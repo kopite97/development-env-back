@@ -1,100 +1,50 @@
 # API
 
 Design APIs as stable external contracts.
-Do not expose persistence or domain implementation details directly.
+Do not expose persistence or domain implementation details.
 
-## Endpoint Design
+## Endpoints
 
-Use resource-oriented REST endpoints.
+- Use resource-oriented REST endpoints and nouns for paths.
+- Use HTTP methods according to their semantics.
+- Keep endpoint and parameter naming consistent.
+- Avoid action-style URLs unless the operation cannot be expressed naturally as a resource change.
 
-Prefer:
+## DTOs
 
-```text
-GET    /api/projects
-GET    /api/projects/{id}
-POST   /api/projects
-PUT    /api/projects/{id}
-DELETE /api/projects/{id}
-```
-
-- Use nouns for resource paths.
-- Use HTTP methods to express operations.
-- Avoid action verbs in URLs unless the operation cannot be represented naturally as a resource change.
-- Use consistent naming across all endpoints.
-
-## DTO
-
-- Never expose JPA entities directly through APIs.
+- Never expose JPA entities directly.
 - Use separate request and response DTOs.
-- Do not reuse request DTOs as response DTOs.
-- DTOs must not contain business logic.
-- Prefer purpose-specific names such as:
+- Prefer purpose-specific DTOs such as `CreateProjectRequest` and `ProjectResponse`.
+- Keep business logic out of DTOs.
 
-```text
-CreateProjectRequest
-UpdateProjectRequest
-ProjectResponse
-ProjectSummaryResponse
-```
+## Responses
 
-## Response
+Use the project's common response and error formats consistently.
 
-Normal JSON responses must use:
-
-```java
-ResponseEntity<ApiResponse<T>>
-```
-
-Use one consistent response model across the API.
-
-Example:
-
-```json
-{
-  "success": true,
-  "data": {},
-  "message": null
-}
-```
-
-Errors must use the shared error response format.
-
-Exceptions to the common wrapper are allowed for cases such as:
-
-- `204 No Content`
-- file downloads
-- streaming responses
-
-## Status Codes
-
-Use HTTP status codes according to their semantics.
-
-- `200` — successful read or update
-- `201` — resource created
-- `204` — successful operation without response body
-- `400` — invalid request
-- `401` — unauthenticated
-- `403` — unauthorized
-- `404` — resource not found
-- `409` — state or resource conflict
+- Return appropriate HTTP status codes such as `200`, `201`, `204`, `400`, `401`, `403`, `404`, and `409`.
+- Do not build error responses individually in controllers.
+- Handle application and domain exceptions centrally.
+- Never expose stack traces or infrastructure details.
 
 ## Validation
 
-- Validate external input at the request DTO boundary.
-- Use Bean Validation for structural validation.
-- Do not place business rules in request DTOs.
-- Return validation failures using the shared error format.
+- Validate external input at the request DTO boundary with Bean Validation.
+- Keep business rules in the application or domain layer.
+- Return validation failures through the common error format.
 
 ## Collections
 
-- APIs returning potentially unbounded collections must support pagination.
-- Define deterministic sorting for paginated responses.
+- Paginate potentially unbounded collections.
+- Use deterministic sorting for pagination.
 - Do not load entire tables into memory for API responses.
 
-## Errors
+## OpenAPI
 
-- Do not build error responses manually in individual controllers.
-- Handle expected application and domain exceptions centrally.
-- Do not expose internal stack traces or infrastructure details to clients.
+Use springdoc/OpenAPI annotations where they add useful API context.
+
+- Prefer `@Tag` and `@Operation` for API intent.
+- Use `@ApiResponse`, `@Parameter`, and `@Schema` only when they add meaningful information.
+- Let Bean Validation define request constraints where possible.
+- Keep generated OpenAPI documentation consistent with the implemented contract.
 
 For business validation and exception design, follow `IMPLEMENTATION/`.

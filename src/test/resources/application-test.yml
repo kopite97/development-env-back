@@ -1,0 +1,23 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test-google-client
+            client-secret: test-google-secret
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/api/v1/auth/callback/{registrationId}"
+        provider:
+          google:
+            authorization-uri: http://127.0.0.1:18999/oauth2/authorize
+            token-uri: http://127.0.0.1:18999/oauth2/token
+            jwk-set-uri: http://127.0.0.1:18999/oauth2/jwks
+            user-info-uri: http://127.0.0.1:18999/userinfo
+            user-name-attribute: sub
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: false

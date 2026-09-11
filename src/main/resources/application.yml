@@ -14,3 +14,32 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OIDC_GOOGLE_CLIENT_ID}
+            client-secret: ${OIDC_GOOGLE_CLIENT_SECRET}
+            scope: openid,profile,email
+            redirect-uri: ${OIDC_GOOGLE_REDIRECT_URI}
+            client-settings:
+              require-proof-key: true
+        provider:
+          google:
+            issuer-uri: ${OIDC_GOOGLE_ISSUER_URI:https://accounts.google.com}
+
+server:
+  servlet:
+    session:
+      timeout: ${SESSION_IDLE_TIMEOUT:12h}
+      cookie:
+        name: ${SESSION_COOKIE_NAME:JSESSIONID}
+        http-only: true
+        secure: ${SESSION_COOKIE_SECURE:false}
+        same-site: lax
+
+app:
+  security:
+    origin: ${APP_ORIGIN:http://localhost:8080}

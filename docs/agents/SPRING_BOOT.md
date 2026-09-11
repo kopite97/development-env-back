@@ -60,3 +60,26 @@ Do not duplicate large configuration blocks across profiles without need.
 For API rules, see `API.md`.
 For persistence rules, see `DATABASE.md`.
 For implementation design, see `IMPLEMENTATION/AGENTS.md`.
+
+## Lombok
+
+Use Lombok to reduce repetitive boilerplate when it does not hide important behavior.
+
+Prefer:
+
+- `@Getter` for simple property access.
+- `@RequiredArgsConstructor` for constructor injection.
+- `@NoArgsConstructor(access = PROTECTED)` when JPA requires a default constructor.
+- `@Slf4j` for class-level logging.
+- `@Value` for simple immutable value objects or DTOs when appropriate.
+
+Use `@Builder` only when object construction remains clear and domain invariants are preserved.
+
+Avoid:
+
+- class-level `@Setter`
+- `@Data`
+- Lombok-generated mutation that bypasses domain methods or invariants
+- automatic `@ToString` or `@EqualsAndHashCode` on JPA entities unless their behavior is explicitly required and reviewed
+
+Prefer explicit domain methods over setters for state changes.
