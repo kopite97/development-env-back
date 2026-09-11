@@ -1,0 +1,16 @@
+spring:
+  # Spring Boot explicitly imports the root .env; Gradle does not load it itself.
+  config:
+    import: optional:file:.env[.properties]
+
+  application:
+    name: devspace
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate

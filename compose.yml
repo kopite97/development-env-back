@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16.4
+    environment:
+      POSTGRES_DB: ${DB_NAME:?DB_NAME must be set}
+      POSTGRES_USER: ${DB_USERNAME:?DB_USERNAME must be set}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set}
+    ports:
+      - "127.0.0.1:${DB_PORT:?DB_PORT must be set}:5432"
+    volumes:
+      - devspace-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  devspace-postgres-data:

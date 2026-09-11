@@ -4,21 +4,65 @@ Status: `proposed`
 
 ## Goal
 
-Describe the runtime behavior or capability this plan will deliver.
+<Describe the intended outcome of this plan.>
 
 ## Scope
 
-- What will change
-- Important boundaries or exclusions
+- <What is included>
+- <Important constraints>
+- <What is explicitly excluded>
 
-## Steps
+## Execution Sessions
 
-1. First implementation step
-2. Next implementation step
-3. Final implementation step
+Execute sessions in order.
 
-## Validation
+Do not start the next session until the current session's implementation and validation are complete.
 
-Define how the completed behavior will be verified at runtime.
+Check an item only after the corresponding work has actually been completed.
+Update this Plan as execution progresses.
 
-Include the relevant build, test, API, database, or application checks required to prove the change works.
+### Session 1: <Name>
+
+Objective:
+
+<Describe the result this session should produce.>
+
+Implementation:
+
+- [ ] <Implementation task>
+- [ ] <Implementation task>
+
+Validation:
+
+- [ ] <Validation required for this session>
+
+### Session 2: <Name>
+
+Objective:
+
+<Describe the result this session should produce.>
+
+Implementation:
+
+- [ ] <Implementation task>
+- [ ] <Implementation task>
+
+Validation:
+
+- [ ] <Validation required for this session>
+
+## Final Validation
+
+- [ ] <End-to-end or final build/test validation>
+- [ ] No failures caused by this Plan remain.
+- [ ] All Execution Sessions are complete.
+
+## Completion
+
+The Plan may be changed to `completed` only when:
+
+- every required session item is checked,
+- every required validation item is checked,
+- and no unresolved blocker prevents the Goal from being satisfied.
+
+If execution cannot continue, leave incomplete items unchecked and record the blocker before stopping.
