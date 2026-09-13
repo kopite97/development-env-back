@@ -55,7 +55,7 @@
 
 ### revision과 멱등성
 
-PATCH/PUT/restore의 본문 revision, DELETE의 query revision을 요구한다. 누락 400, 불일치 409. 프로젝트 보관, 태스크 상태 이동, 마일스톤 완료/재개에도 같은 규칙을 적용한다. 비교와 변경은 한 트랜잭션에서 수행하고 성공마다 1 증가한다. 응답 유실 후 같은 구 revision으로 재시도해도 조용히 덮어쓰지 않는다.
+PATCH/PUT/restore의 본문 revision, DELETE의 query revision을 요구한다. 누락 400, 불일치 409. 프로젝트 보관, 태스크 상태 이동, 마일스톤 완료/재개에도 같은 규칙을 적용한다. 비교와 변경은 한 트랜잭션에서 수행하고 저장되는 리소스 revision은 성공마다 1 증가한다. 영구 삭제는 현재 revision을 검증한 뒤 행을 제거하므로 새 revision이나 tombstone을 남기지 않는다. 응답 유실 후 같은 구 revision으로 재시도해도 조용히 덮어쓰지 않는다.
 
 업무 리소스 POST(프로젝트·태스크·일지·링크·마일스톤)와 import commit에 `Idempotency-Key`를 요구한다. 사용자/작업실/메서드/정규 경로/키에 유일 제약을 두고 요청 해시·성공 상태·응답을 24시간 보존한다. 같은 본문은 같은 결과, 다른 본문은 409. 경쟁 요청은 키 잠금 후 하나만 실행한다. 트랜잭션이 rollback되면 성공 결과를 기록하지 않는다. 인증과 소유권 검증은 재전송에도 먼저 수행한다. 삭제 후 저장된 멱등 결과가 있어도 리소스를 재생성하지 않는다.
 
@@ -162,8 +162,15 @@ title 최대 120, body 최대 20000, 둘 다 필수. entryDate는 유효한 달�
 | GET `/milestones/{id}`   | 전체 리소스                                                                |
 | POST `/milestones`       | projectId, title, dueDate, completed                                       |
 | PATCH `/milestones/{id}` | 위 필드와 revision. 완료/재개도 `{completed, revision}`                    |
+| DELETE `/milestones/{id}?revision=...` | 현재 revision으로 영구 삭제; 200 `{deletedId}` |
 
-정렬은 completed ASC → dueDate ASC(null 마지막) → id ASC. 지연 목표도 포함한다. 기한 지남 표시는 미완료이고 dueDate가 브라우저의 오늘보다 이전일 때 프론트가 계산한다. 서버에서 timezone 의존 overdue 값을 저장하지 않는다. 삭제 API 없음.
+정렬은 completed ASC → dueDate ASC(null 마지막) → id ASC. 지연 목표도 포함한다. 기한 지남 표시는 미완료이고 dueDate가 브라우저의 오늘보다 이전일 때 프론트가 계산한다. 서버에서 timezone 의존 overdue 값을 저장하지 않는다.
+
+DELETE `/api/v1/milestones/{id}?revision=...`는 인증된 사용자의 작업실 범위에서 마일스톤과 연결 Project 소유권을 확인하고 현재 revision을 요구한다. revision 누락/잘못된 값은 400 `VALIDATION_ERROR`, 소유한 기존 행의 오래된 revision은 409 `REVISION_CONFLICT`다. 없거나 접근할 수 없는 마일스톤은 revision 충돌을 노출하지 않고 404 `RESOURCE_NOT_FOUND`로 응답한다. 세션 인증, `X-CSRF-Token` 및 Origin 검증은 다른 mutation과 동일하게 적용한다.
+
+성공하면 한 트랜잭션에서 해당 마일스톤 행만 영구 제거하고 workspace.dataRevision을 정확히 한 번 증가시키며, 200 `{ "deletedId": "..." }`를 반환한다. 휴지통·소프트 삭제·복구·tombstone은 없다. 삭제 시 새 리소스 revision을 저장하지 않으므로 최대 유효 revision에서도 삭제할 수 있다. 이미 삭제된 id의 GET/PATCH 및 반복 DELETE는 404다. 실패/반복 삭제는 dataRevision을 증가시키지 않으며 rollback 시 행과 카운터가 함께 복원된다. Project와 다른 마일스톤의 데이터·revision·감사 시각, 공개 Workspace 메타데이터 revision은 변경하지 않는다. 완료 여부나 소유 Project의 보관 여부와 관계없이 삭제할 수 있다. DELETE에는 생성용 Idempotency-Key를 요구하지 않는다.
+
+생성 POST의 24시간 멱등 결과는 삭제 후에도 보존한다. 같은 키/본문의 재전송은 인증된 작업실과 원래 Project 소유권을 다시 확인한 뒤 원래 201 응답을 반환하며, 삭제된 마일스톤을 재생성하거나 dataRevision을 증가시키지 않는다. 살아 있는 행이 있으면 현재 Project 관계도 검증한다. 이 생성 재전송 규칙은 반복 DELETE의 404 규칙을 바꾸지 않는다.
 
 현재 마일스톤 UI를 유지하기 위해 소유자의 보관 프로젝트도 생성/편집/재개 대상이 될 수 있다. 일반 홈은 projectStatus=active, 특정 프로젝트 위젯과 상세는 projectStatus=all + projectId로 조회한다. 프로젝트 목표 메모를 바꿔도 마일스톤을 자동 생성·수정하지 않는다.
 

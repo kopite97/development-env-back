@@ -10,4 +10,6 @@ public interface PersonalWorkspaceRepository {
     Optional<PersonalWorkspace> findById(UUID id);
 
     Optional<PersonalWorkspace> findByOwnerId(UUID ownerId);
+
+    Optional<PersonalWorkspace> lockByOwnerId(UUID ownerId);
 }

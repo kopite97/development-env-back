@@ -41,5 +41,9 @@ server:
         same-site: lax
 
 app:
+  link:
+    max-links: ${DEVSPACE_LINK_MAX_LINKS:500}
+  project:
+    cursor-signing-key: ${PROJECT_CURSOR_SIGNING_KEY}
   security:
     origin: ${APP_ORIGIN:http://localhost:8080}

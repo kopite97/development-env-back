@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Project API browser validation</title></head>
+<body>PROJECT_API_BROWSER_VALIDATION_RUNNING
+<script>
+addEventListener('load', async () => {
+  try {
+    const csrfResponse = await fetch('/api/v1/auth/csrf', {cache: 'no-store'});
+    if (!csrfResponse.ok) throw new Error(`csrf:${csrfResponse.status}`);
+    const {csrfToken} = await csrfResponse.json();
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken,
+      'Idempotency-Key': `browser-${crypto.randomUUID()}`
+    };
+    const createdResponse = await fetch('/api/v1/projects', {
+      method: 'POST', headers,
+      body: JSON.stringify({name: 'Browser project', scope: 'server', stack: 'Java', progress: 12.5})
+    });
+    if (createdResponse.status !== 201) throw new Error(`create:${createdResponse.status}`);
+    const created = await createdResponse.json();
+    const readResponse = await fetch(`/api/v1/projects/${created.id}`, {cache: 'no-store'});
+    if (!readResponse.ok) throw new Error(`read:${readResponse.status}`);
+    const read = await readResponse.json();
+    const updatedResponse = await fetch(`/api/v1/projects/${created.id}`, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken},
+      body: JSON.stringify({revision: read.revision, status: 'archived'})
+    });
+    if (!updatedResponse.ok) throw new Error(`update:${updatedResponse.status}`);
+    const updated = await updatedResponse.json();
+    const listResponse = await fetch('/api/v1/projects?status=archived&limit=20', {cache: 'no-store'});
+    if (!listResponse.ok) throw new Error(`list:${listResponse.status}`);
+    const list = await listResponse.json();
+    if (updated.status !== 'archived' || updated.revision !== 2 ||
+        list.total !== 1 || !list.items.some(item => item.id === created.id)) {
+      throw new Error('response-contract');
+    }
+    document.body.textContent = `PROJECT_API_BROWSER_VALIDATION_PASS id=${created.id} revision=${updated.revision} total=${list.total}`;
+  } catch (error) {
+    document.body.textContent = `PROJECT_API_BROWSER_VALIDATION_FAIL ${error}`;
+  }
+});
+</script>
+</body>
+</html>

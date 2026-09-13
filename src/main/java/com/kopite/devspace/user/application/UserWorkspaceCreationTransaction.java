@@ -10,6 +10,7 @@ import com.kopite.devspace.workspace.domain.PersonalWorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.util.Optional;
 
@@ -21,14 +22,14 @@ public class UserWorkspaceCreationTransaction {
     private final AuthIdentityRepository authIdentityRepository;
     private final PersonalWorkspaceRepository workspaceRepository;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public UserWorkspaceCreationResult createOrReuse(AuthIdentityId identityId, String displayName) {
         return authIdentityRepository.findById(identityId)
                 .map(this::reuseExistingIdentity)
                 .orElseGet(() -> createNewUser(identityId, displayName));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public Optional<UserWorkspaceCreationResult> findExisting(AuthIdentityId identityId) {
         return authIdentityRepository.findById(identityId)
                 .map(this::reuseExistingIdentity);

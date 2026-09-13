@@ -42,26 +42,15 @@ Infrastructure
 - Infrastructure may implement abstractions defined by inner layers.
 - Do not bypass layers for convenience.
 
-## Package Structure
+## Package Organization
 
-Prefer:
-
-```text
-<base-package>/
-├─ global/
-│  ├─ config/
-│  ├─ exception/
-│  └─ response/
-├─ project/
-├─ devlog/
-├─ kanban/
-└─ reference/
-```
-
-Keep feature-specific code inside its feature package.
-
-Use `global` only for genuinely shared cross-cutting concerns.
-Do not move code into `global` merely because multiple classes use it.
+- Keep the four layers inside each feature; organize by role only when it improves navigation.
+- In large application packages, group commands/services in `command`, queries/filters in `query`, application interfaces in `port`, shared results/cursors in `model`, and application exceptions in `exception`.
+- Group presentation DTOs, their parsers and validation annotations in `dto`. Use `controller` or `openapi` only when multiple related classes justify them; leave singleton roles at the layer root.
+- Group persistence repositories/adapters in `infrastructure.persistence`; use `configuration` only for a meaningful group. Security/OIDC adapters may use their own role groups.
+- Do not mechanically create every role folder. Keep small cohesive packages flat, avoid one-file subpackages and excessive nesting, and keep domain packages simple.
+- Keep package-private collaborators together where possible; package moves must preserve behavior, contracts, transaction boundaries and dependency direction.
+- Keep feature-specific code in its feature. Use `global` only for genuinely shared concerns, not merely because several classes use a type.
 
 ## Architectural Changes
 

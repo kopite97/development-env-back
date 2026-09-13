@@ -70,6 +70,10 @@ public class PersonalWorkspace {
         return new PersonalWorkspace(UUID.randomUUID(), owner, name, Instant.now());
     }
 
+    public void recordBusinessMutation() {
+        dataRevision = Math.incrementExact(dataRevision);
+    }
+
     private static String normalizeName(String name) {
         String normalized = Objects.requireNonNull(name, "name").trim();
         if (normalized.isBlank()) {

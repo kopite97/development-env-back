@@ -16,6 +16,10 @@ spring:
             user-info-uri: http://127.0.0.1:18999/userinfo
             user-name-attribute: sub
 
+app:
+  project:
+    cursor-signing-key: test-only-project-cursor-signing-key-at-least-32-bytes
+
 server:
   servlet:
     session:

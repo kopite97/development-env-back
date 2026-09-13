@@ -164,7 +164,7 @@ class UserWorkspacePersistenceRulesTests {
         assertEquals(100, PersonalWorkspace.create(owner, "😀".repeat(50)).getName().length());
     }
 
-    @Test
+    @org.junit.jupiter.api.RepeatedTest(20)
     void concurrentCreationAttemptsConvergeOnOnePersistedAggregate() throws Exception {
         String issuer = unique("concurrent-issuer");
         String subject = unique("concurrent-subject");

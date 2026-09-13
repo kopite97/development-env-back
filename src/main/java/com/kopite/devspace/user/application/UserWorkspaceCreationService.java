@@ -17,6 +17,8 @@ public class UserWorkspaceCreationService {
         try {
             return transaction.createOrReuse(identityId, displayName);
         } catch (DataIntegrityViolationException creationFailure) {
+            // The proxied creation transaction has fully rolled back before a fresh
+            // transaction reads the winner, including when the caller has a transaction.
             return transaction.findExisting(identityId)
                     .orElseThrow(() -> creationFailure);
         }

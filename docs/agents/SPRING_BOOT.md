@@ -29,6 +29,13 @@ Do not use Spring components as global utility containers.
 - Use environment variables for secrets and deployment-specific values.
 - Prefer `@ConfigurationProperties` for grouped configuration.
 - Do not hardcode URLs, credentials, tokens, or infrastructure settings.
+- 
+## Environment Variables
+
+- When introducing a new environment variable, add it to the root `.env`.
+- Add the same variable to `.env.example` with a safe placeholder or example value.
+- Never commit secrets or real credentials.
+- Reference environment variables from `application.yml` instead of hardcoding environment-specific values.
 
 ## Profiles
 

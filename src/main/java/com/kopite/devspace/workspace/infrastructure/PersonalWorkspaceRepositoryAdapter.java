@@ -28,4 +28,9 @@ public class PersonalWorkspaceRepositoryAdapter implements PersonalWorkspaceRepo
     public Optional<PersonalWorkspace> findByOwnerId(UUID ownerId) {
         return repository.findByOwner_Id(ownerId);
     }
+
+    @Override
+    public Optional<PersonalWorkspace> lockByOwnerId(UUID ownerId) {
+        return repository.lockByOwnerId(ownerId);
+    }
 }

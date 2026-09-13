@@ -1,7 +1,7 @@
 package com.kopite.devspace;
 
 import com.kopite.devspace.auth.application.InternalUserPrincipal;
-import com.kopite.devspace.auth.infrastructure.OidcAuthenticationSuccessHandler;
+import com.kopite.devspace.auth.infrastructure.oidc.OidcAuthenticationSuccessHandler;
 import com.kopite.devspace.user.application.UserWorkspaceCreationResult;
 import com.kopite.devspace.user.application.UserWorkspaceCreationService;
 import org.junit.jupiter.api.Test;
@@ -87,6 +87,20 @@ class SecurityIntegrationTests {
         mockMvc.perform(get("/api/v1/auth/csrf"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value("AUTH_REQUIRED"));
+    }
+
+    @Test
+    void unauthenticatedProtectedMutationsUseTheSharedAuthenticationEntryPoint() throws Exception {
+        for (String method : java.util.List.of("POST", "PATCH", "PUT", "DELETE")) {
+            for (String path : java.util.List.of("/api/v1/projects", "/api/v1/me/workspace")) {
+                mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                                .request(org.springframework.http.HttpMethod.valueOf(method), path)
+                                .contentType("application/json").content("{}"))
+                        .andExpect(status().isUnauthorized())
+                        .andExpect(jsonPath("$.code").value("AUTH_REQUIRED"))
+                        .andExpect(header().string("Cache-Control", containsString("no-store")));
+            }
+        }
     }
 
     @Test
