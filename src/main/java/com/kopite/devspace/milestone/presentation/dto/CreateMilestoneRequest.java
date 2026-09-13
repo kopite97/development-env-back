@@ -9,7 +9,7 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(using=CreateMilestoneRequest.Deserializer.class)
 @Schema(description="Omitted dueDate defaults to null; omitted completed defaults to false. Explicit null is allowed only for dueDate. Unknown/duplicate fields and type coercion are rejected. Title length uses UTF-16 units.",additionalProperties=Schema.AdditionalPropertiesValue.FALSE)
 public record CreateMilestoneRequest(
-    @MilestoneText(max=200,required=true,trim=true) @Schema(maxLength=200,requiredMode=Schema.RequiredMode.REQUIRED) String title,
+    @MilestoneText(max=200,required=true,trim=true) @Schema(minLength=1,maxLength=200,requiredMode=Schema.RequiredMode.REQUIRED) String title,
     @NotNull @Schema(type="string",format="uuid") String projectId,
     @Pattern(regexp="[0-9]{4}-[0-9]{2}-[0-9]{2}") @Schema(types={"string","null"},format="date",description="Calendar date in years 0001 through 9999; null clears the date") String dueDate,
     @Schema(defaultValue="false") Boolean completed,

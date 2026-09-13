@@ -14,10 +14,10 @@ import java.math.BigDecimal;
         additionalProperties = Schema.AdditionalPropertiesValue.FALSE,
         example = "{\"name\":\"Example Project\",\"scope\":\"server\",\"stack\":\"Java\",\"progress\":12.5}")
 public record CreateProjectRequest(
-        @ProjectText(max = 100, required = true, trim = true) @Schema(maxLength = 100, requiredMode = Schema.RequiredMode.REQUIRED) String name,
+        @ProjectText(max = 100, required = true, trim = true) @Schema(minLength=1,maxLength = 100, requiredMode = Schema.RequiredMode.REQUIRED) String name,
         @Size(max = 4000) @Schema(defaultValue = "") String subtitle,
         @NotNull @Pattern(regexp = "unity|server") @Schema(allowableValues = {"unity", "server"}) String scope,
-        @ProjectText(max = 200, required = true, trim = true) @Schema(maxLength = 200, requiredMode = Schema.RequiredMode.REQUIRED) String stack,
+        @ProjectText(max = 200, required = true, trim = true) @Schema(minLength=1,maxLength = 200, requiredMode = Schema.RequiredMode.REQUIRED) String stack,
         @DecimalMin("0") @DecimalMax("100") @Schema(defaultValue = "0", description = "Manual progress; decimals allowed") BigDecimal progress,
         @Size(max = 200) @Schema(defaultValue = "", description = "Goal memo, independent of milestone resources") String currentMilestone,
         @ProjectText(max = 2000, trim = true) @Schema(maxLength = 2000, defaultValue = "", description = "Empty or absolute http/https URL with a host") String repositoryUrl) {

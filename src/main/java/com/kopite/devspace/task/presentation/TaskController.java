@@ -36,11 +36,10 @@ import java.util.UUID;
 @Tag(name="Tasks")
 @SecurityRequirement(name="sessionCookie")
 @ApiResponses({
-    @ApiResponse(responseCode="400",description="VALIDATION_ERROR or INVALID_CURSOR",content=@Content(schema=@Schema(implementation=ApiError.class))),
+
     @ApiResponse(responseCode="401",description="AUTH_REQUIRED",content=@Content(schema=@Schema(implementation=ApiError.class))),
-    @ApiResponse(responseCode="403",description="CSRF_INVALID, forbidden Origin or ACCOUNT_DISABLED",content=@Content(schema=@Schema(implementation=ApiError.class))),
+    @ApiResponse(responseCode="403",description="ACCOUNT_DISABLED; authenticated mutations may also return CSRF_INVALID for a missing/invalid token or forbidden Origin",content=@Content(schema=@Schema(implementation=ApiError.class))),
     @ApiResponse(responseCode="404",description="RESOURCE_NOT_FOUND: missing or inaccessible Task/Project",content=@Content(schema=@Schema(implementation=ApiError.class))),
-    @ApiResponse(responseCode="409",description="REVISION_CONFLICT, PROJECT_ARCHIVED, RESOURCE_DELETED, INVALID_RESOURCE_STATE or IDEMPOTENCY_KEY_REUSED",content=@Content(schema=@Schema(implementation=ApiError.class))),
     @ApiResponse(responseCode="500",description="INTERNAL_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
 })
 public class TaskController {
@@ -48,9 +47,11 @@ public class TaskController {
     private final TaskQueryService queries;
 
     @PostMapping(consumes="application/json")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @Operation(summary="Create an owned Task",description="Requires an active owned Project. Retry the same key/body within 24 hours for the original 201 snapshot, including after deletion or Project archive.",
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
     @ApiResponse(responseCode="201",description="Full created Task or original replay",content=@Content(schema=@Schema(implementation=TaskResponse.class)))
+    @ApiResponse(responseCode="409",description="PROJECT_ARCHIVED or IDEMPOTENCY_KEY_REUSED",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<TaskResponse> create(Authentication auth,
         @RequestHeader("Idempotency-Key") @Parameter(schema=@Schema(minLength=1,maxLength=128,pattern="[!-~]+")) String key,
         @Valid @RequestBody CreateTaskRequest request) {
@@ -58,40 +59,48 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @ApiResponse(responseCode="200",description="Full owned Task including trash",content=@Content(schema=@Schema(implementation=TaskResponse.class)))
     @Operation(summary="Read an owned Task including trash")
-    public ResponseEntity<TaskResponse> get(Authentication auth,@PathVariable String id) {
+    public ResponseEntity<TaskResponse> get(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id) {
         return ok(TaskResponse.from(queries.get(user(auth),id(id))));
     }
 
     @PatchMapping(value="/{id}",consumes="application/json")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @ApiResponse(responseCode="200",description="Full updated Task",content=@Content(schema=@Schema(implementation=TaskResponse.class)))
     @Operation(summary="Update or complete/reopen a Task",description="Omitted fields stay unchanged; revision is required. Completion uses status=done. Same-value updates advance revision. Trash cannot be edited. Retaining an archived Project is allowed; reassignment requires an active owned target.",
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
-    public ResponseEntity<TaskResponse> update(Authentication auth,@PathVariable String id,@Valid @RequestBody UpdateTaskRequest request) {
+    @ApiResponse(responseCode="409",description="REVISION_CONFLICT, PROJECT_ARCHIVED or RESOURCE_DELETED",content=@Content(schema=@Schema(implementation=ApiError.class)))
+    public ResponseEntity<TaskResponse> update(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,@Valid @RequestBody UpdateTaskRequest request) {
         return ok(TaskResponse.from(commands.update(user(auth),id(id),request.command())));
     }
 
     @DeleteMapping("/{id}")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @ApiResponse(responseCode="200",description="Full soft-deleted Task",content=@Content(schema=@Schema(implementation=TaskResponse.class)))
     @Operation(summary="Soft-delete an owned Task",description="Revision conflict precedes already-deleted state conflict. Returns the full Task.",
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
-    public ResponseEntity<TaskResponse> delete(Authentication auth,@PathVariable String id,
+    @ApiResponse(responseCode="409",description="REVISION_CONFLICT or INVALID_RESOURCE_STATE",content=@Content(schema=@Schema(implementation=ApiError.class)))
+    public ResponseEntity<TaskResponse> delete(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,
         @RequestParam @Parameter(schema=@Schema(type="integer",minimum="1",maximum="9007199254740991")) long revision) {
         return ok(TaskResponse.from(commands.delete(user(auth),id(id),revision)));
     }
 
     @PostMapping(value="/{id}/restore",consumes="application/json")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @ApiResponse(responseCode="200",description="Full restored Task",content=@Content(schema=@Schema(implementation=TaskResponse.class)))
     @Operation(summary="Restore an owned Task",description="Body contains only revision. No creation Idempotency-Key is required; archived Project relations are retained.",
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
-    public ResponseEntity<TaskResponse> restore(Authentication auth,@PathVariable String id,@Valid @RequestBody RestoreTaskRequest request) {
+    @ApiResponse(responseCode="409",description="REVISION_CONFLICT or INVALID_RESOURCE_STATE",content=@Content(schema=@Schema(implementation=ApiError.class)))
+    public ResponseEntity<TaskResponse> restore(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,@Valid @RequestBody RestoreTaskRequest request) {
         return ok(TaskResponse.from(commands.restore(user(auth),id(id),request.revision())));
     }
 
     @GetMapping
     @ApiResponse(responseCode="200",description="Filtered cursor page and matching total",content=@Content(schema=@Schema(implementation=TaskListResponse.class)))
     @Operation(summary="List owned Tasks",description="createdAt DESC, id DESC. Literal title/Project-name search. deleted=true selects only trash. Cursor binds workspace, all filters and limit; no cross-page snapshot guarantee.")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR or INVALID_CURSOR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<TaskListResponse> list(Authentication auth,
         @RequestParam(defaultValue="all") @Parameter(schema=@Schema(allowableValues={"all","unity","server"},defaultValue="all")) String scope,
         @RequestParam(required=false) @Parameter(schema=@Schema(format="uuid")) String projectId,
@@ -106,6 +115,7 @@ public class TaskController {
     }
 
     @GetMapping("/stats")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @ApiResponse(responseCode="200",description="Undeleted counts in one read snapshot",content=@Content(schema=@Schema(implementation=TaskStatsResponse.class)))
     @Operation(summary="Count undeleted Tasks by status",description="All three status keys are always returned. Archived Projects are included by default. status/deleted parameters are rejected.")
     public ResponseEntity<TaskStatsResponse> stats(Authentication auth,

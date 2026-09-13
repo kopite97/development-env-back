@@ -3,6 +3,9 @@ import com.kopite.devspace.auth.presentation.dto.CsrfTokenResponse;
 
 import com.kopite.devspace.auth.infrastructure.oidc.SafeReturnToPolicy;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import com.kopite.devspace.global.response.ApiError;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,7 +37,9 @@ public class AuthController {
     @GetMapping("/login")
     @Operation(summary = "Start the configured Google OIDC login")
     @ApiResponses({
-            @ApiResponse(responseCode = "302", description = "Redirect to the Google authorization endpoint")
+            @ApiResponse(responseCode = "302", description = "Redirect to /oauth2/authorization/google, which then redirects to the provider"),
+            @ApiResponse(responseCode = "401", description = "AUTH_REQUIRED: invalid or removed existing session user", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "403", description = "ACCOUNT_DISABLED: existing session user is disabled", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<Void> login(
             @Parameter(in = ParameterIn.QUERY, description = "Relative application path after login")
@@ -56,10 +61,12 @@ public class AuthController {
     @SecurityRequirement(name = "sessionCookie")
     @Operation(summary = "Get the CSRF token for the authenticated browser session")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Session-bound CSRF token"),
-            @ApiResponse(responseCode = "401", description = "Authentication is required")
+            @ApiResponse(responseCode = "200", description = "Session-bound CSRF token", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CsrfTokenResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Authentication is required", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "INTERNAL_ERROR", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "403", description = "ACCOUNT_DISABLED", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class)))
     })
-    public ResponseEntity<CsrfTokenResponse> csrf(CsrfToken token) {
+    public ResponseEntity<CsrfTokenResponse> csrf(@Parameter(hidden = true) CsrfToken token) {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore())
                 .header(HttpHeaders.PRAGMA, "no-cache")

@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 public record JournalResponse(
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) UUID id,
-    @Schema(minimum="1",maximum="9007199254740991") long revision,
+    @Schema(accessMode=Schema.AccessMode.READ_ONLY,minimum="1",maximum="9007199254740991") long revision,
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) Instant createdAt,
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) Instant updatedAt,
     @Schema(maxLength=120) String title, UUID projectId,

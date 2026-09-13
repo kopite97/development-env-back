@@ -15,10 +15,10 @@ import java.math.BigDecimal;
         example = "{\"revision\":1,\"status\":\"archived\"}")
 public record UpdateProjectRequest(
         @NotNull @Min(1) @Max(9007199254740991L) Long revision,
-        @ProjectText(max = 100, trim = true) @Schema(maxLength = 100, description = "Nonblank after trim when supplied") String name,
+        @ProjectText(max = 100, trim = true) @Schema(minLength=1,maxLength = 100, description = "Nonblank after trim when supplied") String name,
         @Size(max = 4000) String subtitle,
         @Pattern(regexp = "unity|server") @Schema(allowableValues = {"unity", "server"}) String scope,
-        @ProjectText(max = 200, trim = true) @Schema(maxLength = 200, description = "Nonblank after trim when supplied") String stack,
+        @ProjectText(max = 200, trim = true) @Schema(minLength=1,maxLength = 200, description = "Nonblank after trim when supplied") String stack,
         @DecimalMin("0") @DecimalMax("100") BigDecimal progress,
         @Size(max = 200) String currentMilestone,
         @ProjectText(max = 2000, trim = true) @Schema(maxLength = 2000) String repositoryUrl,

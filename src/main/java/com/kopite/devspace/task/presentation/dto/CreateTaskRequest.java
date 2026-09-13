@@ -9,7 +9,7 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @Schema(description="Only declared fields are writable. Explicit nulls and duplicates are invalid. Lengths use UTF-16 units. Optional text clears with an empty string.",
     additionalProperties=Schema.AdditionalPropertiesValue.FALSE)
 public record CreateTaskRequest(
-    @TaskText(max=160,required=true,trim=true) @Schema(maxLength=160,requiredMode=Schema.RequiredMode.REQUIRED) String title,
+    @TaskText(max=160,required=true,trim=true) @Schema(minLength=1,maxLength=160,requiredMode=Schema.RequiredMode.REQUIRED) String title,
     @NotNull @Schema(type="string",format="uuid",requiredMode=Schema.RequiredMode.REQUIRED) String projectId,
     @Size(max=10000) @Schema(defaultValue="") String description,
     @Pattern(regexp="todo|doing|done") @Schema(allowableValues={"todo","doing","done"},defaultValue="todo") String status,

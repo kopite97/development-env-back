@@ -33,11 +33,10 @@ import java.util.UUID;
 @Tag(name="Milestones")
 @SecurityRequirement(name="sessionCookie")
 @ApiResponses({
-    @ApiResponse(responseCode="400",description="VALIDATION_ERROR or INVALID_CURSOR",content=@Content(schema=@Schema(implementation=ApiError.class))),
+
     @ApiResponse(responseCode="401",description="AUTH_REQUIRED",content=@Content(schema=@Schema(implementation=ApiError.class))),
-    @ApiResponse(responseCode="403",description="CSRF_INVALID, forbidden Origin or ACCOUNT_DISABLED",content=@Content(schema=@Schema(implementation=ApiError.class))),
+    @ApiResponse(responseCode="403",description="ACCOUNT_DISABLED; authenticated mutations may also return CSRF_INVALID for a missing/invalid token or forbidden Origin",content=@Content(schema=@Schema(implementation=ApiError.class))),
     @ApiResponse(responseCode="404",description="RESOURCE_NOT_FOUND: missing or inaccessible Milestone/Project",content=@Content(schema=@Schema(implementation=ApiError.class))),
-    @ApiResponse(responseCode="409",description="REVISION_CONFLICT or IDEMPOTENCY_KEY_REUSED",content=@Content(schema=@Schema(implementation=ApiError.class))),
     @ApiResponse(responseCode="500",description="INTERNAL_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
 })
 public class MilestoneController {
@@ -45,9 +44,11 @@ public class MilestoneController {
     private final MilestoneQueryService queries;
 
     @PostMapping(consumes="application/json")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @Operation(summary="Create an owned Milestone",description="Requires an owned active or archived Project. Retry the same key/body within 24 hours for the original 201 snapshot, including after deletion or Project archive.",
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
     @ApiResponse(responseCode="201",description="Full created Milestone or original replay",content=@Content(schema=@Schema(implementation=MilestoneResponse.class)))
+    @ApiResponse(responseCode="409",description="IDEMPOTENCY_KEY_REUSED",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<MilestoneResponse> create(Authentication auth,
         @RequestHeader("Idempotency-Key") @Parameter(schema=@Schema(minLength=1,maxLength=128,pattern="[!-~]+")) String key,
         @Valid @RequestBody CreateMilestoneRequest request) {
@@ -55,25 +56,30 @@ public class MilestoneController {
     }
 
     @GetMapping("/{id}")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @ApiResponse(responseCode="200",description="Full owned Milestone",content=@Content(schema=@Schema(implementation=MilestoneResponse.class)))
     @Operation(summary="Read an owned Milestone")
-    public ResponseEntity<MilestoneResponse> get(Authentication auth,@PathVariable String id) {
+    public ResponseEntity<MilestoneResponse> get(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id) {
         return ok(MilestoneResponse.from(queries.get(user(auth),id(id))));
     }
 
     @PatchMapping(value="/{id}",consumes="application/json")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @ApiResponse(responseCode="200",description="Full updated Milestone",content=@Content(schema=@Schema(implementation=MilestoneResponse.class)))
     @Operation(summary="Update a Milestone",description="Omitted fields stay unchanged; revision is required. Same-value updates advance revision. completed=true completes and false reopens. dueDate=null clears, omission preserves. Owned archived Projects are allowed, including reassignment.",
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
-    public ResponseEntity<MilestoneResponse> update(Authentication auth,@PathVariable String id,@Valid @RequestBody UpdateMilestoneRequest request) {
+    @ApiResponse(responseCode="409",description="REVISION_CONFLICT",content=@Content(schema=@Schema(implementation=ApiError.class)))
+    public ResponseEntity<MilestoneResponse> update(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,@Valid @RequestBody UpdateMilestoneRequest request) {
         return ok(MilestoneResponse.from(commands.update(user(auth),id(id),request.command())));
     }
 
     @DeleteMapping("/{id}")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @ApiResponse(responseCode="200",description="Permanently deleted Milestone ID",content=@Content(schema=@Schema(implementation=DeleteMilestoneResponse.class)))
     @Operation(summary="Permanently delete an owned Milestone",description="Requires the current revision. Returns deletedId. Subsequent reads and mutations return 404.",
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
-    public ResponseEntity<DeleteMilestoneResponse> delete(Authentication auth,@PathVariable String id,
+    @ApiResponse(responseCode="409",description="REVISION_CONFLICT",content=@Content(schema=@Schema(implementation=ApiError.class)))
+    public ResponseEntity<DeleteMilestoneResponse> delete(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,
         @RequestParam @Parameter(schema=@Schema(type="integer",minimum="1",maximum="9007199254740991")) long revision) {
         return ok(new DeleteMilestoneResponse(commands.delete(user(auth),id(id),revision)));
     }
@@ -81,6 +87,7 @@ public class MilestoneController {
     @GetMapping
     @ApiResponse(responseCode="200",description="Filtered cursor page and matching total",content=@Content(schema=@Schema(implementation=MilestoneListResponse.class)))
     @Operation(summary="List owned Milestones",description="completed ASC, dueDate ASC NULLS LAST, id ASC. status is only a filter: open, done or all. Overdue items are included. Cursor binds workspace, all filters and limit; no cross-page snapshot guarantee.")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR or INVALID_CURSOR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<MilestoneListResponse> list(Authentication auth,
         @RequestParam(defaultValue="all") @Parameter(schema=@Schema(allowableValues={"all","unity","server"},defaultValue="all")) String scope,
         @RequestParam(required=false) @Parameter(schema=@Schema(format="uuid")) String projectId,

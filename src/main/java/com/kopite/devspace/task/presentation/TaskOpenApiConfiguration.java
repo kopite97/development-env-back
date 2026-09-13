@@ -25,7 +25,7 @@ public class TaskOpenApiConfiguration {
                     property.setDefault("");
                 }
             }
-            for(String name:List.of("TaskResponse","TaskListResponse","TaskStatsResponse","Counts")) {
+            for(String name:List.of("TaskResponse","TaskListResponse","TaskStatsResponse","TaskStatusCounts")) {
                 Schema<?> schema=api.getComponents().getSchemas().get(name);
                 if(schema!=null && schema.getProperties()!=null)
                     schema.setRequired(List.copyOf(schema.getProperties().keySet()));

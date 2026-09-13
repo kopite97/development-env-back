@@ -22,6 +22,20 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(com.kopite.devspace.dashboard.domain.DashboardValidationException.class)
+    ResponseEntity<ApiError> dashboardInvalid(com.kopite.devspace.dashboard.domain.DashboardValidationException ex) {
+        return error(400,"VALIDATION_ERROR","Request validation failed",Map.of(ex.getField(),ex.getMessage()));
+    }
+    @ExceptionHandler(com.kopite.devspace.dashboard.presentation.dto.UnsupportedDashboardSchemaException.class)
+    ResponseEntity<ApiError> dashboardSchema() {return error(400,"UNSUPPORTED_SCHEMA_VERSION","Only schemaVersion 1 is supported",Map.of());}
+    @ExceptionHandler(com.kopite.devspace.dashboard.domain.DashboardConflictException.class)
+    ResponseEntity<ApiError> dashboardConflict() {return revision();}
+    @ExceptionHandler(com.kopite.devspace.dashboard.application.DashboardNotFoundException.class)
+    ResponseEntity<ApiError> dashboardNotFound() {return notFound();}
+    @ExceptionHandler(com.kopite.devspace.overview.application.OverviewValidationException.class)
+    ResponseEntity<ApiError> overviewInvalid(com.kopite.devspace.overview.application.OverviewValidationException ex) {
+        return error(400,"VALIDATION_ERROR","Invalid query parameter",Map.of(ex.getField(),ex.getMessage()));
+    }
     @ExceptionHandler(com.kopite.devspace.link.domain.LinkValidationException.class)
     ResponseEntity<ApiError> invalidLink(com.kopite.devspace.link.domain.LinkValidationException exception) {
         return error(400,"VALIDATION_ERROR","Request validation failed",Map.of(exception.getField(),exception.getMessage()));
@@ -87,6 +101,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<ApiError> unreadable(HttpMessageNotReadableException exception) {
         for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
+            if(cause instanceof com.kopite.devspace.dashboard.presentation.dto.UnsupportedDashboardSchemaException) return dashboardSchema();
+            if(cause instanceof com.kopite.devspace.dashboard.domain.DashboardValidationException validation) return dashboardInvalid(validation);
             if(cause instanceof com.kopite.devspace.link.domain.LinkValidationException validation) return invalidLink(validation);
             if(cause instanceof com.kopite.devspace.milestone.domain.MilestoneValidationException validation) return invalidMilestone(validation);
             if(cause instanceof com.kopite.devspace.journal.domain.JournalValidationException validation) return invalidJournal(validation);

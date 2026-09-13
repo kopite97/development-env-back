@@ -1,0 +1,229 @@
+package com.kopite.devspace;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Collectors;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@ActiveProfiles("test")
+@Import(TestcontainersConfiguration.class)
+@AutoConfigureMockMvc
+class BackendOpenApiContractTests {
+    @Autowired MockMvc mvc;
+    @Autowired JsonMapper json;
+    @Autowired @Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping mappings;
+
+    private static final Map<String, Set<String>> INVENTORY = Map.ofEntries(
+        Map.entry("/api/v1/auth/login", Set.of("get")),
+        Map.entry("/api/v1/auth/callback/{registrationId}", Set.of("get")),
+        Map.entry("/api/v1/auth/csrf", Set.of("get")),
+        Map.entry("/api/v1/auth/logout", Set.of("post")),
+        Map.entry("/api/v1/me", Set.of("get")),
+        Map.entry("/api/v1/projects", Set.of("get", "post")),
+        Map.entry("/api/v1/projects/{id}", Set.of("get", "patch")),
+        Map.entry("/api/v1/tasks", Set.of("get", "post")),
+        Map.entry("/api/v1/tasks/{id}", Set.of("get", "patch", "delete")),
+        Map.entry("/api/v1/tasks/{id}/restore", Set.of("post")),
+        Map.entry("/api/v1/tasks/stats", Set.of("get")),
+        Map.entry("/api/v1/journals", Set.of("get", "post")),
+        Map.entry("/api/v1/journals/{id}", Set.of("get", "patch", "delete")),
+        Map.entry("/api/v1/milestones", Set.of("get", "post")),
+        Map.entry("/api/v1/milestones/{id}", Set.of("get", "patch", "delete")),
+        Map.entry("/api/v1/links", Set.of("get", "post")),
+        Map.entry("/api/v1/links/{id}", Set.of("get", "patch", "delete")),
+        Map.entry("/api/v1/links/order", Set.of("put")),
+        Map.entry("/api/v1/dashboards/home", Set.of("get", "put")),
+        Map.entry("/api/v1/overview", Set.of("get")));
+
+    @Test void generatedInventoryExactlyMatchesApprovedSurfaceAndRuntimeMappings() throws Exception {
+        var api = document();
+        assertEquals(INVENTORY.keySet(), keys(api.path("paths")));
+        Set<String> documented = new HashSet<>();
+        Set<String> operationIds = new HashSet<>();
+        for (var entry : INVENTORY.entrySet()) {
+            assertEquals(entry.getValue(), keys(api.path("paths").path(entry.getKey())));
+            for (String method : entry.getValue()) {
+                var op = api.path("paths").path(entry.getKey()).path(method);
+                documented.add(method + " " + entry.getKey());
+                assertFalse(op.path("operationId").asString("").isBlank());
+                assertTrue(operationIds.add(op.path("operationId").asString()), "Duplicate operationId");
+                assertFalse(strings(op.path("tags")).isEmpty());
+                assertFalse(strings(op.path("tags")).contains("default"));
+                if (entry.getKey().contains("{id}")) {
+                    var id = parameter(op, "id");
+                    assertEquals("path", id.path("in").asString());
+                    assertTrue(id.path("required").asBoolean());
+                    assertEquals("uuid", id.path("schema").path("format").asString());
+                }
+            }
+        }
+        Set<String> implemented = new HashSet<>();
+        mappings.getHandlerMethods().forEach((mapping, handler) -> {
+            for (String path : mapping.getPatternValues()) if (path.startsWith("/api/v1/"))
+                mapping.getMethodsCondition().getMethods().forEach(method -> implemented.add(method.name().toLowerCase(Locale.ROOT) + " " + path));
+        });
+        assertEquals(33, implemented.size());
+        implemented.add("get /api/v1/auth/callback/{registrationId}");
+        implemented.add("post /api/v1/auth/logout");
+        assertEquals(35, documented.size());
+        assertEquals(implemented, documented);
+        assertReferencesResolve(api, api);
+    }
+
+    @Test void statusCodesErrorSchemasCsrfAndIdempotencyMatchEachOperation() throws Exception {
+        var api = document();
+        Set<String> creations = Set.of("/api/v1/projects", "/api/v1/tasks", "/api/v1/journals", "/api/v1/milestones", "/api/v1/links");
+        for (var entry : INVENTORY.entrySet()) for (String method : entry.getValue()) {
+            String path = entry.getKey();
+            var op = api.path("paths").path(path).path(method);
+            String success = path.endsWith("/login") || path.contains("/callback/") ? "302"
+                : path.endsWith("/logout") ? "204" : method.equals("post") && creations.contains(path) ? "201" : "200";
+            assertEquals(Set.of(success), keys(op.path("responses")).stream().filter(c -> c.startsWith("2") || c.startsWith("3")).collect(Collectors.toSet()), path);
+            for (var response : op.path("responses").properties()) if (Integer.parseInt(response.getKey()) >= 400) {
+                assertEquals(Set.of("application/json"), keys(response.getValue().path("content")), path + " " + response.getKey());
+                assertEquals("#/components/schemas/ApiError", response.getValue().path("content").path("application/json").path("schema").path("$ref").asString());
+            }
+            if (!method.equals("get")) {
+                var csrf = parameter(op, "X-CSRF-Token");
+                assertEquals("header", csrf.path("in").asString());
+                assertEquals(!path.endsWith("/logout"), csrf.path("required").asBoolean());
+            } else {
+                assertFalse(op.path("responses").has("409"), path);
+                assertFalse(hasParameter(op, "X-CSRF-Token"));
+            }
+            boolean creation = method.equals("post") && creations.contains(path);
+            assertEquals(creation, hasParameter(op, "Idempotency-Key"), path);
+            if (creation) {
+                var key = parameter(op, "Idempotency-Key");
+                assertTrue(key.path("required").asBoolean());
+                assertEquals(1, key.path("schema").path("minLength").asInt());
+                assertEquals(128, key.path("schema").path("maxLength").asInt());
+                assertTrue(op.path("responses").has("409"));
+            }
+            if (method.equals("delete")) {
+                var revision = parameter(op, "revision");
+                assertTrue(revision.path("required").asBoolean());
+                assertEquals("query", revision.path("in").asString());
+                bounds(revision.path("schema"), 1);
+                assertFalse(op.has("requestBody"));
+            }
+            if (op.path("responses").has("400")) {
+                String description = op.path("responses").path("400").path("description").asString();
+                assertEquals(method.equals("get") && creations.contains(path) && !path.endsWith("/links"), description.contains("INVALID_CURSOR"), path + " " + method);
+                assertEquals(method.equals("put") && path.endsWith("/dashboards/home"), description.contains("UNSUPPORTED_SCHEMA_VERSION"), path + " " + method);
+            }
+        }
+        assertFalse(api.path("paths").path("/api/v1/links").path("get").path("responses").has("404"));
+        var errors = api.path("components").path("schemas").path("ApiError");
+        assertEquals(Set.of("code", "message", "fieldErrors", "requestId"), strings(errors.path("required")));
+    }
+
+    @Test void responseRequiredFieldsAndOwnershipBoundariesAreConsistent() throws Exception {
+        var schemas = document().path("components").path("schemas");
+        for (var entry : schemas.properties()) {
+            String name = entry.getKey();
+            var schema = entry.getValue();
+            if (!schema.has("properties")) continue;
+            var fields = keys(schema.path("properties"));
+            for (String forbidden : List.of("workspaceId", "ownerUserId", "userId", "dataRevision", "owner", "password", "accessToken", "refreshToken"))
+                assertFalse(fields.contains(forbidden), name + "." + forbidden);
+            if (name.endsWith("Response") || name.startsWith("Overview") || name.equals("TaskStatusCounts")) {
+                var required = new HashSet<>(fields);
+                if (name.equals("DashboardWidgetResponse")) required.removeAll(Set.of("projectId", "limit"));
+                assertEquals(required, strings(schema.path("required")), name);
+            }
+            for (String field : List.of("revision", "collectionRevision")) if (name.endsWith("Response") && fields.contains(field))
+                assertTrue(schema.path("properties").path(field).path("readOnly").asBoolean(), name + "." + field);
+        }
+        assertFalse(schemas.has("CsrfToken"));
+        assertFalse(schemas.has("Counts"));
+        for (String name : List.of("Task", "Project", "Journal", "Milestone", "Link")) {
+            var response = schemas.path(name + "Response").path("properties");
+            assertEquals("uuid", response.path("id").path("format").asString());
+            bounds(response.path("revision"), 1);
+            for (String date : List.of("createdAt", "updatedAt")) assertEquals("date-time", response.path(date).path("format").asString());
+            assertEquals(Set.of("revision"), strings(schemas.path("Update" + name + "Request").path("required")));
+            bounds(schemas.path("Update" + name + "Request").path("properties").path("revision"), 1);
+            assertFalse(schemas.path("Update" + name + "Request").path("properties").path("revision").path("readOnly").asBoolean());
+            for (String prefix : List.of("Create", "Update")) assertFalse(schemas.path(prefix + name + "Request").path("additionalProperties").asBoolean(true));
+        }
+        assertEquals("date", schemas.path("JournalResponse").path("properties").path("entryDate").path("format").asString());
+        assertEquals(Set.of("string", "null"), types(schemas.path("MilestoneResponse").path("properties").path("dueDate")));
+        assertEquals("date", schemas.path("MilestoneResponse").path("properties").path("dueDate").path("format").asString());
+        assertEquals(Set.of("string", "null"), types(schemas.path("TaskResponse").path("properties").path("deletedAt")));
+        assertEquals("date-time", schemas.path("TaskResponse").path("properties").path("deletedAt").path("format").asString());
+    }
+
+    @Test void paginationDefaultsEnumsAndWidgetRevisionSemanticsMatchPlans() throws Exception {
+        var api = document(); var schemas = api.path("components").path("schemas");
+        for (String feature : List.of("Project", "Task", "Journal", "Milestone")) {
+            var list = api.path("paths").path("/api/v1/" + feature.toLowerCase(Locale.ROOT) + "s").path("get");
+            var limit = parameter(list, "limit").path("schema");
+            assertEquals(20, limit.path("default").asInt());
+            assertEquals(1, limit.path("minimum").asInt()); assertEquals(100, limit.path("maximum").asInt());
+            assertEquals(Set.of("items", "total", "nextCursor"), keys(schemas.path(feature + "ListResponse").path("properties")));
+            assertEquals(Set.of("string", "null"), types(schemas.path(feature + "ListResponse").path("properties").path("nextCursor")));
+        }
+        assertEquals(Set.of("null"), types(schemas.path("LinkListResponse").path("properties").path("nextCursor")));
+        assertEquals(Set.of("todo", "doing", "done"), strings(schemas.path("CreateTaskRequest").path("properties").path("status").path("enum")));
+        assertEquals(Set.of("normal", "high"), strings(schemas.path("CreateTaskRequest").path("properties").path("priority").path("enum")));
+        assertEquals("todo", schemas.path("CreateTaskRequest").path("properties").path("status").path("default").asString());
+        for (String feature : List.of("Task", "Link")) assertEquals("", schemas.path("Create" + feature + "Request").path("properties").path("description").path("default").asString());
+        for (String schema : List.of("HomeDashboardResponse", "SaveHomeDashboardRequest")) {
+            bounds(schemas.path(schema).path("properties").path("revision"), 0);
+            assertEquals(1, schemas.path(schema).path("properties").path("schemaVersion").path("enum").get(0).asInt());
+        }
+        bounds(schemas.path("ReorderLinksRequest").path("properties").path("collectionRevision"), 0);
+        for (String name : List.of("DashboardWidgetRequest", "DashboardWidgetResponse")) {
+            var widget = schemas.path(name);
+            assertEquals(2, widget.path("oneOf").size());
+            assertEquals(Set.of("overview", "board", "deploy", "links", "journal", "milestone"), strings(widget.path("properties").path("type").path("enum")));
+            assertEquals(Set.of("small", "medium", "wide"), strings(widget.path("properties").path("size").path("enum")));
+            assertEquals(Set.of("all", "unity", "server"), strings(widget.path("properties").path("scope").path("enum")));
+            assertEquals(1, widget.path("properties").path("title").path("minLength").asInt());
+            assertEquals(48, widget.path("properties").path("title").path("maxLength").asInt());
+            assertFalse(widget.path("properties").path("limit").has("default"));
+        }
+        assertFalse(schemas.path("DashboardUtilityWidget").path("properties").has("projectId"));
+        assertFalse(schemas.path("DashboardUtilityWidget").path("properties").has("limit"));
+        assertEquals(Set.of("string", "null"), types(schemas.path("OverviewResponse").path("properties").path("projectId")));
+    }
+
+    private JsonNode document() throws Exception {
+        String body = mvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        Path output = Path.of("build/reports/backend-openapi-review/openapi.json");
+        Files.createDirectories(output.getParent()); Files.writeString(output, body);
+        return json.readTree(body);
+    }
+    private void assertReferencesResolve(JsonNode node, JsonNode root) {
+        if (node.isObject()) {
+            if (node.has("$ref")) {
+                String ref = node.path("$ref").asString();
+                assertTrue(ref.startsWith("#/"));
+                assertFalse(root.at(ref.substring(1)).isMissingNode(), ref);
+            }
+            node.properties().forEach(entry -> assertReferencesResolve(entry.getValue(), root));
+        } else if (node.isArray()) node.forEach(value -> assertReferencesResolve(value, root));
+    }
+    private boolean hasParameter(JsonNode op, String name) { return op.path("parameters").valueStream().anyMatch(p -> p.path("name").asString().equals(name)); }
+    private JsonNode parameter(JsonNode op, String name) { return op.path("parameters").valueStream().filter(p -> p.path("name").asString().equals(name)).findFirst().orElseThrow(); }
+    private Set<String> keys(JsonNode node) { return node.properties().stream().map(Map.Entry::getKey).collect(Collectors.toSet()); }
+    private Set<String> strings(JsonNode node) { return node.valueStream().map(JsonNode::asString).collect(Collectors.toSet()); }
+    private Set<String> types(JsonNode schema) { var type = schema.path("type"); return type.isArray() ? strings(type) : Set.of(type.asString()); }
+    private void bounds(JsonNode schema, long minimum) { assertEquals(minimum, schema.path("minimum").asLong()); assertEquals(9007199254740991L, schema.path("maximum").asLong()); }
+}

@@ -9,9 +9,9 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @Schema(additionalProperties=Schema.AdditionalPropertiesValue.FALSE,description="Only supplied fields change. Null, unknown and duplicate fields reject. URLs must have an http/https host and no credentials; strings use UTF-16 lengths.")
 public record UpdateLinkRequest(
     @NotNull @Min(1) @Max(9007199254740991L) Long revision,
-    @LinkText(max=100,trim=true) @Schema(maxLength=100) String label,
+    @LinkText(max=100,trim=true) @Schema(minLength=1,maxLength=100) String label,
     @Size(max=300) @Schema(maxLength=300) String description,
-    @LinkText(max=2000,trim=true) @Schema(maxLength=2000,format="uri") String url,
+    @LinkText(max=2000,trim=true) @Schema(minLength=1,maxLength=2000,format="uri") String url,
     @Schema(allowableValues={"all","unity","server"}) String scope) {
     public UpdateLinkCommand command() { return new UpdateLinkCommand(revision,label,description,url,scope); }
     public static class Deserializer extends ValueDeserializer<UpdateLinkRequest> {

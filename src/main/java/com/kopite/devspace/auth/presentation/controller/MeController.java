@@ -6,6 +6,9 @@ import com.kopite.devspace.auth.application.CurrentUserService;
 import com.kopite.devspace.auth.application.InternalUserPrincipal;
 import com.kopite.devspace.user.application.UserWorkspaceCreationResult;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import com.kopite.devspace.global.response.ApiError;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,9 +34,10 @@ public class MeController {
     @SecurityRequirement(name = "sessionCookie")
     @Operation(summary = "Get the authenticated user and personal workspace")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Authenticated user and workspace"),
-            @ApiResponse(responseCode = "401", description = "Authentication is required"),
-            @ApiResponse(responseCode = "403", description = "The user account is disabled")
+            @ApiResponse(responseCode = "200", description = "Authenticated user and workspace", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MeResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Authentication is required", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "INTERNAL_ERROR", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "403", description = "The user account is disabled", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<MeResponse> me(Authentication authentication) {
         InternalUserPrincipal principal = (InternalUserPrincipal) authentication.getPrincipal();

@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.UUID;
 public record LinkResponse(
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) UUID id,
-    @Schema(minimum="1",maximum="9007199254740991") long revision,
+    @Schema(accessMode=Schema.AccessMode.READ_ONLY,minimum="1",maximum="9007199254740991") long revision,
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) Instant createdAt,
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) Instant updatedAt,
     @Schema(maxLength=100) String label,@Schema(maxLength=300) String description,

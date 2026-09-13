@@ -45,8 +45,9 @@ class MilestoneOpenApiTests {
                 String success=entry.getKey().equals("/api/v1/milestones")&&method.equals("post")?"201":"200";
                 assertTrue(operation.get("responses").has(success));
                 assertTrue(operation.get("security").valueStream().anyMatch(s->s.has("sessionCookie")));
-                for(String code:List.of("400","401","403","404","409","500"))
+                for(String code:(method.equals("get") ? List.of("400","401","403","404","500") : List.of("400","401","403","404","409","500")))
                     assertEquals("#/components/schemas/ApiError",operation.get("responses").get(code).get("content").get("application/json").get("schema").get("$ref").asString());
+                if(method.equals("get")) assertFalse(operation.get("responses").has("409"));
                 if(!method.equals("get")) assertTrue(parameter(operation,"X-CSRF-Token").get("required").asBoolean());
             }
         }

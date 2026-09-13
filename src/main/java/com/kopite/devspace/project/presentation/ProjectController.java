@@ -33,7 +33,7 @@ import java.util.UUID;
 @Tag(name = "Projects")
 @SecurityRequirement(name = "sessionCookie")
 @ApiResponses({
-        @ApiResponse(responseCode = "400", description = "VALIDATION_ERROR; list cursors may return INVALID_CURSOR", content = @Content(schema = @Schema(implementation = ApiError.class))),
+
         @ApiResponse(responseCode = "401", description = "AUTH_REQUIRED", content = @Content(schema = @Schema(implementation = ApiError.class))),
         @ApiResponse(responseCode = "403", description = "ACCOUNT_DISABLED, or CSRF_INVALID for an authenticated mutation", content = @Content(schema = @Schema(implementation = ApiError.class))),
         @ApiResponse(responseCode = "500", description = "INTERNAL_ERROR", content = @Content(schema = @Schema(implementation = ApiError.class)))
@@ -43,6 +43,7 @@ public class ProjectController {
     private final ProjectQueryService queries;
 
     @PostMapping(consumes = "application/json")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @Operation(summary = "Create an owned Project", description = "Requires session CSRF/Origin checks. Retry the same Idempotency-Key and body within 24 hours to replay the original 201 response. JSON property order is ignored; supplied values and field presence are preserved in the request fingerprint.",
             parameters = @Parameter(name = "X-CSRF-Token", in = ParameterIn.HEADER, required = true, description = "Session token from GET /api/v1/auth/csrf", schema = @Schema(type = "string")))
     @ApiResponses({
@@ -57,6 +58,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @Operation(summary = "Get an owned Project, including archived Projects")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Owned Project", content = @Content(schema = @Schema(implementation = ProjectResponse.class))),
@@ -67,6 +69,7 @@ public class ProjectController {
     }
 
     @PatchMapping(value = "/{id}", consumes = "application/json")
+    @ApiResponse(responseCode="400",description="VALIDATION_ERROR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     @Operation(summary = "Update, archive or unarchive an owned Project", description = "Only supplied fields change; explicit nulls are invalid. Revision is required and advances once per successful PATCH, including same-value updates. Empty strings clear optional text. Archived Projects remain editable; archiving preserves connected data.",
             parameters = @Parameter(name = "X-CSRF-Token", in = ParameterIn.HEADER, required = true, description = "Session token from GET /api/v1/auth/csrf", schema = @Schema(type = "string")))
     @ApiResponses({
@@ -81,6 +84,7 @@ public class ProjectController {
     }
 
     @GetMapping
+    @ApiResponse(responseCode = "400", description = "VALIDATION_ERROR or INVALID_CURSOR", content = @Content(schema = @Schema(implementation = ApiError.class)))
     @Operation(summary = "List owned Projects", description = "createdAt DESC, id DESC. Query is a case-insensitive literal substring of name or stack. Cursor binds all filters and limit; no cross-page snapshot guarantee.")
     @ApiResponse(responseCode = "200", description = "Filtered cursor page with total matching count", content = @Content(schema = @Schema(implementation = ProjectListResponse.class)))
     public ResponseEntity<ProjectListResponse> list(Authentication authentication,

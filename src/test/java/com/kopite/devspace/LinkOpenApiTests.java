@@ -34,7 +34,12 @@ class LinkOpenApiTests {
             for(String method:entry.getValue()) {
                 var op=paths.get(entry.getKey()).get(method);String success=method.equals("post")?"201":"200";
                 assertTrue(op.get("responses").has(success));assertTrue(op.get("security").valueStream().anyMatch(s->s.has("sessionCookie")));
-                for(String code:List.of("400","401","403","404","409","500"))assertEquals("#/components/schemas/ApiError",op.get("responses").get(code).get("content").get("application/json").get("schema").get("$ref").asString());
+                var errors = new HashSet<>(Set.of("400","401","403","500"));
+                if (!method.equals("get")) errors.add("409");
+                if (!method.equals("get") || entry.getKey().endsWith("/{id}")) errors.add("404");
+                for(String code:errors) assertEquals("#/components/schemas/ApiError",op.get("responses").get(code).get("content").get("application/json").get("schema").get("$ref").asString());
+                if(method.equals("get")) assertFalse(op.get("responses").has("409"));
+                if(method.equals("get") && entry.getKey().equals("/api/v1/links")) assertFalse(op.get("responses").has("404"));
                 if(!method.equals("get")){var csrf=parameter(op,"X-CSRF-Token");assertTrue(csrf.get("required").asBoolean());assertEquals("header",csrf.get("in").asString());}
             }
         }
