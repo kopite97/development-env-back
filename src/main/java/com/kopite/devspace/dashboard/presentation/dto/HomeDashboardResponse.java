@@ -5,8 +5,8 @@ import java.util.List;
 @Schema(description="Configuration only, no business data. Unsaved GET returns deterministic defaults at revision 0 without creating state. Persisted revisions start at 1; saved empty widgets remain empty. Array order is layout order.")
 public record HomeDashboardResponse(
     @Schema(allowableValues={"home"}) String id,
-    @Schema(allowableValues={"1"}) int schemaVersion,
+    @Schema(allowableValues={"2"}) int schemaVersion,
     @Schema(accessMode=Schema.AccessMode.READ_ONLY,minimum="0",maximum="9007199254740991") long revision,
     List<DashboardWidgetResponse> widgets) {
-    public static HomeDashboardResponse from(HomeDashboardSnapshot d) {return new HomeDashboardResponse("home",1,d.revision(),d.widgets().stream().map(DashboardWidgetResponse::from).toList());}
+    public static HomeDashboardResponse from(HomeDashboardSnapshot d) {return new HomeDashboardResponse("home",2,d.revision(),d.widgets().stream().map(w->DashboardWidgetResponse.from(w,d.missingCategoryWidgetIds().contains(w.id()))).toList());}
 }

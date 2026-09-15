@@ -41,6 +41,7 @@ public class MilestoneCommandService {
         var previous=replays.find(workspace.getId(),key);
         if(previous.isPresent() && previous.get().expiresAt().isAfter(now)) {
             var saved=previous.get();
+            if(saved.legacy()) throw new MilestoneConflictException("IDEMPOTENCY_KEY_REUSED");
             projects.findOwned(workspace.getId(),saved.result().projectId()).orElseThrow(MilestoneNotFoundException::new);
             milestones.findOwned(workspace.getId(),saved.result().id()).ifPresent(milestone ->
                 projects.findOwned(workspace.getId(),milestone.getProjectId()).orElseThrow(MilestoneNotFoundException::new));
@@ -50,7 +51,7 @@ public class MilestoneCommandService {
         replays.removeExpired(workspace.getId(),now);
         Milestone milestone=milestones.save(Milestone.create(workspace.getId(),values,now));
         workspace.recordBusinessMutation();
-        var result=MilestoneSnapshot.from(milestone,project);
+        var result=MilestoneSnapshot.from(milestone,project).observed(workspace.getDataRevision());
         replays.save(workspace.getId(),key,hash,result,now);
         return result;
     }
@@ -63,7 +64,7 @@ public class MilestoneCommandService {
         var target=projects.findOwned(workspace.getId(),values.projectId()).orElseThrow(MilestoneNotFoundException::new);
         milestone.update(command.revision(),values,projectClock.instant());
         workspace.recordBusinessMutation();
-        return MilestoneSnapshot.from(milestone,target);
+        return MilestoneSnapshot.from(milestone,target).observed(workspace.getDataRevision());
     }
     @Transactional
     public UUID delete(UUID userId,UUID id,long revision) {
@@ -85,4 +86,10 @@ public class MilestoneCommandService {
         currentUser.resolve(userId);
         return workspace;
     }
+    @Transactional
+    public com.kopite.devspace.workspace.application.DeletedResource deleteObserved(UUID user,UUID id,long revision) {
+        var deleted=delete(user,id,revision);
+        return new com.kopite.devspace.workspace.application.DeletedResource(deleted,currentUser.resolve(user).workspace().getDataRevision());
+    }
+
 }

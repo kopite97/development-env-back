@@ -21,16 +21,17 @@ import java.util.UUID;
 @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
 public class TaskQueryService {
     private final CurrentUserService currentUser;
+    private final com.kopite.devspace.projectcategory.application.CategoryFilterOwnership categoryOwnership;
     private final ProjectRepository projects;
     private final TaskSearchRepository search;
     private final TaskCursorCodec cursors;
     private final Clock projectClock;
-    public record Page(List<TaskSnapshot> items, long total, String nextCursor) {}
-    public record Stats(Map<String, Long> counts, long total, Instant asOf) {}
+    public record Page(List<TaskSnapshot> items, long total, String nextCursor, Long dataRevision) {}
+    public record Stats(Map<String, Long> counts, long total, Instant asOf, Long dataRevision) {}
 
     public TaskSnapshot get(UUID userId, UUID id) {
         UUID workspace = currentUser.resolve(userId).workspace().getId();
-        return search.findOwned(workspace, id).orElseThrow(TaskNotFoundException::new);
+        return search.findOwned(workspace, id).orElseThrow(TaskNotFoundException::new).observed(currentUser.resolve(userId).workspace().getDataRevision());
     }
     public Page list(UUID userId, TaskListFilter filter, String cursor) {
         UUID workspace = ownedWorkspace(userId, filter);
@@ -43,17 +44,18 @@ public class TaskQueryService {
             var last = items.getLast();
             next = cursors.encode(workspace, filter, new TaskCursor(last.createdAt(), last.id()));
         }
-        return new Page(items, total, next);
+        return new Page(items, total, next, currentUser.resolve(userId).workspace().getDataRevision());
     }
     public Stats stats(UUID userId, TaskListFilter filter) {
         if (filter.deleted() || filter.status() != null)
             throw new com.kopite.devspace.task.domain.TaskValidationException("filters", "stats accepts no deleted or status filter");
         UUID workspace = ownedWorkspace(userId, filter);
         var counts = search.counts(workspace, filter);
-        return new Stats(counts, counts.values().stream().mapToLong(Long::longValue).sum(), projectClock.instant());
+        return new Stats(counts, counts.values().stream().mapToLong(Long::longValue).sum(), projectClock.instant(), currentUser.resolve(userId).workspace().getDataRevision());
     }
     private UUID ownedWorkspace(UUID userId, TaskListFilter filter) {
         UUID workspace = currentUser.resolve(userId).workspace().getId();
+        categoryOwnership.validate(workspace,filter.category());
         if (filter.projectId() != null) projects.findOwned(workspace, filter.projectId()).orElseThrow(TaskNotFoundException::new);
         return workspace;
     }

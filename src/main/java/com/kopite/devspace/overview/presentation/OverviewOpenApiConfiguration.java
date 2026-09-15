@@ -8,14 +8,15 @@ import java.util.*;
 public class OverviewOpenApiConfiguration {
     @Bean OpenApiCustomizer overviewContractSchemas() {
         return api->{
-            for(String name:List.of("OverviewResponse","OverviewProjectCounts","OverviewProjectScopeCounts","OverviewProjectsByScope","OverviewTaskCounts")) {
+            for(String name:List.of("OverviewResponse","OverviewProjectCounts","OverviewProjectCategoryCounts","OverviewTaskCounts")) {
                 Schema<?> s=api.getComponents().getSchemas().get(name);
                 if(s!=null){s.setRequired(List.copyOf(s.getProperties().keySet()));s.setAdditionalProperties(false);}
             }
-            var path=api.getPaths().get("/api/v1/overview");
+            var path=api.getPaths().get("/api/v2/overview");
             var example=new LinkedHashMap<String,Object>();
-            example.put("scope","all");example.put("projectId",null);
-            example.put("projects",Map.of("total",2,"archived",1,"byScope",Map.of("unity",Map.of("total",1,"archived",1),"server",Map.of("total",1,"archived",0))));
+            example.put("category","all");example.put("projectId",null);
+            var bucket=new LinkedHashMap<String,Object>();bucket.put("categoryId",null);bucket.put("total",2);bucket.put("archived",1);
+            example.put("projects",Map.of("total",2,"archived",1,"byCategory",List.of(bucket)));
             example.put("tasks",Map.of("todo",2,"doing",1,"done",3,"total",6));example.put("asOf","2026-09-13T00:00:00Z");
             if(path!=null)path.getGet().getResponses().get("200").getContent().get("application/json").addExamples("workspace",new Example().value(example));
         };

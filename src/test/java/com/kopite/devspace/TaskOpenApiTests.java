@@ -44,17 +44,17 @@ class TaskOpenApiTests {
         mvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());
         mvc.perform(get("/swagger-ui/swagger-ui-bundle.js")).andExpect(status().isOk());
         mvc.perform(get("/v3/api-docs/swagger-config")).andExpect(status().isOk());
-        mvc.perform(get("/api/v1/tasks")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/v2/tasks")).andExpect(status().isUnauthorized());
         String body=mvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         var output=Path.of("build/reports/task-api/openapi.json"); Files.createDirectories(output.getParent()); Files.writeString(output,body);
         var api=json.readTree(body); var paths=api.get("paths");
-        Map<String,Set<String>> methods=Map.of("/api/v1/tasks",Set.of("get","post"),"/api/v1/tasks/{id}",Set.of("get","patch","delete"),
-            "/api/v1/tasks/{id}/restore",Set.of("post"),"/api/v1/tasks/stats",Set.of("get"));
+        Map<String,Set<String>> methods=Map.of("/api/v2/tasks",Set.of("get","post"),"/api/v2/tasks/{id}",Set.of("get","patch","delete"),
+            "/api/v2/tasks/{id}/restore",Set.of("post"),"/api/v2/tasks/stats",Set.of("get"));
         for(var entry:methods.entrySet()) {
             assertEquals(entry.getValue(),paths.get(entry.getKey()).properties().stream().map(Map.Entry::getKey).collect(Collectors.toSet()));
             for(String method:entry.getValue()) {
                 var operation=paths.get(entry.getKey()).get(method);
-                String success=entry.getKey().equals("/api/v1/tasks")&&method.equals("post")?"201":"200";
+                String success=entry.getKey().equals("/api/v2/tasks")&&method.equals("post")?"201":"200";
                 assertTrue(operation.get("responses").has(success));
                 assertTrue(operation.get("security").valueStream().anyMatch(s->s.has("sessionCookie")));
                 for(String code:(method.equals("get") ? List.of("400","401","403","404","500") : List.of("400","401","403","404","409","500")))
@@ -63,14 +63,14 @@ class TaskOpenApiTests {
                 if(!method.equals("get")) assertTrue(parameter(operation,"X-CSRF-Token").get("required").asBoolean());
             }
         }
-        var create=paths.get("/api/v1/tasks").get("post");
+        var create=paths.get("/api/v2/tasks").get("post");
         assertFalse(create.get("responses").has("200"));
         assertTrue(parameter(create,"Idempotency-Key").get("required").asBoolean());
         assertEquals(128,parameter(create,"Idempotency-Key").get("schema").get("maxLength").asInt());
-        var delete=paths.get("/api/v1/tasks/{id}").get("delete");
+        var delete=paths.get("/api/v2/tasks/{id}").get("delete");
         assertTrue(parameter(delete,"revision").get("required").asBoolean());
         assertEquals("query",parameter(delete,"revision").get("in").asString());
-        var list=paths.get("/api/v1/tasks").get("get");
+        var list=paths.get("/api/v2/tasks").get("get");
         assertEquals("all",parameter(list,"projectStatus").get("schema").get("default").asString());
         assertEquals(20,parameter(list,"limit").get("schema").get("default").asInt());
         assertEquals(100,parameter(list,"limit").get("schema").get("maximum").asInt());
@@ -90,7 +90,7 @@ class TaskOpenApiTests {
             assertEquals("uuid",props.get("projectId").get("format").asString());
             assertEquals(Set.of("normal","high"),strings(props.get("priority").get("enum")));
             assertEquals(Set.of("todo","doing","done"),strings(props.get("status").get("enum")));
-            for(String forbidden:List.of("tags","workspaceId","projectName","scope","deletedAt","id")) assertFalse(props.has(forbidden));
+            for(String forbidden:List.of("tags","workspaceId","projectName","categoryId","deletedAt","id")) assertFalse(props.has(forbidden));
         }
         assertEquals("",request.get("properties").get("tag").get("default").asString());
         assertEquals("",request.get("properties").get("description").get("default").asString());
@@ -98,7 +98,7 @@ class TaskOpenApiTests {
         assertEquals("todo",request.get("properties").get("status").get("default").asString());
         var response=schemas.get("TaskResponse"); assertEquals(13,response.get("required").size());
         assertTrue(strings(response.get("properties").get("deletedAt").get("type")).contains("null"));
-        for(String field:List.of("id","createdAt","updatedAt","projectName","scope","deletedAt"))
+        for(String field:List.of("id","createdAt","updatedAt","projectName","categoryId","deletedAt"))
             assertTrue(response.get("properties").get(field).get("readOnly").asBoolean());
         assertEquals(Set.of("items","total","nextCursor"),strings(schemas.get("TaskListResponse").get("required")));
         assertEquals(Set.of("counts","total","asOf"),strings(schemas.get("TaskStatsResponse").get("required")));

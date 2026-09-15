@@ -39,7 +39,7 @@ public class JournalSearchAdapter implements JournalSearchRepository {
     private String where(JournalListFilter f) {
         return " where t.workspaceId=:workspace"
             + (f.projectId()==null ? "" : " and t.projectId=:projectId")
-            + ("all".equals(f.scope()) ? "" : " and p.scope=:scope")
+            + ("all".equals(f.category()) ? "" : ("uncategorized".equals(f.category()) ? " and p.categoryId is null" : " and p.categoryId=:categoryId"))
             + ("all".equals(f.projectStatus()) ? "" : " and p.status=:projectStatus")
             + (f.from()==null ? "" : " and t.entryDate>=:from")
             + (f.to()==null ? "" : " and t.entryDate<=:to")
@@ -48,7 +48,7 @@ public class JournalSearchAdapter implements JournalSearchRepository {
     private <T> TypedQuery<T> bind(TypedQuery<T> query, UUID workspace, JournalListFilter f) {
         query.setParameter("workspace",workspace);
         if(f.projectId()!=null) query.setParameter("projectId",f.projectId());
-        if(!"all".equals(f.scope())) query.setParameter("scope",f.scope());
+        if(com.kopite.devspace.projectcategory.application.CategoryFilter.id(f.category())!=null) query.setParameter("categoryId",com.kopite.devspace.projectcategory.application.CategoryFilter.id(f.category()));
         if(!"all".equals(f.projectStatus())) query.setParameter("projectStatus",f.projectStatus());
         if(f.from()!=null) query.setParameter("from",f.from());
         if(f.to()!=null) query.setParameter("to",f.to());

@@ -39,16 +39,16 @@ class JournalOpenApiTests {
         mvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());
         mvc.perform(get("/swagger-ui/swagger-ui-bundle.js")).andExpect(status().isOk());
         mvc.perform(get("/v3/api-docs/swagger-config")).andExpect(status().isOk());
-        mvc.perform(get("/api/v1/journals")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/v2/journals")).andExpect(status().isUnauthorized());
         String body=mvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         var output=Path.of("build/reports/journal-api/openapi.json"); Files.createDirectories(output.getParent()); Files.writeString(output,body);
         var api=json.readTree(body); var paths=api.get("paths");
-        Map<String,Set<String>> methods=Map.of("/api/v1/journals",Set.of("get","post"),"/api/v1/journals/{id}",Set.of("get","patch","delete"));
+        Map<String,Set<String>> methods=Map.of("/api/v2/journals",Set.of("get","post"),"/api/v2/journals/{id}",Set.of("get","patch","delete"));
         for(var entry:methods.entrySet()) {
             assertEquals(entry.getValue(),paths.get(entry.getKey()).properties().stream().map(Map.Entry::getKey).collect(Collectors.toSet()));
             for(String method:entry.getValue()) {
                 var operation=paths.get(entry.getKey()).get(method);
-                String success=entry.getKey().equals("/api/v1/journals")&&method.equals("post")?"201":"200";
+                String success=entry.getKey().equals("/api/v2/journals")&&method.equals("post")?"201":"200";
                 assertTrue(operation.get("responses").has(success));
                 assertTrue(operation.get("security").valueStream().anyMatch(s->s.has("sessionCookie")));
                 for(String code:(method.equals("get") ? List.of("400","401","403","404","500") : List.of("400","401","403","404","409","500")))
@@ -57,14 +57,14 @@ class JournalOpenApiTests {
                 if(!method.equals("get")) assertTrue(parameter(operation,"X-CSRF-Token").get("required").asBoolean());
             }
         }
-        var create=paths.get("/api/v1/journals").get("post");
+        var create=paths.get("/api/v2/journals").get("post");
         assertFalse(create.get("responses").has("200"));
         assertTrue(parameter(create,"Idempotency-Key").get("required").asBoolean());
         assertEquals(128,parameter(create,"Idempotency-Key").get("schema").get("maxLength").asInt());
-        var delete=paths.get("/api/v1/journals/{id}").get("delete");
+        var delete=paths.get("/api/v2/journals/{id}").get("delete");
         assertTrue(parameter(delete,"revision").get("required").asBoolean());
         assertEquals("query",parameter(delete,"revision").get("in").asString());
-        var list=paths.get("/api/v1/journals").get("get");
+        var list=paths.get("/api/v2/journals").get("get");
         assertEquals("all",parameter(list,"projectStatus").get("schema").get("default").asString());
         assertEquals(20,parameter(list,"limit").get("schema").get("default").asInt());
         assertEquals(100,parameter(list,"limit").get("schema").get("maximum").asInt());
@@ -85,13 +85,13 @@ class JournalOpenApiTests {
             assertEquals("uuid",props.get("projectId").get("format").asString());
             assertEquals("date",props.get("entryDate").get("format").asString());
             assertEquals(Set.of("title","projectId","body","entryDate"),schema.get("properties").properties().stream().map(Map.Entry::getKey).filter(k->!k.equals("revision")).collect(Collectors.toSet()));
-            for(String forbidden:List.of("tags","workspaceId","projectName","scope","deletedAt","id")) assertFalse(props.has(forbidden));
+            for(String forbidden:List.of("tags","workspaceId","projectName","categoryId","deletedAt","id")) assertFalse(props.has(forbidden));
         }
         assertEquals(Set.of("deletedId"),strings(schemas.get("DeleteJournalResponse").get("required")));
         var revision=schemas.get("UpdateJournalRequest").get("properties").get("revision");
         assertEquals(1,revision.get("minimum").asLong()); assertEquals(9007199254740991L,revision.get("maximum").asLong());
         var response=schemas.get("JournalResponse"); assertEquals(10,response.get("required").size());
-        for(String field:List.of("id","createdAt","updatedAt","projectName","scope"))
+        for(String field:List.of("id","createdAt","updatedAt","projectName","categoryId"))
             assertTrue(response.get("properties").get(field).get("readOnly").asBoolean());
         assertEquals("date",response.get("properties").get("entryDate").get("format").asString());
         for(String audit:List.of("createdAt","updatedAt")) assertEquals("date-time",response.get("properties").get(audit).get("format").asString());

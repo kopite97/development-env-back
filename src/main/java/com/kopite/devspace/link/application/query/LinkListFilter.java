@@ -1,8 +1,12 @@
 package com.kopite.devspace.link.application.query;
 import com.kopite.devspace.link.domain.LinkValidationException;
-public record LinkListFilter(String scope,String query) {
+import com.kopite.devspace.projectcategory.application.CategoryFilter;
+import java.util.UUID;
+public record LinkListFilter(String category,UUID projectId,String projectStatus,String query) {
+    public LinkListFilter(String category,String query) {this(category,null,"all",query);}
     public LinkListFilter {
-        if(!"all".equals(scope)&&!"unity".equals(scope)&&!"server".equals(scope)) throw new LinkValidationException("scope","must be all, unity or server");
+        category=CategoryFilter.normalize(category);
+        if(!java.util.Set.of("all","active","archived").contains(projectStatus))throw new LinkValidationException("projectStatus","invalid status");
         if(query==null) query="";
     }
 }

@@ -12,6 +12,10 @@ public class ProjectOpenApiConfiguration {
     OpenApiCustomizer projectStringDefaults() {
         // An empty @Schema.defaultValue is treated as unspecified by the annotation processor.
         return api -> {
+            for(String name:java.util.List.of("ProjectCategoryCountsResponse","ProjectCategoryCountItem","ProjectCategoryCountTotals")) {
+                Schema<?> schema=api.getComponents().getSchemas().get(name);
+                if(schema!=null) {schema.setRequired(java.util.List.copyOf(schema.getProperties().keySet()));schema.setAdditionalProperties(false);}
+            }
             Schema<?> create = api.getComponents().getSchemas().get("CreateProjectRequest");
             if (create != null) {
                 for (String field : java.util.List.of("subtitle", "currentMilestone", "repositoryUrl")) {

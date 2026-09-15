@@ -10,51 +10,55 @@ import java.math.BigDecimal;
 import java.util.*;
 @Configuration(proxyBeanMethods=false)
 public class HomeDashboardOpenApiConfiguration {
-    private static final List<String> CORE=List.of("id","type","title","scope","size");
+    private static final List<String> CORE=List.of("id","type","title","size","selection");
     @Bean OpenApiCustomizer homeDashboardContractSchemas() {
         return api->{
             var schemas=api.getComponents().getSchemas();
-            Schema<?> request=schemas.get("DashboardWidgetRequest");
-            if(request==null)return;
-            // Conditional object shapes reject projectId/limit for utility widgets.
-            var data=widget(List.of("overview","board","journal","milestone"),true);
-            var utility=widget(List.of("deploy","links"),false);
-            schemas.put("DashboardDataWidget",data);schemas.put("DashboardUtilityWidget",utility);
-            for(String name:List.of("DashboardWidgetRequest","DashboardWidgetResponse")) {
-                Schema<?> s=schemas.get(name);s.setRequired(CORE);
-                s.setAdditionalProperties(false);
-                s.getProperties().get("id").setMinLength(1);
-                s.getProperties().get("title").setMinLength(1);
-                s.setOneOf(List.of(new Schema<Object>().$ref("#/components/schemas/DashboardDataWidget"),new Schema<Object>().$ref("#/components/schemas/DashboardUtilityWidget")));
-                s.addProperty("projectId",new StringSchema().format("uuid").description("Optional, never null. Owned active or archived Project; save normalizes scope to all."));
-                s.addProperty("limit",new IntegerSchema().minimum(BigDecimal.ONE).maximum(BigDecimal.valueOf(20)).description("Optional, never null. No default is inserted."));
+            if(!schemas.containsKey("DashboardWidgetRequest"))return;
+            Schema<?> selection=schemas.get("DashboardSelectionDto");selection.setRequired(List.of("kind"));selection.setAdditionalProperties(false);
+            var shapes=new ArrayList<Schema>();
+            for(String kind:List.of("all","uncategorized","project","category")) {
+                var shape=selection(kind);String name="DashboardSelection"+Character.toUpperCase(kind.charAt(0))+kind.substring(1);
+                schemas.put(name,shape);shapes.add(new Schema<>().$ref("#/components/schemas/"+name));
+            }
+            selection.setOneOf(shapes);
+            for(boolean response:List.of(false,true)) {
+                String suffix=response?"Response":"Request";var alternatives=new ArrayList<Schema>();
+                for(String group:List.of("Data","Links","Deploy")) {
+                    var types=group.equals("Data")?List.of("overview","board","journal","milestone"):List.of(group.toLowerCase(Locale.ROOT));
+                    String name="Dashboard"+group+"Widget"+suffix;
+                    schemas.put(name,widget(types,group.equals("Data"),group.equals("Deploy"),response));alternatives.add(new Schema<>().$ref("#/components/schemas/"+name));
+                }
+                Schema<?> schema=schemas.get("DashboardWidget"+suffix);var required=new ArrayList<>(CORE);if(response)required.add("selectionState");
+                schema.setRequired(required);schema.setAdditionalProperties(false);schema.setOneOf(alternatives);
+                schema.getProperties().get("id").setMinLength(1);schema.getProperties().get("title").setMinLength(1);
             }
             for(String name:List.of("SaveHomeDashboardRequest","HomeDashboardResponse")) {
-                Schema<?> s=schemas.get(name);s.setRequired(List.copyOf(s.getProperties().keySet()));s.setAdditionalProperties(false);
-                s.addProperty("schemaVersion",new IntegerSchema()._enum(List.of(1)).description("Configuration format version; unsupported integer versions return UNSUPPORTED_SCHEMA_VERSION."));
+                Schema<?> schema=schemas.get(name);schema.setRequired(List.copyOf(schema.getProperties().keySet()));schema.setAdditionalProperties(false);
+                schema.addProperty("schemaVersion",new IntegerSchema()._enum(List.of(2)).description("Configuration format version. Other integer versions return UNSUPPORTED_SCHEMA_VERSION."));
             }
-            var home=api.getPaths().get("/api/v1/dashboards/home");
+            var home=api.getPaths().get("/api/v2/dashboards/home");
             var get=home.getGet().getResponses().get("200").getContent().get("application/json");
             get.addExamples("unsaved",new Example().summary("Virtual defaults; GET does not write").value(HomeDashboardResponse.from(new HomeDashboardSnapshot(0,HomeDashboard.defaults()))));
-            get.addExamples("savedEmpty",new Example().value(new HomeDashboardResponse("home",1,1,List.of())));
-            var put=home.getPut();
-            put.getRequestBody().getContent().get("application/json")
-                .addExamples("firstSave",new Example().value(Map.of("schemaVersion",1,"revision",0,"widgets",List.of())))
-                .addExamples("projectWidget",new Example().value(Map.of("schemaVersion",1,"revision",1,"widgets",List.of(Map.of("id","project-board","type","board","title","Selected project","size","wide","scope","unity","projectId","00000000-0000-0000-0000-000000000001","limit",5)))));
-            put.getResponses().get("409").getContent().get("application/json").addExamples("staleFirstSave",new Example().summary("Another first PUT has already saved revision 1").value(Map.of("code","REVISION_CONFLICT","message","Reload the resource before updating","fieldErrors",Map.of(),"requestId","example")));
+            get.addExamples("savedEmpty",new Example().value(new HomeDashboardResponse("home",2,1,List.of())));
+            var put=home.getPut();put.getRequestBody().getContent().get("application/json")
+                .addExamples("firstSave",new Example().value(Map.of("schemaVersion",2,"revision",0,"widgets",List.of())))
+                .addExamples("projectWidget",new Example().value(Map.of("schemaVersion",2,"revision",1,"widgets",List.of(Map.of("id","project-board","type","board","title","Selected project","size","wide","selection",Map.of("kind","project","projectId","00000000-0000-0000-0000-000000000001"),"limit",5)))));
+            put.getResponses().get("409").getContent().get("application/json").addExamples("staleFirstSave",new Example().value(Map.of("code","REVISION_CONFLICT","message","Reload the resource before updating","fieldErrors",Map.of(),"requestId","example")));
         };
     }
-    private ObjectSchema widget(List<String> types,boolean settings) {
-        var s=new ObjectSchema();s.setAdditionalProperties(false);s.setRequired(CORE);
-        s.addProperty("id",new StringSchema().minLength(1).description("Trimmed, case-sensitive, unique ID within the array; same type may repeat."));
-        s.addProperty("type",new StringSchema()._enum(types));
-        s.addProperty("title",new StringSchema().minLength(1).maxLength(48).description("Trimmed 1..48 UTF-16 code units"));
-        s.addProperty("scope",new StringSchema()._enum(List.of("all","unity","server")));
-        s.addProperty("size",new StringSchema()._enum(List.of("small","medium","wide")));
-        if(settings) {
-            s.addProperty("projectId",new StringSchema().format("uuid"));
-            s.addProperty("limit",new IntegerSchema().minimum(BigDecimal.ONE).maximum(BigDecimal.valueOf(20)));
-        }
-        return s;
+    private ObjectSchema selection(String kind) {
+        var schema=new ObjectSchema();schema.setAdditionalProperties(false);var required=new ArrayList<>(List.of("kind"));schema.addProperty("kind",new StringSchema()._enum(List.of(kind)));
+        if(kind.equals("project")||kind.equals("category")){String field=kind+"Id";required.add(field);schema.addProperty(field,new StringSchema().format("uuid"));}
+        schema.setRequired(required);return schema;
+    }
+    private ObjectSchema widget(List<String> types,boolean limit,boolean allOnly,boolean response) {
+        var schema=new ObjectSchema();schema.setAdditionalProperties(false);var required=new ArrayList<>(CORE);if(response)required.add("selectionState");schema.setRequired(required);
+        schema.addProperty("id",new StringSchema().minLength(1).description("Trimmed case-sensitive ID unique within the array"));schema.addProperty("type",new StringSchema()._enum(types));
+        schema.addProperty("title",new StringSchema().minLength(1).maxLength(48));schema.addProperty("size",new StringSchema()._enum(List.of("small","medium","wide")));
+        schema.addProperty("selection",new Schema<>().$ref("#/components/schemas/"+(allOnly?"DashboardSelectionAll":"DashboardSelectionDto")));
+        if(limit)schema.addProperty("limit",new IntegerSchema().minimum(BigDecimal.ONE).maximum(BigDecimal.valueOf(20)));
+        if(response)schema.addProperty("selectionState",new StringSchema()._enum(allOnly?List.of("valid"):List.of("valid","missingCategory")).readOnly(true));
+        return schema;
     }
 }

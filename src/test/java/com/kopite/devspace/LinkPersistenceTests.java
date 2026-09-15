@@ -41,7 +41,7 @@ class LinkPersistenceTests {
         this.jdbc=jdbc;this.tx=new TransactionTemplate(manager);this.dataSource=dataSource;
     }
     private UUID workspace() { return users.createOrReuse("link-persistence",UUID.randomUUID().toString(),"Owner").workspace().getId(); }
-    private LinkValues values() { return new LinkValues(" Label "," preserved "," https://example.com/a?q=1#f ","all"); }
+    private LinkValues values() { return new LinkValues(" Label "," preserved "," https://example.com/a?q=1#f ", null); }
     @Test
     void lazyCollectionSwapAndDeletePreserveAtomicState() {
         UUID w=workspace();
@@ -74,14 +74,15 @@ class LinkPersistenceTests {
     @Test
     void domainValidationAndOverflow() {
         String emoji="\uD83D\uDE00";
-        assertEquals(100,new LinkValues(emoji.repeat(50),"","https://example.com","all").label().length());
+        assertEquals(100,new LinkValues(emoji.repeat(50),"","https://example.com", null).label().length());
         for(String label:new String[]{null,"","\u2003",emoji.repeat(51)})
-            assertThrows(LinkValidationException.class,()->new LinkValues(label,"","https://example.com","all"));
+            assertThrows(LinkValidationException.class,()->new LinkValues(label,"","https://example.com", null));
         for(String url:new String[]{"","/a","//example.com","javascript:alert(1)","ftp://example.com","https://u:p@example.com","https://@example.com","https://example.com:bad","https://","https://a b"})
-            assertThrows(LinkValidationException.class,()->new LinkValues("a","",url,"all"),url);
-        for(String scope:new String[]{null,"bad","ALL"}) assertThrows(LinkValidationException.class,()->new LinkValues("a","","https://example.com",scope));
-        assertThrows(LinkValidationException.class,()->new LinkValues("a","x".repeat(301),"https://example.com","all"));
-        assertThrows(LinkValidationException.class,()->new LinkValues("a","","https://example.com/"+"x".repeat(2000),"all"));
+            assertThrows(LinkValidationException.class,()->new LinkValues("a","",url, null),url);
+        for(String value:new String[]{"","bad","ALL"}) assertThrows(LinkValidationException.class,()->new com.kopite.devspace.link.application.command.LinkProjectSelection(true,value));
+        assertNull(new com.kopite.devspace.link.application.command.LinkProjectSelection(true,null).id());
+        assertThrows(LinkValidationException.class,()->new LinkValues("a","x".repeat(301),"https://example.com", null));
+        assertThrows(LinkValidationException.class,()->new LinkValues("a","","https://example.com/"+"x".repeat(2000), null));
         var l=Link.create(UUID.randomUUID(),values(),0,Instant.now());
         l.update(1,values(),Instant.now());assertEquals(2,l.getRevision());
         assertThrows(LinkConflictException.class,()->l.checkRevision(1));
@@ -91,7 +92,7 @@ class LinkPersistenceTests {
     @Test
     void databaseChecksAndMaxRevisionDeletion() {
         UUID w=workspace();var id=tx.execute(s->{collections.lockOrCreate(w);return links.save(Link.create(w,values(),0,Instant.now())).getId();});
-        for(String assignment:new String[]{"label=null","label=' '","label=repeat('x',101)","description=null","description=repeat('x',301)","url=' '","url=repeat('x',2001)","scope='bad'","position=-1","position=9007199254740992","revision=0","revision=9007199254740992"})
+        for(String assignment:new String[]{"label=null","label=' '","label=repeat('x',101)","description=null","description=repeat('x',301)","url=' '","url=repeat('x',2001)","project_id='00000000-0000-0000-0000-000000000001'","position=-1","position=9007199254740992","revision=0","revision=9007199254740992"})
             assertThrows(DataIntegrityViolationException.class,()->jdbc.update("update links set "+assignment+" where id=?",id),assignment);
         assertThrows(DataIntegrityViolationException.class,()->jdbc.update("update links set workspace_id=? where id=?",UUID.randomUUID(),id));
         assertThrows(DataIntegrityViolationException.class,()->jdbc.update("update link_collections set revision=-1 where workspace_id=?",w));
@@ -115,9 +116,13 @@ class LinkPersistenceTests {
         var before=new java.util.HashMap<String,java.util.List<java.util.Map<String,Object>>>();
         tables.forEach(table->before.put(table,jdbc.queryForList("select * from "+schema+"."+table)));
         var checksums=jdbc.queryForList("select version,checksum from "+schema+".flyway_schema_history where version is not null order by version");
-        var upgraded=Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema).locations("classpath:db/migration").load();
+        var upgraded=Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema).locations("classpath:db/migration").target("14").load();
         upgraded.migrate(); upgraded.validate();
-        tables.forEach(table->assertEquals(before.get(table),jdbc.queryForList("select * from "+schema+"."+table),table));
+        tables.forEach(table->{
+            var after=jdbc.queryForList("select * from "+schema+"."+table);
+            if(table.equals("projects"))after.forEach(row->{assertTrue(row.containsKey("category_id"));assertNull(row.remove("category_id"));});
+            assertEquals(before.get(table),after,table);
+        });
         assertEquals(42L,jdbc.queryForObject("select data_revision from "+schema+".workspaces",Long.class));
         assertEquals(checksums,jdbc.queryForList("select version,checksum from "+schema+".flyway_schema_history where version in ('1','2','3','4','5','6','7','8','9') order by version"));
         assertEquals(0L,jdbc.queryForObject("select count(*) from "+schema+".links",Long.class));

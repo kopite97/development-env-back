@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 interface ProjectJpaRepository extends JpaRepository<Project, UUID> {
+    java.util.List<Project> findByWorkspaceIdAndIdIn(UUID workspaceId, java.util.Set<UUID> ids);
     Optional<Project> findByWorkspaceIdAndId(UUID workspaceId, UUID id);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestcontainersConfiguration.class)
 @AutoConfigureMockMvc
 class MilestoneApiTests {
-    private static final String BASE="/api/v1/milestones";
+    private static final String BASE="/api/v2/milestones";
     private final MockMvc mvc;
     private final UserWorkspaceCreationService users;
     private final JdbcTemplate jdbc;
@@ -48,9 +48,13 @@ class MilestoneApiTests {
     private MockHttpServletRequestBuilder mutation(MockHttpServletRequestBuilder request,Owner owner) {
         return request.session(owner.session()).contentType("application/json").header("X-CSRF-Token",owner.csrf());
     }
+    private final Map<UUID,UUID> categoryIds=new java.util.HashMap<>();
+    private String category(Owner owner) {
+        return categoryIds.computeIfAbsent(owner.workspace(),workspace->{UUID id=UUID.randomUUID();jdbc.update("insert into project_categories(id,workspace_id,name,created_at,updated_at) values(?,?,'Selected Category',now(),now())",id,workspace);return id;}).toString();
+    }
     private String project(Owner owner) throws Exception {
-        return json.readTree(mvc.perform(mutation(post("/api/v1/projects"),owner).header("Idempotency-Key",UUID.randomUUID().toString())
-            .content("{\"name\":\"Project\",\"scope\":\"server\",\"stack\":\"Java\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("id").asString();
+        return json.readTree(mvc.perform(mutation(post("/api/v2/projects"),owner).header("Idempotency-Key",UUID.randomUUID().toString())
+            .content("{\"name\":\"Project\",\"stack\":\"Java\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("id").asString();
     }
     private String body(String project) { return "{\"title\":\" Milestone \",\"projectId\":\""+project+"\"}"; }
     private JsonNode create(Owner owner,String body) throws Exception {
@@ -68,7 +72,7 @@ class MilestoneApiTests {
     @Test
     void lifecycleNullableDatesCompletionArchivedProjectsAndPermanentDeletion() throws Exception {
         var owner=owner(); String project=project(owner);
-        mvc.perform(mutation(patch("/api/v1/projects/"+project),owner).content("{\"revision\":1,\"status\":\"archived\"}")).andExpect(status().isOk());
+        mvc.perform(mutation(patch("/api/v2/projects/"+project),owner).content("{\"revision\":1,\"status\":\"archived\"}")).andExpect(status().isOk());
         var item=create(owner,body(project)); String path=BASE+"/"+item.get("id").asString();
         assertEquals(10,item.size()); assertEquals("Milestone",item.get("title").asString()); assertTrue(item.get("dueDate").isNull()); assertFalse(item.get("completed").asBoolean());
         assertEquals(item,read(owner,path,Map.of())); assertEquals(item.get("createdAt"),item.get("updatedAt"));
@@ -86,14 +90,14 @@ class MilestoneApiTests {
         assertTrue(read(owner,path,Map.of()).get("dueDate").isNull());
         mvc.perform(mutation(patch(path),owner).content("{\"revision\":4}"))
             .andExpect(status().isOk()).andExpect(jsonPath("$.revision").value(5));
-        mvc.perform(mutation(patch("/api/v1/projects/"+project),owner).content("{\"revision\":2,\"name\":\"Renamed\",\"scope\":\"unity\",\"currentMilestone\":\"Independent memo\",\"progress\":33}"))
+        mvc.perform(mutation(patch("/api/v2/projects/"+project),owner).content("{\"revision\":2,\"name\":\"Renamed\",\"categoryId\":\""+category(owner)+"\",\"currentMilestone\":\"Independent memo\",\"progress\":33}"))
             .andExpect(status().isOk());
-        var detail=read(owner,path,Map.of()); assertEquals("Renamed",detail.get("projectName").asString()); assertEquals("unity",detail.get("scope").asString());
+        var detail=read(owner,path,Map.of()); assertEquals("Renamed",detail.get("projectName").asString()); assertEquals(category(owner),detail.get("categoryId").asString());assertFalse(detail.has("scope"));
         assertEquals(5,detail.get("revision").asInt()); assertEquals(item.get("createdAt"),detail.get("createdAt"));
-        assertEquals(1,read(owner,BASE,Map.of("scope","unity","projectStatus","archived")).get("total").asInt());
-        assertEquals(0,read(owner,BASE,Map.of("scope","server")).get("total").asInt());
+        assertEquals(1,read(owner,BASE,Map.of("category",category(owner),"projectStatus","archived")).get("total").asInt());
+        assertEquals(0,read(owner,BASE,Map.of("category","uncategorized")).get("total").asInt());
         var sibling=create(owner,body(project));
-        var projectBefore=read(owner,"/api/v1/projects/"+project,Map.of());
+        var projectBefore=read(owner,"/api/v2/projects/"+project,Map.of());
         long counter=jdbc.queryForObject("select data_revision from workspaces where id=?",Long.class,owner.workspace());
         mvc.perform(mutation(delete(path),owner).param("revision","4")).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("REVISION_CONFLICT"));
         var deleted=json.readTree(mvc.perform(mutation(delete(path),owner).param("revision","5")).andExpect(status().isOk())
@@ -104,7 +108,7 @@ class MilestoneApiTests {
         mvc.perform(mutation(patch(path),owner).content("{\"revision\":5}")).andExpect(status().isNotFound());
         mvc.perform(mutation(delete(path),owner).param("revision","5")).andExpect(status().isNotFound());
         assertEquals(counter+1,jdbc.queryForObject("select data_revision from workspaces where id=?",Long.class,owner.workspace()));
-        assertEquals(projectBefore,read(owner,"/api/v1/projects/"+project,Map.of()));
+        assertEquals(projectBefore,read(owner,"/api/v2/projects/"+project,Map.of()));
         assertEquals(sibling,read(owner,BASE+"/"+sibling.get("id").asString(),Map.of()));
         assertEquals(1,read(owner,BASE,Map.of("status","all")).get("total").asInt());
         mvc.perform(mutation(put(BASE+"/"+sibling.get("id").asString()),owner).content("{}")).andExpect(status().isMethodNotAllowed());
@@ -163,15 +167,15 @@ class MilestoneApiTests {
             assertEquals(expected,seen);
         }
         String cursor=read(owner,BASE,Map.of("limit","2","status","all")).get("nextCursor").asString();
-        for(var entry:Map.of("scope","unity","projectId",project,"projectStatus","active","status","open","limit","3").entrySet()) {
+        for(var entry:Map.of("category",category(owner),"projectId",project,"projectStatus","active","status","open","limit","3").entrySet()) {
             var params=new HashMap<>(Map.of("limit","2","status","all","cursor",cursor));params.put(entry.getKey(),entry.getValue());
             var request=get(BASE).session(owner.session());params.forEach(request::param);
             mvc.perform(request).andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("INVALID_CURSOR"));
         }
         for(String invalid:List.of(cursor+"x","","junk")) mvc.perform(get(BASE).session(owner.session()).param("status","all").param("limit","2").param("cursor",invalid)).andExpect(status().isBadRequest());
         var other=owner();mvc.perform(get(BASE).session(other.session()).param("status","all").param("limit","2").param("cursor",cursor)).andExpect(status().isBadRequest());
-        for(String resource:List.of("projects","tasks","journals")) mvc.perform(get("/api/v1/"+resource).session(owner.session()).param("limit","2").param("cursor",cursor)).andExpect(status().isBadRequest());
-        assertEquals(0,read(owner,BASE,Map.of("projectId",project,"scope","unity")).get("total").asInt());
+        for(String resource:List.of("projects","tasks","journals")) mvc.perform(get("/api/v2/"+resource).session(owner.session()).param("limit","2").param("cursor",cursor)).andExpect(status().isBadRequest());
+        assertEquals(0,read(owner,BASE,Map.of("projectId",project,"category",category(owner))).get("total").asInt());
         var output=java.nio.file.Path.of("build/reports/milestone-api/query-plan.txt");java.nio.file.Files.createDirectories(output.getParent());
         java.nio.file.Files.writeString(output,String.join("\n",jdbc.queryForList("explain select id from milestones where workspace_id=? order by completed asc,due_date asc nulls last,id asc limit 3",String.class,owner.workspace())));
     }
@@ -193,7 +197,7 @@ class MilestoneApiTests {
             mvc.perform(mutation(delete(BASE+"/"+id),other).param("revision","99")).andExpect(status().isNotFound());
         }
         assertEquals(0,read(other,BASE,Map.of()).get("total").asInt());
-        mvc.perform(get(BASE).session(other.session()).param("projectId",project).param("scope","unity")).andExpect(status().isNotFound());
+        mvc.perform(get(BASE).session(other.session()).param("projectId",project).param("category",category(owner))).andExpect(status().isNotFound());
         mvc.perform(mutation(post(BASE),other).header("Idempotency-Key","foreign").content(body(project))).andExpect(status().isNotFound());
         String key=UUID.randomUUID().toString();
         var original=mvc.perform(mutation(post(BASE),owner).header("Idempotency-Key",key).content(body(project))).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();

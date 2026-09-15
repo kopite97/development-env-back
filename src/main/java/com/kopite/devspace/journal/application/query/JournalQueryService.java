@@ -18,14 +18,15 @@ import java.util.UUID;
 @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
 public class JournalQueryService {
     private final CurrentUserService currentUser;
+    private final com.kopite.devspace.projectcategory.application.CategoryFilterOwnership categoryOwnership;
     private final ProjectRepository projects;
     private final JournalSearchRepository search;
     private final JournalCursorCodec cursors;
-    public record Page(List<JournalSnapshot> items, long total, String nextCursor) {}
+    public record Page(List<JournalSnapshot> items, long total, String nextCursor, Long dataRevision) {}
 
     public JournalSnapshot get(UUID userId, UUID id) {
         UUID workspace = currentUser.resolve(userId).workspace().getId();
-        return search.findOwned(workspace, id).orElseThrow(JournalNotFoundException::new);
+        return search.findOwned(workspace, id).orElseThrow(JournalNotFoundException::new).observed(currentUser.resolve(userId).workspace().getDataRevision());
     }
     public Page list(UUID userId, JournalListFilter filter, String cursor) {
         UUID workspace = ownedWorkspace(userId, filter);
@@ -38,10 +39,11 @@ public class JournalQueryService {
             var last = items.getLast();
             next = cursors.encode(workspace, filter, new JournalCursor(last.entryDate(), last.createdAt(), last.id()));
         }
-        return new Page(items, total, next);
+        return new Page(items, total, next, currentUser.resolve(userId).workspace().getDataRevision());
     }
     private UUID ownedWorkspace(UUID userId, JournalListFilter filter) {
         UUID workspace = currentUser.resolve(userId).workspace().getId();
+        categoryOwnership.validate(workspace,filter.category());
         if (filter.projectId() != null) projects.findOwned(workspace, filter.projectId()).orElseThrow(JournalNotFoundException::new);
         return workspace;
     }

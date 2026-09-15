@@ -5,8 +5,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 
-public record ProjectListRequest(@Pattern(regexp = "all|unity|server") String scope,
+public record ProjectListRequest(String category,
                                  @Pattern(regexp = "active|archived|all") String status,
                                  String query, @Min(1) @Max(100) int limit, String cursor) {
-    public ProjectListFilter filter() { return new ProjectListFilter(scope, status, query, limit); }
+    public ProjectListFilter filter() { return new ProjectListFilter(category, status, query, limit); }
 }

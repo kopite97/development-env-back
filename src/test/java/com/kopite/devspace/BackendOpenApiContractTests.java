@@ -34,21 +34,24 @@ class BackendOpenApiContractTests {
         Map.entry("/api/v1/auth/csrf", Set.of("get")),
         Map.entry("/api/v1/auth/logout", Set.of("post")),
         Map.entry("/api/v1/me", Set.of("get")),
-        Map.entry("/api/v1/projects", Set.of("get", "post")),
-        Map.entry("/api/v1/projects/{id}", Set.of("get", "patch")),
-        Map.entry("/api/v1/tasks", Set.of("get", "post")),
-        Map.entry("/api/v1/tasks/{id}", Set.of("get", "patch", "delete")),
-        Map.entry("/api/v1/tasks/{id}/restore", Set.of("post")),
-        Map.entry("/api/v1/tasks/stats", Set.of("get")),
-        Map.entry("/api/v1/journals", Set.of("get", "post")),
-        Map.entry("/api/v1/journals/{id}", Set.of("get", "patch", "delete")),
-        Map.entry("/api/v1/milestones", Set.of("get", "post")),
-        Map.entry("/api/v1/milestones/{id}", Set.of("get", "patch", "delete")),
-        Map.entry("/api/v1/links", Set.of("get", "post")),
-        Map.entry("/api/v1/links/{id}", Set.of("get", "patch", "delete")),
-        Map.entry("/api/v1/links/order", Set.of("put")),
-        Map.entry("/api/v1/dashboards/home", Set.of("get", "put")),
-        Map.entry("/api/v1/overview", Set.of("get")));
+        Map.entry("/api/v1/project-categories", Set.of("get", "post")),
+        Map.entry("/api/v1/project-categories/{id}", Set.of("get", "patch", "delete")),
+        Map.entry("/api/v2/projects", Set.of("get", "post")),
+        Map.entry("/api/v2/projects/{id}", Set.of("get", "patch")),
+        Map.entry("/api/v2/projects/category-counts", Set.of("get")),
+        Map.entry("/api/v2/tasks", Set.of("get", "post")),
+        Map.entry("/api/v2/tasks/{id}", Set.of("get", "patch", "delete")),
+        Map.entry("/api/v2/tasks/{id}/restore", Set.of("post")),
+        Map.entry("/api/v2/tasks/stats", Set.of("get")),
+        Map.entry("/api/v2/journals", Set.of("get", "post")),
+        Map.entry("/api/v2/journals/{id}", Set.of("get", "patch", "delete")),
+        Map.entry("/api/v2/milestones", Set.of("get", "post")),
+        Map.entry("/api/v2/milestones/{id}", Set.of("get", "patch", "delete")),
+        Map.entry("/api/v2/links", Set.of("get", "post")),
+        Map.entry("/api/v2/links/{id}", Set.of("get", "patch", "delete")),
+        Map.entry("/api/v2/links/order", Set.of("put")),
+        Map.entry("/api/v2/dashboards/home", Set.of("get", "put")),
+        Map.entry("/api/v2/overview", Set.of("get")));
 
     @Test void generatedInventoryExactlyMatchesApprovedSurfaceAndRuntimeMappings() throws Exception {
         var api = document();
@@ -74,20 +77,21 @@ class BackendOpenApiContractTests {
         }
         Set<String> implemented = new HashSet<>();
         mappings.getHandlerMethods().forEach((mapping, handler) -> {
-            for (String path : mapping.getPatternValues()) if (path.startsWith("/api/v1/"))
+            if (handler.getBeanType().getName().startsWith("com.kopite.devspace.compatibility.")) return; // Historical replay/410 surface is independently HTTP-tested, not normal OpenAPI.
+            for (String path : mapping.getPatternValues()) if (path.startsWith("/api/"))
                 mapping.getMethodsCondition().getMethods().forEach(method -> implemented.add(method.name().toLowerCase(Locale.ROOT) + " " + path));
         });
-        assertEquals(33, implemented.size());
+        assertEquals(39, implemented.size());
         implemented.add("get /api/v1/auth/callback/{registrationId}");
         implemented.add("post /api/v1/auth/logout");
-        assertEquals(35, documented.size());
+        assertEquals(41, documented.size());
         assertEquals(implemented, documented);
         assertReferencesResolve(api, api);
     }
 
     @Test void statusCodesErrorSchemasCsrfAndIdempotencyMatchEachOperation() throws Exception {
         var api = document();
-        Set<String> creations = Set.of("/api/v1/projects", "/api/v1/tasks", "/api/v1/journals", "/api/v1/milestones", "/api/v1/links");
+        Set<String> creations = Set.of("/api/v2/projects", "/api/v1/project-categories", "/api/v2/tasks", "/api/v2/journals", "/api/v2/milestones", "/api/v2/links");
         for (var entry : INVENTORY.entrySet()) for (String method : entry.getValue()) {
             String path = entry.getKey();
             var op = api.path("paths").path(path).path(method);
@@ -105,6 +109,12 @@ class BackendOpenApiContractTests {
             } else {
                 assertFalse(op.path("responses").has("409"), path);
                 assertFalse(hasParameter(op, "X-CSRF-Token"));
+            }
+            if (path.startsWith("/api/v2/") || path.startsWith("/api/v1/project-categories")) {
+                var header = op.path("responses").path(success).path("headers").path("X-Workspace-Data-Revision");
+                assertEquals("string", header.path("schema").path("type").asString(), path);
+                assertEquals("^[0-9]+$", header.path("schema").path("pattern").asString());
+                assertTrue(header.path("description").asString().contains("replays"));
             }
             boolean creation = method.equals("post") && creations.contains(path);
             assertEquals(creation, hasParameter(op, "Idempotency-Key"), path);
@@ -124,11 +134,11 @@ class BackendOpenApiContractTests {
             }
             if (op.path("responses").has("400")) {
                 String description = op.path("responses").path("400").path("description").asString();
-                assertEquals(method.equals("get") && creations.contains(path) && !path.endsWith("/links"), description.contains("INVALID_CURSOR"), path + " " + method);
+                assertEquals(method.equals("get") && creations.contains(path) && !path.endsWith("/links") && !path.endsWith("/project-categories"), description.contains("INVALID_CURSOR"), path + " " + method);
                 assertEquals(method.equals("put") && path.endsWith("/dashboards/home"), description.contains("UNSUPPORTED_SCHEMA_VERSION"), path + " " + method);
             }
         }
-        assertFalse(api.path("paths").path("/api/v1/links").path("get").path("responses").has("404"));
+        assertTrue(api.path("paths").path("/api/v2/links").path("get").path("responses").has("404"));
         var errors = api.path("components").path("schemas").path("ApiError");
         assertEquals(Set.of("code", "message", "fieldErrors", "requestId"), strings(errors.path("required")));
     }
@@ -140,11 +150,11 @@ class BackendOpenApiContractTests {
             var schema = entry.getValue();
             if (!schema.has("properties")) continue;
             var fields = keys(schema.path("properties"));
-            for (String forbidden : List.of("workspaceId", "ownerUserId", "userId", "dataRevision", "owner", "password", "accessToken", "refreshToken"))
+            for (String forbidden : List.of("scope", "colorToken", "byScope", "workspaceId", "ownerUserId", "userId", "dataRevision", "owner", "password", "accessToken", "refreshToken"))
                 assertFalse(fields.contains(forbidden), name + "." + forbidden);
             if (name.endsWith("Response") || name.startsWith("Overview") || name.equals("TaskStatusCounts")) {
                 var required = new HashSet<>(fields);
-                if (name.equals("DashboardWidgetResponse")) required.removeAll(Set.of("projectId", "limit"));
+                if (Set.of("DashboardWidgetResponse", "DashboardDataWidgetResponse").contains(name)) required.remove("limit");
                 assertEquals(required, strings(schema.path("required")), name);
             }
             for (String field : List.of("revision", "collectionRevision")) if (name.endsWith("Response") && fields.contains(field))
@@ -172,7 +182,7 @@ class BackendOpenApiContractTests {
     @Test void paginationDefaultsEnumsAndWidgetRevisionSemanticsMatchPlans() throws Exception {
         var api = document(); var schemas = api.path("components").path("schemas");
         for (String feature : List.of("Project", "Task", "Journal", "Milestone")) {
-            var list = api.path("paths").path("/api/v1/" + feature.toLowerCase(Locale.ROOT) + "s").path("get");
+            var list = api.path("paths").path("/api/v2/" + feature.toLowerCase(Locale.ROOT) + "s").path("get");
             var limit = parameter(list, "limit").path("schema");
             assertEquals(20, limit.path("default").asInt());
             assertEquals(1, limit.path("minimum").asInt()); assertEquals(100, limit.path("maximum").asInt());
@@ -186,20 +196,20 @@ class BackendOpenApiContractTests {
         for (String feature : List.of("Task", "Link")) assertEquals("", schemas.path("Create" + feature + "Request").path("properties").path("description").path("default").asString());
         for (String schema : List.of("HomeDashboardResponse", "SaveHomeDashboardRequest")) {
             bounds(schemas.path(schema).path("properties").path("revision"), 0);
-            assertEquals(1, schemas.path(schema).path("properties").path("schemaVersion").path("enum").get(0).asInt());
+            assertEquals(2, schemas.path(schema).path("properties").path("schemaVersion").path("enum").get(0).asInt());
         }
         bounds(schemas.path("ReorderLinksRequest").path("properties").path("collectionRevision"), 0);
         for (String name : List.of("DashboardWidgetRequest", "DashboardWidgetResponse")) {
             var widget = schemas.path(name);
-            assertEquals(2, widget.path("oneOf").size());
+            assertEquals(3, widget.path("oneOf").size());
             assertEquals(Set.of("overview", "board", "deploy", "links", "journal", "milestone"), strings(widget.path("properties").path("type").path("enum")));
             assertEquals(Set.of("small", "medium", "wide"), strings(widget.path("properties").path("size").path("enum")));
-            assertEquals(Set.of("all", "unity", "server"), strings(widget.path("properties").path("scope").path("enum")));
+            assertEquals("#/components/schemas/DashboardSelectionDto", widget.path("properties").path("selection").path("$ref").asString());
             assertEquals(1, widget.path("properties").path("title").path("minLength").asInt());
             assertEquals(48, widget.path("properties").path("title").path("maxLength").asInt());
             assertFalse(widget.path("properties").path("limit").has("default"));
         }
-        assertFalse(schemas.path("DashboardUtilityWidget").path("properties").has("projectId"));
+        assertFalse(schemas.path("DashboardDeployWidgetRequest").path("properties").has("projectId"));
         assertFalse(schemas.path("DashboardUtilityWidget").path("properties").has("limit"));
         assertEquals(Set.of("string", "null"), types(schemas.path("OverviewResponse").path("properties").path("projectId")));
     }

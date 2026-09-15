@@ -15,7 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 @RestController
-@RequestMapping(value="/api/v1/overview",produces="application/json")
+@RequestMapping(value="/api/v2/overview",produces="application/json")
 @RequiredArgsConstructor
 @Tag(name="Overview")
 @SecurityRequirement(name="sessionCookie")
@@ -29,12 +29,13 @@ import java.util.Set;
 public class OverviewController {
     private final OverviewQueryService queries;
     @GetMapping
-    @Operation(summary="Read workspace Overview",description="Single read snapshot; scope/projectId intersection after ownership validation, including archived Projects. projects.total counts active, archived separately. Both byScope keys and every Task status always present, excluded scopes zero. Tasks match unsearched stats with projectStatus=all and deleted=false. Totals cover every matching row independent of pages or widget limits; query/status/projectStatus/deleted/limit/cursor and repeated parameters are not accepted.")
+    @Operation(summary="Read workspace Overview",description="Single read snapshot; category/projectId intersection after ownership validation, including archived Projects. projects.total counts active, archived separately. Category buckets include zero counts and an uncategorized bucket; every Task status is always present. Tasks match unsearched stats with projectStatus=all and deleted=false. Totals cover every matching row independent of pages or widget limits; query/status/projectStatus/deleted/limit/cursor and repeated parameters are not accepted.")
     @ApiResponse(responseCode="200",description="Complete owned Project and Task counts",content=@Content(schema=@Schema(implementation=OverviewResponse.class)))
     public ResponseEntity<OverviewResponse> get(Authentication auth,
-        @RequestParam(required=false) @Parameter(schema=@Schema(allowableValues={"all","unity","server"},defaultValue="all")) String scope,
+        @RequestParam(required=false) @Parameter(schema=@Schema(pattern="all|uncategorized|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",defaultValue="all")) String category,
         @RequestParam(required=false) @Parameter(schema=@Schema(type="string",format="uuid")) String projectId,HttpServletRequest http) {
-        http.getParameterMap().forEach((name,values)->{if(!Set.of("scope","projectId").contains(name)||values.length!=1)throw new OverviewValidationException(name);});
-        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(OverviewResponse.from(queries.get(((InternalUserPrincipal)auth.getPrincipal()).userId(),new OverviewRequest(scope,projectId).filter())));
+        http.getParameterMap().forEach((name,values)->{if(!Set.of("category","projectId").contains(name)||values.length!=1)throw new OverviewValidationException(name);});
+        var result=queries.get(((InternalUserPrincipal)auth.getPrincipal()).userId(),new OverviewRequest(category,projectId).filter());
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(OverviewResponse.from(result),result.dataRevision());
     }
 }

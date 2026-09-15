@@ -24,8 +24,7 @@ public class JournalCreateReplayAdapter implements JournalCreateReplayStore {
         return jdbc.query("""
                 select request_hash, response_body, expires_at from journal_create_idempotency
                 where workspace_id=? and method='POST' and path='/api/v1/journals' and key=?
-                """, (rs, row) -> new Replay(rs.getString(1), json.readValue(rs.getString(2), JournalSnapshot.class),
-                rs.getTimestamp(3).toInstant()), workspaceId, key).stream().findFirst();
+                """, (rs, row) -> replay(rs.getString(1),rs.getString(2),rs.getTimestamp(3).toInstant()), workspaceId, key).stream().findFirst();
     }
 
     @Override
@@ -42,5 +41,10 @@ public class JournalCreateReplayAdapter implements JournalCreateReplayStore {
     public void removeExpired(UUID workspaceId, Instant now) {
         jdbc.update("delete from journal_create_idempotency where workspace_id=? and expires_at<=?",
                 workspaceId, Timestamp.from(now));
+    }
+    private Replay replay(String hash,String body,Instant expiresAt) {
+        var tree=json.readTree(body);
+        boolean legacy=tree.has("scope");
+        return new Replay(hash,legacy?null:json.readValue(body,JournalSnapshot.class),expiresAt,legacy);
     }
 }

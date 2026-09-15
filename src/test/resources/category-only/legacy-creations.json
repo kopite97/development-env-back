@@ -1,0 +1,44 @@
+[
+  {
+    "resource": "project",
+    "requestBody": "{\"name\":\"Project\",\"scope\":\"unity\",\"stack\":\"Java\"}",
+    "hashVersion": 1,
+    "requestHash": "00089fb3486496837020676940112e08bf4fc26e3e92b7c17fdefc7a0a9b8e65",
+    "responseBody": "{\"id\":\"10000000-0000-0000-0000-000000000001\",\"revision\":1,\"createdAt\":\"2026-09-14T00:00:00Z\",\"updatedAt\":\"2026-09-14T00:00:00Z\",\"name\":\"Project\",\"subtitle\":\"\",\"scope\":\"unity\",\"stack\":\"Java\",\"progress\":0,\"currentMilestone\":\"\",\"repositoryUrl\":\"\",\"status\":\"active\",\"colorToken\":\"unity\"}"
+  },
+  {
+    "resource": "project",
+    "requestBody": "{\"name\":\"Project\",\"scope\":\"unity\",\"stack\":\"Java\",\"categoryId\":\"20000000-0000-0000-0000-000000000001\"}",
+    "hashVersion": 2,
+    "requestHash": "b170b6625b8e399870524c9f01e84650d7cfab1ceb033c78dbdfd99f9c653396",
+    "responseBody": "{\"id\":\"10000000-0000-0000-0000-000000000001\",\"revision\":1,\"createdAt\":\"2026-09-14T00:00:00Z\",\"updatedAt\":\"2026-09-14T00:00:00Z\",\"name\":\"Project\",\"subtitle\":\"\",\"scope\":\"unity\",\"stack\":\"Java\",\"progress\":0,\"currentMilestone\":\"\",\"repositoryUrl\":\"\",\"status\":\"active\",\"colorToken\":\"unity\",\"categoryId\":\"20000000-0000-0000-0000-000000000001\"}"
+  },
+  {
+    "resource": "task",
+    "requestBody": "{\"title\":\"Task\",\"projectId\":\"10000000-0000-0000-0000-000000000001\"}",
+    "hashVersion": 1,
+    "requestHash": "96084cc2f081f3a0119e4dac551d4b0c3f1c15c309bef96c69359fc5308324da",
+    "responseBody": "{\"id\":\"30000000-0000-0000-0000-000000000001\",\"revision\":1,\"createdAt\":\"2026-09-14T00:00:00Z\",\"updatedAt\":\"2026-09-14T00:00:00Z\",\"title\":\"Task\",\"projectId\":\"10000000-0000-0000-0000-000000000001\",\"projectName\":\"Project\",\"scope\":\"unity\",\"description\":\"\",\"status\":\"todo\",\"priority\":\"normal\",\"tag\":\"\",\"deletedAt\":null}"
+  },
+  {
+    "resource": "journal",
+    "requestBody": "{\"title\":\"Journal\",\"projectId\":\"10000000-0000-0000-0000-000000000001\",\"body\":\"Body\",\"entryDate\":\"2026-09-14\"}",
+    "hashVersion": 1,
+    "requestHash": "d1ab0e308b4e197c08d798c827f4d1af9cc7bab9264691cad2be44ba0d287f84",
+    "responseBody": "{\"id\":\"40000000-0000-0000-0000-000000000001\",\"revision\":1,\"createdAt\":\"2026-09-14T00:00:00Z\",\"updatedAt\":\"2026-09-14T00:00:00Z\",\"title\":\"Journal\",\"projectId\":\"10000000-0000-0000-0000-000000000001\",\"projectName\":\"Project\",\"scope\":\"unity\",\"body\":\"Body\",\"entryDate\":\"2026-09-14\"}"
+  },
+  {
+    "resource": "milestone",
+    "requestBody": "{\"title\":\"Milestone\",\"projectId\":\"10000000-0000-0000-0000-000000000001\"}",
+    "hashVersion": 1,
+    "requestHash": "30579665592705410f213f08fcf0c1f5ad42032f16d6b90ff699ce6911b5b0a1",
+    "responseBody": "{\"id\":\"50000000-0000-0000-0000-000000000001\",\"revision\":1,\"createdAt\":\"2026-09-14T00:00:00Z\",\"updatedAt\":\"2026-09-14T00:00:00Z\",\"title\":\"Milestone\",\"projectId\":\"10000000-0000-0000-0000-000000000001\",\"projectName\":\"Project\",\"scope\":\"unity\",\"dueDate\":null,\"completed\":false}"
+  },
+  {
+    "resource": "link",
+    "requestBody": "{\"label\":\"Link\",\"url\":\"https://example.com\"}",
+    "hashVersion": 1,
+    "requestHash": "9d804ce607b1d5c5db16c313e857e9470d3988b217e3e196c4abc71b3069ba98",
+    "responseBody": "{\"item\":{\"id\":\"60000000-0000-0000-0000-000000000001\",\"revision\":1,\"createdAt\":\"2026-09-14T00:00:00Z\",\"updatedAt\":\"2026-09-14T00:00:00Z\",\"label\":\"Link\",\"description\":\"\",\"url\":\"https://example.com\",\"scope\":\"all\",\"position\":0},\"collectionRevision\":1}"
+  }
+]

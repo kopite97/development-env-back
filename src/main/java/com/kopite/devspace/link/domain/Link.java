@@ -20,7 +20,7 @@ public class Link {
     @Column(nullable=false, columnDefinition="text") private String label;
     @Column(nullable=false, columnDefinition="text") private String description;
     @Column(nullable=false, columnDefinition="text") private String url;
-    @Column(nullable=false, columnDefinition="text") private String scope;
+    @Column private UUID projectId;
     @Column(nullable=false) private long position;
     @Column(nullable=false) private long revision;
     @Column(nullable=false, updatable=false) private Instant createdAt;
@@ -54,7 +54,7 @@ public class Link {
         Instant time = Objects.requireNonNull(now).truncatedTo(ChronoUnit.MICROS);
         this.position = position; revision++; updatedAt = time;
     }
-    public LinkValues values() { return new LinkValues(label, description, url, scope); }
+    public LinkValues values() { return new LinkValues(label, description, url, projectId); }
     public static long nextPosition(long max) {
         if (max >= MAX_REVISION) throw new LinkConflictException("REVISION_CONFLICT");
         return max + 1;
@@ -64,6 +64,6 @@ public class Link {
     }
     private void assign(LinkValues values) {
         Objects.requireNonNull(values);
-        label=values.label(); description=values.description(); url=values.url(); scope=values.scope();
+        label=values.label(); description=values.description(); url=values.url(); projectId=values.projectId();
     }
 }

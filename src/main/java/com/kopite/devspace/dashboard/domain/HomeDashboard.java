@@ -31,7 +31,7 @@ public class HomeDashboard {
     public static HomeDashboard create(UUID workspace,List<DashboardWidget> widgets,Instant now) {
         HomeDashboard result=new HomeDashboard();
         result.id=new Key(Objects.requireNonNull(workspace),"home");
-        result.schemaVersion=1; result.revision=1; result.widgets=validate(widgets);
+        result.schemaVersion=2; result.revision=1; result.widgets=validate(widgets);
         result.createdAt=Objects.requireNonNull(now).truncatedTo(ChronoUnit.MICROS);
         result.updatedAt=result.createdAt;
         return result;
@@ -56,16 +56,16 @@ public class HomeDashboard {
         widgets=validate(values); revision++; updatedAt=now.truncatedTo(ChronoUnit.MICROS);
     }
     public void validateStored() {
-        if(schemaVersion!=1 || revision<1 || revision>MAX_REVISION) throw new IllegalStateException("Invalid stored dashboard");
+        if(schemaVersion!=2 || revision<1 || revision>MAX_REVISION) throw new IllegalStateException("Invalid stored dashboard");
         try { validate(widgets); } catch(DashboardValidationException ex) { throw new IllegalStateException("Invalid stored dashboard",ex); }
     }
     public static List<DashboardWidget> defaults() {
         return List.of(
-            new DashboardWidget("home-overview","overview","프로젝트 개요","all","wide",null,null),
-            new DashboardWidget("home-board","board","작업 보드","all","wide",null,null),
-            new DashboardWidget("home-deploy","deploy","운영","all","medium",null,null),
-            new DashboardWidget("home-links","links","바로가기","all","small",null,null),
-            new DashboardWidget("home-journal","journal","개발 일지","all","medium",null,null),
-            new DashboardWidget("home-milestone","milestone","마일스톤","all","medium",null,null));
+            new DashboardWidget("home-overview","overview","프로젝트 개요","wide",DashboardSelection.all(),null),
+            new DashboardWidget("home-board","board","작업 보드","wide",DashboardSelection.all(),null),
+            new DashboardWidget("home-deploy","deploy","운영","medium",DashboardSelection.all(),null),
+            new DashboardWidget("home-links","links","바로가기","small",DashboardSelection.all(),null),
+            new DashboardWidget("home-journal","journal","개발 일지","medium",DashboardSelection.all(),null),
+            new DashboardWidget("home-milestone","milestone","마일스톤","medium",DashboardSelection.all(),null));
     }
 }

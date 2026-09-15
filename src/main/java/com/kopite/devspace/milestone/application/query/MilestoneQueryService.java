@@ -18,14 +18,15 @@ import java.util.UUID;
 @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
 public class MilestoneQueryService {
     private final CurrentUserService currentUser;
+    private final com.kopite.devspace.projectcategory.application.CategoryFilterOwnership categoryOwnership;
     private final ProjectRepository projects;
     private final MilestoneSearchRepository search;
     private final MilestoneCursorCodec cursors;
-    public record Page(List<MilestoneSnapshot> items, long total, String nextCursor) {}
+    public record Page(List<MilestoneSnapshot> items, long total, String nextCursor, Long dataRevision) {}
 
     public MilestoneSnapshot get(UUID userId, UUID id) {
         UUID workspace = currentUser.resolve(userId).workspace().getId();
-        return search.findOwned(workspace, id).orElseThrow(MilestoneNotFoundException::new);
+        return search.findOwned(workspace, id).orElseThrow(MilestoneNotFoundException::new).observed(currentUser.resolve(userId).workspace().getDataRevision());
     }
     public Page list(UUID userId, MilestoneListFilter filter, String cursor) {
         UUID workspace = ownedWorkspace(userId, filter);
@@ -38,10 +39,11 @@ public class MilestoneQueryService {
             var last = items.getLast();
             next = cursors.encode(workspace, filter, new MilestoneCursor(last.completed(), last.dueDate(), last.id()));
         }
-        return new Page(items, total, next);
+        return new Page(items, total, next, currentUser.resolve(userId).workspace().getDataRevision());
     }
     private UUID ownedWorkspace(UUID userId, MilestoneListFilter filter) {
         UUID workspace = currentUser.resolve(userId).workspace().getId();
+        categoryOwnership.validate(workspace,filter.category());
         if (filter.projectId() != null) projects.findOwned(workspace, filter.projectId()).orElseThrow(MilestoneNotFoundException::new);
         return workspace;
     }

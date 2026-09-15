@@ -22,6 +22,24 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(com.kopite.devspace.compatibility.application.ApiVersionRetiredException.class)
+    ResponseEntity<ApiError> retiredVersion() {
+        return error(410,"API_VERSION_RETIRED","This API version accepts no new operations; use the current API",Map.of());
+    }
+    @ExceptionHandler(com.kopite.devspace.projectcategory.domain.CategoryValidationException.class)
+    ResponseEntity<ApiError> categoryInvalid(com.kopite.devspace.projectcategory.domain.CategoryValidationException ex) {
+        return error(400,"VALIDATION_ERROR","Request validation failed",Map.of(ex.getField(),ex.getMessage()));
+    }
+    @ExceptionHandler(com.kopite.devspace.projectcategory.application.CategoryNotFoundException.class)
+    ResponseEntity<ApiError> categoryNotFound() {return notFound();}
+    @ExceptionHandler(com.kopite.devspace.projectcategory.application.CategoryQuotaException.class)
+    ResponseEntity<ApiError> categoryQuota(com.kopite.devspace.projectcategory.application.CategoryQuotaException ex) {return error(429,"QUOTA_EXCEEDED",ex.getMessage(),Map.of());}
+    @ExceptionHandler(com.kopite.devspace.projectcategory.domain.CategoryConflictException.class)
+    ResponseEntity<ApiError> categoryConflict(com.kopite.devspace.projectcategory.domain.CategoryConflictException ex) {
+        if("CATEGORY_NAME_CONFLICT".equals(ex.getCode()))return error(409,ex.getCode(),"Category name is already used",Map.of("name","must be unique within the workspace"));
+        if("CATEGORY_IN_USE".equals(ex.getCode()))return error(409,ex.getCode(),"Reassign or clear referencing Projects explicitly before deleting this Category",Map.of());
+        return error(409,ex.getCode(),"Category operation conflicts with current state",Map.of());
+    }
     @ExceptionHandler(com.kopite.devspace.dashboard.domain.DashboardValidationException.class)
     ResponseEntity<ApiError> dashboardInvalid(com.kopite.devspace.dashboard.domain.DashboardValidationException ex) {
         return error(400,"VALIDATION_ERROR","Request validation failed",Map.of(ex.getField(),ex.getMessage()));
@@ -101,6 +119,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<ApiError> unreadable(HttpMessageNotReadableException exception) {
         for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
+            if(cause instanceof com.kopite.devspace.projectcategory.domain.CategoryValidationException validation) return categoryInvalid(validation);
             if(cause instanceof com.kopite.devspace.dashboard.presentation.dto.UnsupportedDashboardSchemaException) return dashboardSchema();
             if(cause instanceof com.kopite.devspace.dashboard.domain.DashboardValidationException validation) return dashboardInvalid(validation);
             if(cause instanceof com.kopite.devspace.link.domain.LinkValidationException validation) return invalidLink(validation);

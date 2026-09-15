@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestcontainersConfiguration.class)
 @AutoConfigureMockMvc
 class LinkApiTests {
-    private static final String BASE="/api/v1/links";
+    private static final String BASE="/api/v2/links";
     private final MockMvc mvc;
     private final UserWorkspaceCreationService users;
     private final JdbcTemplate jdbc;
@@ -62,14 +62,14 @@ class LinkApiTests {
     @Test
     void sixOperationsReturnExactWrappersAndServerOrder() throws Exception {
         var o=owner();var empty=read(o,BASE,Map.of());assertEquals(0,empty.get("collectionRevision").asLong());assertTrue(empty.get("nextCursor").isNull());
-        var a=create(o,body());var b=create(o,body());assertEquals(2,a.size());assertEquals(9,a.get("item").size());
+        var a=create(o,body());var b=create(o,body());assertEquals(2,a.size());assertEquals(11,a.get("item").size());
         String id=a.get("item").get("id").asString(),bid=b.get("item").get("id").asString();
-        var detail=read(o,BASE+"/"+id,Map.of());assertEquals(a.get("item"),detail);assertEquals("",detail.get("description").asString());assertEquals("all",detail.get("scope").asString());
+        var detail=read(o,BASE+"/"+id,Map.of());assertEquals(a.get("item"),detail);assertEquals("",detail.get("description").asString());assertFalse(detail.has("scope"));assertTrue(detail.get("projectId").isNull());assertTrue(detail.get("categoryId").isNull());assertTrue(detail.get("projectName").isNull());
         var order=mvc.perform(mutation(put(BASE+"/order"),o).content(json.writeValueAsString(Map.of("collectionRevision",2,"ids",List.of(bid,id)))))
             .andExpect(status().isOk()).andExpect(header().string("Cache-Control","no-store")).andExpect(jsonPath("$.collectionRevision").value(3)).andReturn();
         var rows=json.readTree(order.getResponse().getContentAsString());assertEquals(4,rows.size());assertEquals(bid,rows.get("items").get(0).get("id").asString());assertEquals(2,rows.get("items").get(1).get("revision").asInt());
         mvc.perform(mutation(patch(BASE+"/"+id),o).content("{\"revision\":1}")).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("REVISION_CONFLICT"));
-        mvc.perform(mutation(patch(BASE+"/"+id),o).content("{\"revision\":2,\"description\":\"changed\",\"scope\":\"unity\"}"))
+        mvc.perform(mutation(patch(BASE+"/"+id),o).content("{\"revision\":2,\"description\":\"changed\",\"projectId\":null}"))
             .andExpect(status().isOk()).andExpect(jsonPath("$.item.position").value(1)).andExpect(jsonPath("$.item.revision").value(3)).andExpect(jsonPath("$.collectionRevision").value(4));
         mvc.perform(mutation(delete(BASE+"/"+id),o).param("revision","2")).andExpect(status().isConflict());
         var deleted=mvc.perform(mutation(delete(BASE+"/"+id),o).param("revision","3")).andExpect(status().isOk()).andExpect(jsonPath("$.collectionRevision").value(5)).andReturn();
@@ -107,11 +107,11 @@ class LinkApiTests {
         mvc.perform(mutation(post(BASE),o).content(body())).andExpect(status().isBadRequest());
     }
     @Test
-    void fullFilteredCollectionsIncludeCommonAndLiteralUrlSearch() throws Exception {
+    void fullUnlinkedCollectionsAndLiteralUrlSearch() throws Exception {
         var o=owner();create(o,"{\"label\":\"Common\",\"url\":\"https://example.com/a_%25!\",\"description\":\"Needle\"}");
-        create(o,"{\"label\":\"Unity\",\"url\":\"https://example.com\",\"scope\":\"unity\"}");create(o,"{\"label\":\"Server\",\"url\":\"https://example.com\",\"scope\":\"server\"}");
+        create(o,"{\"label\":\"First\",\"url\":\"https://example.com\"}");create(o,"{\"label\":\"Second\",\"url\":\"https://example.com\"}");
         assertEquals(3,read(o,BASE,Map.of()).get("total").asInt());
-        for(String scope:List.of("unity","server"))assertEquals(2,read(o,BASE,Map.of("scope",scope)).get("total").asInt());
+        assertEquals(3,read(o,BASE,Map.of("category","uncategorized")).get("total").asInt());assertEquals(0,read(o,BASE,Map.of("projectStatus","active")).get("total").asInt());
         for(String query:List.of("NEEDLE","common","a_%25!","%","_","!")){var r=read(o,BASE,Map.of("query",query));assertEquals(1,r.get("total").asInt(),query);assertEquals(3,r.get("collectionRevision").asInt());assertTrue(r.get("nextCursor").isNull());}
         var empty=read(o,BASE,Map.of("query","absent"));assertEquals(0,empty.get("total").asInt());assertEquals(3,empty.get("collectionRevision").asInt());
     }
@@ -138,17 +138,18 @@ class LinkApiTests {
     @Test
     void maximumCollectionIsReturnedWithoutTruncationAndWithinResponseBound() throws Exception {
         var o=owner();jdbc.update("insert into link_collections(workspace_id,revision) values(?,500)",o.workspace());
+        UUID project=UUID.randomUUID();jdbc.update("insert into projects(id,workspace_id,name,stack,created_at,updated_at) values(?,?,?,'Java',now(),now())",project,o.workspace(),"X"+"\u0001".repeat(98)+"X");
         String label="X"+"\u0001".repeat(98)+"X",description="\u0001".repeat(300),url="https://example.com/"+"x".repeat(2000-"https://example.com/".length());
-        var legal=new com.kopite.devspace.link.domain.LinkValues(label,description,url,"all");assertEquals(100,legal.label().length());assertEquals(300,legal.description().length());assertEquals(2000,legal.url().length());
-        jdbc.batchUpdate("insert into links(id,workspace_id,label,description,url,scope,position,revision,created_at,updated_at) values(?,?,?,?,?,'all',?,9007199254740991,now(),now())",new org.springframework.jdbc.core.BatchPreparedStatementSetter(){
+        var legal=new com.kopite.devspace.link.domain.LinkValues(label,description,url, null);assertEquals(100,legal.label().length());assertEquals(300,legal.description().length());assertEquals(2000,legal.url().length());
+        jdbc.batchUpdate("insert into links(id,workspace_id,label,description,url,position,revision,created_at,updated_at,project_id) values(?,?,?,?,?,?,9007199254740991,now(),now(),?)",new org.springframework.jdbc.core.BatchPreparedStatementSetter(){
             public int getBatchSize(){return 500;}
-            public void setValues(java.sql.PreparedStatement s,int i)throws java.sql.SQLException{s.setObject(1,UUID.randomUUID());s.setObject(2,o.workspace());s.setString(3,label);s.setString(4,description);s.setString(5,url);s.setLong(6,i);}
+            public void setValues(java.sql.PreparedStatement s,int i)throws java.sql.SQLException{s.setObject(1,UUID.randomUUID());s.setObject(2,o.workspace());s.setString(3,label);s.setString(4,description);s.setString(5,url);s.setLong(6,i);s.setObject(7,project);}
         });
         var response=mvc.perform(get(BASE).session(o.session())).andExpect(status().isOk()).andReturn().getResponse();
         var value=json.readTree(response.getContentAsString());assertEquals(500,value.get("items").size());assertEquals(500,value.get("total").asInt());assertTrue(value.get("nextCursor").isNull());
         assertTrue(response.getContentAsByteArray().length<8*1024*1024);
         // Conservative serialization proof: six bytes per UTF-16 code unit, plus 1024 bytes of fixed fields/JSON overhead per item.
-        assertTrue(500L*((100+300+2000)*6+1024)+1024<8L*1024*1024);
+        assertTrue(500L*((100+300+2000+100)*6+1024)+1024<8L*1024*1024);
         mvc.perform(mutation(post(BASE),o).header("Idempotency-Key","over-limit").content(body())).andExpect(status().isTooManyRequests()).andExpect(jsonPath("$.code").value("QUOTA_EXCEEDED"));
         var output=java.nio.file.Path.of("build/reports/link-api/query-plan.txt");java.nio.file.Files.createDirectories(output.getParent());
         java.nio.file.Files.writeString(output,String.join("\n",jdbc.queryForList("explain select id from links where workspace_id=? order by position,id",String.class,o.workspace())));

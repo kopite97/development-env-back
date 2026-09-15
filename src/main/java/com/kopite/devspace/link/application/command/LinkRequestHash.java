@@ -12,8 +12,8 @@ final class LinkRequestHash {
         try {
             var bytes = new ByteArrayOutputStream();
             var output = new DataOutputStream(bytes);
-            output.writeInt(1);
-            for (Object value : new Object[]{command.label(), command.description(), command.url(), command.scope()}) {
+            output.writeInt(2);
+            for (Object value : new Object[]{command.label(), command.description(), command.url()}) {
                 if (value == null) output.writeInt(-1);
                 else {
                     byte[] field = value.toString().getBytes(StandardCharsets.UTF_8);
@@ -21,6 +21,9 @@ final class LinkRequestHash {
                     output.write(field);
                 }
             }
+            output.writeBoolean(command.project().present());
+            if(command.project().rawValue()==null)output.writeInt(-1);
+            else {byte[] id=command.project().rawValue().getBytes(StandardCharsets.UTF_8);output.writeInt(id.length);output.write(id);}
             return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes.toByteArray()));
         } catch (IOException | NoSuchAlgorithmException impossible) {
             throw new IllegalStateException("Cannot fingerprint link request", impossible);

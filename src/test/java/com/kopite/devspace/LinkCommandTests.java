@@ -47,15 +47,19 @@ class LinkCommandTests {
             PlatformTransactionManager manager,EntityManager em) {
         this.commands=commands;this.users=users;this.jdbc=jdbc;this.tx=new TransactionTemplate(manager);this.em=em;
     }
+    private void assertReplay(LinkMutation expected,LinkMutation actual) {
+        assertEquals(com.kopite.devspace.link.presentation.dto.LinkMutationResponse.from(expected),com.kopite.devspace.link.presentation.dto.LinkMutationResponse.from(actual));
+        assertNull(actual.dataRevision());
+    }
     private UUID owner() { return users.createOrReuse("link-command",UUID.randomUUID().toString(),"Owner").user().getId(); }
     private UUID workspace(UUID user) { return jdbc.queryForObject("select id from workspaces where owner_user_id=?",UUID.class,user); }
-    private CreateLinkCommand input() { return new CreateLinkCommand("Link",null,"https://example.com",null); }
+    private CreateLinkCommand input() { return new CreateLinkCommand("Link",null,"https://example.com", com.kopite.devspace.link.application.command.LinkProjectSelection.omitted()); }
     private LinkMutation create(UUID u) { return commands.create(u,UUID.randomUUID().toString(),input()); }
     private long counter(UUID u) { return jdbc.queryForObject("select data_revision from workspaces where owner_user_id=?",Long.class,u); }
     private long revision(UUID u) { return jdbc.queryForObject("select revision from link_collections where workspace_id=?",Long.class,workspace(u)); }
     private long count(UUID u) { return jdbc.queryForObject("select count(*) from links where workspace_id=?",Long.class,workspace(u)); }
     private List<String> state(UUID u) { return jdbc.queryForList("select row_to_json(l)::text from links l where workspace_id=? order by id",String.class,workspace(u)); }
-    private UpdateLinkCommand edit(long r) { return new UpdateLinkCommand(r,"Edited",null,null,"unity"); }
+    private UpdateLinkCommand edit(long r) { return new UpdateLinkCommand(r,"Edited",null,null, com.kopite.devspace.link.application.command.LinkProjectSelection.omitted()); }
 
     @Test
     void ownershipGapsNoopsRevisionsAndHistoricReplay() {
@@ -77,11 +81,11 @@ class LinkCommandTests {
         assertEquals(updated.item(),reordered.items().getFirst());assertEquals(2,reordered.items().getLast().revision());
         var noOp=commands.reorder(u,6,List.of(a.item().id(),c.item().id()));assertEquals(reordered.items(),noOp.items());
         assertEquals(7,noOp.collectionRevision());
-        assertEquals(a,commands.create(u,"same",input()));
-        assertThrows(LinkConflictException.class,()->commands.create(u,"same",new CreateLinkCommand("Link","","https://example.com",null)));
-        assertThrows(LinkConflictException.class,()->commands.create(u,"same",new CreateLinkCommand("Link",null,"https://example.com","all")));
-        assertThrows(LinkConflictException.class,()->commands.create(u,"same",new CreateLinkCommand(" Link ",null,"https://example.com",null)));
-        commands.delete(u,a.item().id(),2);assertEquals(a,commands.create(u,"same",input()));assertEquals(8,counter(u));assertEquals(8,revision(u));
+        assertReplay(a,commands.create(u,"same",input()));
+        assertThrows(LinkConflictException.class,()->commands.create(u,"same",new CreateLinkCommand("Link","","https://example.com", com.kopite.devspace.link.application.command.LinkProjectSelection.omitted())));
+        assertThrows(LinkConflictException.class,()->commands.create(u,"same",new CreateLinkCommand("Link",null,"https://example.com", new com.kopite.devspace.link.application.command.LinkProjectSelection(true,null))));
+        assertThrows(LinkConflictException.class,()->commands.create(u,"same",new CreateLinkCommand(" Link ",null,"https://example.com", com.kopite.devspace.link.application.command.LinkProjectSelection.omitted())));
+        commands.delete(u,a.item().id(),2);assertReplay(a,commands.create(u,"same",input()));assertEquals(8,counter(u));assertEquals(8,revision(u));
         assertThrows(LinkNotFoundException.class,()->commands.delete(u,a.item().id(),2));
         assertThrows(LinkNotFoundException.class,()->commands.update(u,a.item().id(),edit(2)));
         assertEquals(1,count(u));assertEquals(1L,jdbc.queryForObject("select revision from workspaces where owner_user_id=?",Long.class,u));
@@ -96,7 +100,7 @@ class LinkCommandTests {
     void quotaAndOverflowLeaveNoPartialChanges() {
         UUID u=owner();var a=commands.create(u,"same",input());
         doReturn(1).when(limits).getMaxLinks();
-        assertThrows(LinkQuotaException.class,()->create(u));assertEquals(a,commands.create(u,"same",input()));
+        assertThrows(LinkQuotaException.class,()->create(u));assertReplay(a,commands.create(u,"same",input()));
         assertEquals(1,count(u));assertEquals(1,revision(u));
         commands.update(u,a.item().id(),edit(1));commands.reorder(u,2,List.of(a.item().id()));
         jdbc.update("update links set revision=? where id=?",Link.MAX_REVISION,a.item().id());
@@ -130,9 +134,9 @@ class LinkCommandTests {
     @RepeatedTest(5)
     void concurrentCommandsConvergeOnValidRowsAndExactCounters() throws Exception {
         UUID u=owner();var same=race(()->commands.create(u,"same",input()),()->commands.create(u,"same",input()));
-        assertEquals(same.getFirst(),same.getLast());assertInstanceOf(LinkMutation.class,same.getFirst());assertEquals(1,count(u));assertEquals(1,revision(u));
+        assertInstanceOf(LinkMutation.class,same.getFirst());assertInstanceOf(LinkMutation.class,same.getLast());assertEquals(com.kopite.devspace.link.presentation.dto.LinkMutationResponse.from((LinkMutation)same.getFirst()),com.kopite.devspace.link.presentation.dto.LinkMutationResponse.from((LinkMutation)same.getLast()));assertEquals(1,count(u));assertEquals(1,revision(u));
         var a=((LinkMutation)same.getFirst()).item();
-        var conflict=race(()->commands.create(u,"different",input()),()->commands.create(u,"different",new CreateLinkCommand("Other",null,"https://example.com",null)));
+        var conflict=race(()->commands.create(u,"different",input()),()->commands.create(u,"different",new CreateLinkCommand("Other",null,"https://example.com", com.kopite.devspace.link.application.command.LinkProjectSelection.omitted())));
         assertEquals(1,conflict.stream().filter(LinkMutation.class::isInstance).count());assertEquals(1,conflict.stream().filter(LinkConflictException.class::isInstance).count());
         var b=((LinkMutation)conflict.stream().filter(LinkMutation.class::isInstance).findFirst().orElseThrow()).item();
         var orders=race(()->commands.reorder(u,2,List.of(b.id(),a.id())),()->commands.reorder(u,2,List.of(a.id(),b.id())));

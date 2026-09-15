@@ -40,7 +40,7 @@ class MilestoneQueryTests {
     @Test void countAndRowsShareSnapshotDespiteConcurrentCommit() throws Exception {
         var owner=users.createOrReuse("milestone-query",UUID.randomUUID().toString(),"Owner");
         UUID user=owner.user().getId();
-        var project=projects.create(user,UUID.randomUUID().toString(),new CreateProjectCommand("Project",null,"server","Java",null,null,null));
+        var project=projects.create(user,UUID.randomUUID().toString(),new CreateProjectCommand("Project",null,"Java",null,null,null));
         var input=new CreateMilestoneCommand("Milestone",project.id(),"2024-02-29",false,true);
         commands.create(user,UUID.randomUUID().toString(),input);
         var injected=new AtomicBoolean();
@@ -57,14 +57,14 @@ class MilestoneQueryTests {
     }
     @Test void projectingMoreProjectsDoesNotAddPerRowQueries() {
         var owner=users.createOrReuse("milestone-query",UUID.randomUUID().toString(),"Owner"); UUID user=owner.user().getId();
-        var project=projects.create(user,UUID.randomUUID().toString(),new CreateProjectCommand("Project",null,"server","Java",null,null,null));
+        var project=projects.create(user,UUID.randomUUID().toString(),new CreateProjectCommand("Project",null,"Java",null,null,null));
         commands.create(user,UUID.randomUUID().toString(),new CreateMilestoneCommand("Milestone",project.id(),"2024-02-29",false,true));
         var stats=factory.unwrap(SessionFactory.class).getStatistics(); boolean enabled=stats.isStatisticsEnabled();
         stats.setStatisticsEnabled(true);
         try {
             stats.clear(); assertEquals(1,queries.list(user,filter,null).items().size()); long single=stats.getPrepareStatementCount();
             for(int i=0;i<5;i++) {
-                var target=projects.create(user,UUID.randomUUID().toString(),new CreateProjectCommand("Project"+i,null,"server","Java",null,null,null));
+                var target=projects.create(user,UUID.randomUUID().toString(),new CreateProjectCommand("Project"+i,null,"Java",null,null,null));
                 commands.create(user,UUID.randomUUID().toString(),new CreateMilestoneCommand("Milestone",target.id(),"2024-02-29",false,true));
             }
             stats.clear(); assertEquals(6,queries.list(user,filter,null).items().size()); assertEquals(single,stats.getPrepareStatementCount());

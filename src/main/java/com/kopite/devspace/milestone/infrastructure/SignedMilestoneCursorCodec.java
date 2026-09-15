@@ -25,7 +25,7 @@ public class SignedMilestoneCursorCodec implements MilestoneCursorCodec {
     }
 
     @Override public String encode(UUID workspace, MilestoneListFilter filter, MilestoneCursor position) {
-        String payload = "v1." + Base64.getUrlEncoder().withoutPadding().encodeToString(
+        String payload = "v2." + Base64.getUrlEncoder().withoutPadding().encodeToString(
                 ((position.completed()?"1":"0") + "/" + (position.dueDate()==null?"null":position.dueDate()) + "/" + position.id()).getBytes(StandardCharsets.UTF_8));
         return payload + "." + Base64.getUrlEncoder().withoutPadding().encodeToString(sign(workspace, filter, payload));
     }
@@ -34,7 +34,7 @@ public class SignedMilestoneCursorCodec implements MilestoneCursorCodec {
         try {
             if (cursor.length() > 512) throw new InvalidMilestoneCursorException();
             String[] parts = cursor.split("\\.", -1);
-            if (parts.length != 3 || !parts[0].equals("v1")) throw new InvalidMilestoneCursorException();
+            if (parts.length != 3 || !parts[0].equals("v2")) throw new InvalidMilestoneCursorException();
             byte[] supplied = Base64.getUrlDecoder().decode(parts[2]);
             if (!MessageDigest.isEqual(sign(workspace, filter, parts[0] + "." + parts[1]), supplied)) throw new InvalidMilestoneCursorException();
             String[] position = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8).split("/", -1);
@@ -53,7 +53,7 @@ public class SignedMilestoneCursorCodec implements MilestoneCursorCodec {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(signingKey, "HmacSHA256"));
             // All context fields have fixed UUID, enum or integer syntax.
-            String bound = "milestones:"+workspace+":"+filter.scope()+":"+filter.projectId()+":"+filter.projectStatus()+":"+filter.status()+":"+filter.limit()
+            String bound = "milestones:"+workspace+":"+filter.category()+":"+filter.projectId()+":"+filter.projectStatus()+":"+filter.status()+":"+filter.limit()
                 +":completed-asc,dueDate-asc-nulls-last,id-asc:"+payload;
             return mac.doFinal(bound.getBytes(StandardCharsets.UTF_8));
         } catch (GeneralSecurityException impossible) { throw new IllegalStateException("Cannot sign milestone cursor", impossible); }

@@ -1,10 +1,10 @@
 package com.kopite.devspace.task.application.query;
 import com.kopite.devspace.task.domain.TaskValidationException;
 import java.util.UUID;
-public record TaskListFilter(String scope, UUID projectId, String projectStatus, String query,
+public record TaskListFilter(String category, UUID projectId, String projectStatus, String query,
                              String status, boolean deleted, int limit) {
     public TaskListFilter {
-        if (!"all".equals(scope) && !"unity".equals(scope) && !"server".equals(scope)) invalid("scope");
+        category = com.kopite.devspace.projectcategory.application.CategoryFilter.normalize(category);
         if (!"all".equals(projectStatus) && !"active".equals(projectStatus) && !"archived".equals(projectStatus)) invalid("projectStatus");
         if (status != null && !"todo".equals(status) && !"doing".equals(status) && !"done".equals(status)) invalid("status");
         if (query == null) invalid("query");

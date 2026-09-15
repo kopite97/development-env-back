@@ -130,7 +130,7 @@ class JournalPersistenceTests {
         jdbc.update("insert into "+schema+".tasks(id,workspace_id,project_id,title,created_at,updated_at) values(?,?,?,'Existing',now(),now())",UUID.randomUUID(),workspace,project);
         var before=jdbc.queryForMap("select * from "+schema+".tasks");
         var checksums=jdbc.queryForList("select version,checksum from "+schema+".flyway_schema_history where version is not null order by version");
-        var upgraded=Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema).locations("classpath:db/migration").load();
+        var upgraded=Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema).locations("classpath:db/migration").target("14").load();
         upgraded.migrate(); upgraded.validate();
         assertEquals(before,jdbc.queryForMap("select * from "+schema+".tasks"));
         assertEquals(42L,jdbc.queryForObject("select data_revision from "+schema+".workspaces",Long.class));

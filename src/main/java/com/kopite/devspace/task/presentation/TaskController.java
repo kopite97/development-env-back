@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value="/api/v1/tasks",produces="application/json")
+@RequestMapping(value="/api/v2/tasks",produces="application/json")
 @RequiredArgsConstructor
 @Tag(name="Tasks")
 @SecurityRequirement(name="sessionCookie")
@@ -55,7 +55,8 @@ public class TaskController {
     public ResponseEntity<TaskResponse> create(Authentication auth,
         @RequestHeader("Idempotency-Key") @Parameter(schema=@Schema(minLength=1,maxLength=128,pattern="[!-~]+")) String key,
         @Valid @RequestBody CreateTaskRequest request) {
-        return ResponseEntity.status(201).cacheControl(CacheControl.noStore()).body(TaskResponse.from(commands.create(user(auth),key,request.command())));
+        var result=commands.create(user(auth),key,request.command());
+        return com.kopite.devspace.global.response.WorkspaceResponses.created(TaskResponse.from(result),result.dataRevision());
     }
 
     @GetMapping("/{id}")
@@ -63,7 +64,8 @@ public class TaskController {
     @ApiResponse(responseCode="200",description="Full owned Task including trash",content=@Content(schema=@Schema(implementation=TaskResponse.class)))
     @Operation(summary="Read an owned Task including trash")
     public ResponseEntity<TaskResponse> get(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id) {
-        return ok(TaskResponse.from(queries.get(user(auth),id(id))));
+        var result=queries.get(user(auth),id(id));
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(TaskResponse.from(result),result.dataRevision());
     }
 
     @PatchMapping(value="/{id}",consumes="application/json")
@@ -73,7 +75,8 @@ public class TaskController {
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
     @ApiResponse(responseCode="409",description="REVISION_CONFLICT, PROJECT_ARCHIVED or RESOURCE_DELETED",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<TaskResponse> update(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,@Valid @RequestBody UpdateTaskRequest request) {
-        return ok(TaskResponse.from(commands.update(user(auth),id(id),request.command())));
+        var result=commands.update(user(auth),id(id),request.command());
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(TaskResponse.from(result),result.dataRevision());
     }
 
     @DeleteMapping("/{id}")
@@ -84,7 +87,8 @@ public class TaskController {
     @ApiResponse(responseCode="409",description="REVISION_CONFLICT or INVALID_RESOURCE_STATE",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<TaskResponse> delete(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,
         @RequestParam @Parameter(schema=@Schema(type="integer",minimum="1",maximum="9007199254740991")) long revision) {
-        return ok(TaskResponse.from(commands.delete(user(auth),id(id),revision)));
+        var result=commands.delete(user(auth),id(id),revision);
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(TaskResponse.from(result),result.dataRevision());
     }
 
     @PostMapping(value="/{id}/restore",consumes="application/json")
@@ -94,7 +98,8 @@ public class TaskController {
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
     @ApiResponse(responseCode="409",description="REVISION_CONFLICT or INVALID_RESOURCE_STATE",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<TaskResponse> restore(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,@Valid @RequestBody RestoreTaskRequest request) {
-        return ok(TaskResponse.from(commands.restore(user(auth),id(id),request.revision())));
+        var result=commands.restore(user(auth),id(id),request.revision());
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(TaskResponse.from(result),result.dataRevision());
     }
 
     @GetMapping
@@ -102,16 +107,18 @@ public class TaskController {
     @Operation(summary="List owned Tasks",description="createdAt DESC, id DESC. Literal title/Project-name search. deleted=true selects only trash. Cursor binds workspace, all filters and limit; no cross-page snapshot guarantee.")
     @ApiResponse(responseCode="400",description="VALIDATION_ERROR or INVALID_CURSOR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<TaskListResponse> list(Authentication auth,
-        @RequestParam(defaultValue="all") @Parameter(schema=@Schema(allowableValues={"all","unity","server"},defaultValue="all")) String scope,
+        @RequestParam(defaultValue="all") @Parameter(schema=@Schema(pattern="all|uncategorized|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",defaultValue="all")) String category,
         @RequestParam(required=false) @Parameter(schema=@Schema(format="uuid")) String projectId,
         @RequestParam(defaultValue="all") @Parameter(schema=@Schema(allowableValues={"all","active","archived"},defaultValue="all")) String projectStatus,
         @RequestParam(defaultValue="") String query,
         @RequestParam(required=false) @Parameter(schema=@Schema(allowableValues={"todo","doing","done"})) String status,
         @RequestParam(defaultValue="false") @Parameter(schema=@Schema(type="boolean",defaultValue="false")) String deleted,
         @RequestParam(defaultValue="20") @Parameter(schema=@Schema(type="integer",minimum="1",maximum="100",defaultValue="20")) int limit,
-        @RequestParam(required=false) String cursor) {
-        var request=new TaskListRequest(scope,projectId,projectStatus,query,status,deleted,limit,cursor);
-        return ok(TaskListResponse.from(queries.list(user(auth),request.filter(),cursor)));
+        @RequestParam(required=false) String cursor, jakarta.servlet.http.HttpServletRequest http) {
+        validateQuery(http);
+        var request=new TaskListRequest(category,projectId,projectStatus,query,status,deleted,limit,cursor);
+        var result=queries.list(user(auth),request.filter(),cursor);
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(TaskListResponse.from(result),result.dataRevision());
     }
 
     @GetMapping("/stats")
@@ -119,15 +126,22 @@ public class TaskController {
     @ApiResponse(responseCode="200",description="Undeleted counts in one read snapshot",content=@Content(schema=@Schema(implementation=TaskStatsResponse.class)))
     @Operation(summary="Count undeleted Tasks by status",description="All three status keys are always returned. Archived Projects are included by default. status/deleted parameters are rejected.")
     public ResponseEntity<TaskStatsResponse> stats(Authentication auth,
-        @RequestParam(defaultValue="all") @Parameter(schema=@Schema(allowableValues={"all","unity","server"},defaultValue="all")) String scope,
+        @RequestParam(defaultValue="all") @Parameter(schema=@Schema(pattern="all|uncategorized|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",defaultValue="all")) String category,
         @RequestParam(required=false) @Parameter(schema=@Schema(format="uuid")) String projectId,
         @RequestParam(defaultValue="all") @Parameter(schema=@Schema(allowableValues={"all","active","archived"},defaultValue="all")) String projectStatus,
         @RequestParam(defaultValue="") String query,
-        @Parameter(hidden=true) @RequestParam java.util.Map<String,String> parameters) {
+        @Parameter(hidden=true) @RequestParam org.springframework.util.MultiValueMap<String,String> parameters) {
         for(String field:parameters.keySet())
-            if(!java.util.Set.of("scope","projectId","projectStatus","query").contains(field))
+            if(!java.util.Set.of("category","projectId","projectStatus","query").contains(field) || parameters.get(field).size()!=1 || (field.equals("category") && parameters.getFirst(field).isEmpty()))
                 throw new TaskValidationException(field,"not supported by Task stats");
-        return ok(TaskStatsResponse.from(queries.stats(user(auth),new TaskStatsRequest(scope,projectId,projectStatus,query).filter())));
+        var result=queries.stats(user(auth),new TaskStatsRequest(category,projectId,projectStatus,query).filter());
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(TaskStatsResponse.from(result),result.dataRevision());
+    }
+    private void validateQuery(jakarta.servlet.http.HttpServletRequest request) {
+        request.getParameterMap().forEach((name,values)->{
+            if(!java.util.Set.of("category","projectId","projectStatus","query","limit","cursor","status","deleted").contains(name)||values.length!=1 || (name.equals("category") && values[0].isEmpty()))
+                throw new TaskValidationException(name,"invalid query parameter");
+        });
     }
     private UUID user(Authentication auth) { return ((InternalUserPrincipal)auth.getPrincipal()).userId(); }
     private UUID id(String value) { return TaskRequestFields.uuid(value,"id"); }

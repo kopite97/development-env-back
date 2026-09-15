@@ -25,7 +25,7 @@ public class SignedTaskCursorCodec implements TaskCursorCodec {
     }
 
     @Override public String encode(UUID workspace, TaskListFilter filter, TaskCursor position) {
-        String payload = "v1." + Base64.getUrlEncoder().withoutPadding().encodeToString(
+        String payload = "v2." + Base64.getUrlEncoder().withoutPadding().encodeToString(
                 (position.createdAt() + "/" + position.id()).getBytes(StandardCharsets.UTF_8));
         return payload + "." + Base64.getUrlEncoder().withoutPadding().encodeToString(sign(workspace, filter, payload));
     }
@@ -34,7 +34,7 @@ public class SignedTaskCursorCodec implements TaskCursorCodec {
         try {
             if (cursor.length() > 512) throw new InvalidTaskCursorException();
             String[] parts = cursor.split("\\.", -1);
-            if (parts.length != 3 || !parts[0].equals("v1")) throw new InvalidTaskCursorException();
+            if (parts.length != 3 || !parts[0].equals("v2")) throw new InvalidTaskCursorException();
             byte[] supplied = Base64.getUrlDecoder().decode(parts[2]);
             if (!MessageDigest.isEqual(sign(workspace, filter, parts[0] + "." + parts[1]), supplied)) throw new InvalidTaskCursorException();
             String[] position = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8).split("/", -1);
@@ -52,7 +52,7 @@ public class SignedTaskCursorCodec implements TaskCursorCodec {
             Mac mac = Mac.getInstance("HmacSHA256");
             mac.init(new SecretKeySpec(signingKey, "HmacSHA256"));
             // All context fields before query have fixed/enum syntax; query is length-prefixed to avoid ambiguous framing.
-            String bound = "tasks:" + workspace + ":" + filter.scope() + ":" + filter.projectId() + ":" + filter.projectStatus() + ":" + filter.deleted() + ":" + filter.status() + ":" + filter.limit()
+            String bound = "tasks:" + workspace + ":" + filter.category() + ":" + filter.projectId() + ":" + filter.projectStatus() + ":" + filter.deleted() + ":" + filter.status() + ":" + filter.limit()
                     + ":createdAt-desc,id-desc:" + filter.query().length() + ":" + filter.query() + ":" + payload;
             return mac.doFinal(bound.getBytes(StandardCharsets.UTF_8));
         } catch (GeneralSecurityException impossible) { throw new IllegalStateException("Cannot sign project cursor", impossible); }

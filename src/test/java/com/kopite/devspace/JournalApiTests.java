@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestcontainersConfiguration.class)
 @AutoConfigureMockMvc
 class JournalApiTests {
-    private static final String BASE="/api/v1/journals";
+    private static final String BASE="/api/v2/journals";
     private final MockMvc mvc;
     private final UserWorkspaceCreationService users;
     private final JdbcTemplate jdbc;
@@ -48,9 +48,13 @@ class JournalApiTests {
     private MockHttpServletRequestBuilder mutation(MockHttpServletRequestBuilder request,Owner owner) {
         return request.session(owner.session()).contentType("application/json").header("X-CSRF-Token",owner.csrf());
     }
+    private final Map<UUID,UUID> categoryIds=new java.util.HashMap<>();
+    private String category(Owner owner) {
+        return categoryIds.computeIfAbsent(owner.workspace(),workspace->{UUID id=UUID.randomUUID();jdbc.update("insert into project_categories(id,workspace_id,name,created_at,updated_at) values(?,?,'Selected Category',now(),now())",id,workspace);return id;}).toString();
+    }
     private String project(Owner owner) throws Exception {
-        return json.readTree(mvc.perform(mutation(post("/api/v1/projects"),owner).header("Idempotency-Key",UUID.randomUUID().toString())
-            .content("{\"name\":\"Project\",\"scope\":\"server\",\"stack\":\"Java\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("id").asString();
+        return json.readTree(mvc.perform(mutation(post("/api/v2/projects"),owner).header("Idempotency-Key",UUID.randomUUID().toString())
+            .content("{\"name\":\"Project\",\"stack\":\"Java\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("id").asString();
     }
     private String body(String project) { return "{\"title\":\" Journal \",\"projectId\":\""+project+"\",\"body\":\" kept \\n body \",\"entryDate\":\"2024-02-29\"}"; }
     private JsonNode create(Owner owner,String body) throws Exception {
@@ -77,12 +81,12 @@ class JournalApiTests {
             .andExpect(status().isOk()).andExpect(jsonPath("$.revision").value(2)).andExpect(jsonPath("$.entryDate").value("2025-01-01"));
         mvc.perform(mutation(patch(path),owner).content("{\"revision\":1}"))
             .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("REVISION_CONFLICT"));
-        mvc.perform(mutation(patch("/api/v1/projects/"+project),owner).content("{\"revision\":1,\"name\":\"Renamed%_!\",\"scope\":\"unity\",\"status\":\"archived\"}"))
+        mvc.perform(mutation(patch("/api/v2/projects/"+project),owner).content("{\"revision\":1,\"name\":\"Renamed%_!\",\"categoryId\":\""+category(owner)+"\",\"status\":\"archived\"}"))
             .andExpect(status().isOk());
         var detail=read(owner,path,Map.of());
-        assertEquals("Renamed%_!",detail.get("projectName").asString()); assertEquals("unity",detail.get("scope").asString());
+        assertEquals("Renamed%_!",detail.get("projectName").asString()); assertEquals(category(owner),detail.get("categoryId").asString());assertFalse(detail.has("scope"));
         assertEquals(journal.get("createdAt"),detail.get("createdAt")); assertEquals(2,detail.get("revision").asInt());
-        assertEquals(1,read(owner,BASE,Map.of("query","%_!","scope","unity","projectStatus","archived")).get("total").asInt());
+        assertEquals(1,read(owner,BASE,Map.of("query","%_!","category",category(owner),"projectStatus","archived")).get("total").asInt());
         assertEquals(0,read(owner,BASE,Map.of("projectStatus","active")).get("total").asInt());
         mvc.perform(mutation(patch(path),owner).content("{\"revision\":2}"))
             .andExpect(status().isOk()).andExpect(jsonPath("$.revision").value(3));
@@ -145,7 +149,7 @@ class JournalApiTests {
             mvc.perform(mutation(delete(BASE+"/"+id),other).param("revision","99")).andExpect(status().isNotFound());
         }
         assertEquals(0,read(other,BASE,Map.of("query","Journal")).get("total").asInt());
-        mvc.perform(get(BASE).session(other.session()).param("projectId",project).param("scope","unity")).andExpect(status().isNotFound());
+        mvc.perform(get(BASE).session(other.session()).param("projectId",project).param("category",category(owner))).andExpect(status().isNotFound());
         mvc.perform(mutation(post(BASE),other).header("Idempotency-Key","foreign").content(body(project))).andExpect(status().isNotFound());
         String key=UUID.randomUUID().toString();
         var original=mvc.perform(mutation(post(BASE),owner).header("Idempotency-Key",key).content(body(project))).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
@@ -184,7 +188,7 @@ class JournalApiTests {
         assertEquals(7,read(owner,BASE,Map.of("query","%_! needle")).get("total").asInt());
         assertEquals(0,read(owner,BASE,Map.of("query","not present")).get("total").asInt());
         String cursor=read(owner,BASE,Map.of("limit","2")).get("nextCursor").asString();
-        for(var entry:Map.of("scope","unity","projectId",project,"projectStatus","active","from","2024-02-29","to","2024-03-01","sort","oldest","query","Tied","limit","3").entrySet()) {
+        for(var entry:Map.of("category",category(owner),"projectId",project,"projectStatus","active","from","2024-02-29","to","2024-03-01","sort","oldest","query","Tied","limit","3").entrySet()) {
             var request=get(BASE).session(owner.session()).param("limit","2").param("cursor",cursor);
             if(entry.getKey().equals("limit")) request=get(BASE).session(owner.session()).param("cursor",cursor);
             mvc.perform(request.param(entry.getKey(),entry.getValue())).andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("INVALID_CURSOR"));
@@ -192,7 +196,7 @@ class JournalApiTests {
         for(String invalid:List.of(cursor+"x","","junk")) mvc.perform(get(BASE).session(owner.session()).param("limit","2").param("cursor",invalid)).andExpect(status().isBadRequest());
         var other=owner();
         mvc.perform(get(BASE).session(other.session()).param("limit","2").param("cursor",cursor)).andExpect(status().isBadRequest());
-        for(String resource:List.of("projects","tasks")) mvc.perform(get("/api/v1/"+resource).session(owner.session()).param("limit","2").param("cursor",cursor)).andExpect(status().isBadRequest());
-        assertEquals(0,read(owner,BASE,Map.of("projectId",project,"scope","unity")).get("total").asInt());
+        for(String resource:List.of("projects","tasks")) mvc.perform(get("/api/v2/"+resource).session(owner.session()).param("limit","2").param("cursor",cursor)).andExpect(status().isBadRequest());
+        assertEquals(0,read(owner,BASE,Map.of("projectId",project,"category",category(owner))).get("total").asInt());
     }
 }

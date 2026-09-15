@@ -25,12 +25,11 @@ public class Project {
     private UUID id;
     @Column(nullable = false, updatable = false)
     private UUID workspaceId;
+    private UUID categoryId;
     @Column(nullable = false, columnDefinition = "text")
     private String name;
     @Column(nullable = false, columnDefinition = "text")
     private String subtitle;
-    @Column(nullable = false, columnDefinition = "text")
-    private String scope;
     @Column(nullable = false, columnDefinition = "text")
     private String stack;
     @Column(nullable = false, columnDefinition = "numeric")
@@ -81,18 +80,15 @@ public class Project {
     }
 
     public ProjectValues values() {
-        return new ProjectValues(name, subtitle, scope, stack, progress, currentMilestone, repositoryUrl);
+        return new ProjectValues(name, subtitle, stack, progress, currentMilestone, repositoryUrl, categoryId);
     }
 
-    public String colorToken() {
-        return scope;
-    }
 
     private void assign(ProjectValues values) {
         Objects.requireNonNull(values);
         name = values.name();
+        categoryId = values.categoryId();
         subtitle = values.subtitle();
-        scope = values.scope();
         stack = values.stack();
         progress = values.progress();
         currentMilestone = values.currentMilestone();

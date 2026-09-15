@@ -33,16 +33,16 @@ class MilestoneOpenApiTests {
         mvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());
         mvc.perform(get("/swagger-ui/swagger-ui-bundle.js")).andExpect(status().isOk());
         mvc.perform(get("/v3/api-docs/swagger-config")).andExpect(status().isOk());
-        mvc.perform(get("/api/v1/milestones")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/v2/milestones")).andExpect(status().isUnauthorized());
         String body=mvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         var output=Path.of("build/reports/milestone-api/openapi.json"); Files.createDirectories(output.getParent()); Files.writeString(output,body);
         var api=json.readTree(body); var paths=api.get("paths");
-        Map<String,Set<String>> methods=Map.of("/api/v1/milestones",Set.of("get","post"),"/api/v1/milestones/{id}",Set.of("get","patch","delete"));
+        Map<String,Set<String>> methods=Map.of("/api/v2/milestones",Set.of("get","post"),"/api/v2/milestones/{id}",Set.of("get","patch","delete"));
         for(var entry:methods.entrySet()) {
             assertEquals(entry.getValue(),paths.get(entry.getKey()).properties().stream().map(Map.Entry::getKey).collect(Collectors.toSet()));
             for(String method:entry.getValue()) {
                 var operation=paths.get(entry.getKey()).get(method);
-                String success=entry.getKey().equals("/api/v1/milestones")&&method.equals("post")?"201":"200";
+                String success=entry.getKey().equals("/api/v2/milestones")&&method.equals("post")?"201":"200";
                 assertTrue(operation.get("responses").has(success));
                 assertTrue(operation.get("security").valueStream().anyMatch(s->s.has("sessionCookie")));
                 for(String code:(method.equals("get") ? List.of("400","401","403","404","500") : List.of("400","401","403","404","409","500")))
@@ -51,20 +51,20 @@ class MilestoneOpenApiTests {
                 if(!method.equals("get")) assertTrue(parameter(operation,"X-CSRF-Token").get("required").asBoolean());
             }
         }
-        var create=paths.get("/api/v1/milestones").get("post");
+        var create=paths.get("/api/v2/milestones").get("post");
         assertFalse(create.get("responses").has("200"));
         assertTrue(parameter(create,"Idempotency-Key").get("required").asBoolean());
         assertEquals(128,parameter(create,"Idempotency-Key").get("schema").get("maxLength").asInt());
-        var delete=paths.get("/api/v1/milestones/{id}").get("delete");
+        var delete=paths.get("/api/v2/milestones/{id}").get("delete");
         assertTrue(parameter(delete,"revision").get("required").asBoolean());
         assertEquals("query",parameter(delete,"revision").get("in").asString());
-        var list=paths.get("/api/v1/milestones").get("get");
+        var list=paths.get("/api/v2/milestones").get("get");
         assertEquals("all",parameter(list,"projectStatus").get("schema").get("default").asString());
         assertEquals(20,parameter(list,"limit").get("schema").get("default").asInt());
         assertEquals(100,parameter(list,"limit").get("schema").get("maximum").asInt());
         assertEquals("open",parameter(list,"status").get("schema").get("default").asString());
         assertEquals(Set.of("open","done","all"),strings(parameter(list,"status").get("schema").get("enum")));
-        assertEquals(Set.of("scope","projectId","projectStatus","status","limit","cursor"),list.get("parameters").valueStream().map(p->p.get("name").asString()).collect(Collectors.toSet()));
+        assertEquals(Set.of("category","projectId","projectStatus","status","limit","cursor"),list.get("parameters").valueStream().map(p->p.get("name").asString()).collect(Collectors.toSet()));
         assertEquals(1,parameter(delete,"revision").get("schema").get("minimum").asLong());
         assertEquals(9007199254740991L,parameter(delete,"revision").get("schema").get("maximum").asLong());
         assertFalse(delete.has("requestBody"));
@@ -83,7 +83,7 @@ class MilestoneOpenApiTests {
             assertEquals(Set.of("title","projectId","dueDate","completed"),schema.get("properties").properties().stream().map(Map.Entry::getKey).filter(k->!k.equals("revision")).collect(Collectors.toSet()));
             assertEquals(Set.of("string","null"),strings(props.get("dueDate").get("type")));
             assertEquals("boolean",props.get("completed").get("type").asString());
-            for(String forbidden:List.of("status","progress","dueDatePresent","tags","workspaceId","projectName","scope","deletedAt","id")) assertFalse(props.has(forbidden));
+            for(String forbidden:List.of("status","progress","dueDatePresent","tags","workspaceId","projectName","categoryId","deletedAt","id")) assertFalse(props.has(forbidden));
         }
         assertEquals(Set.of("deletedId"),strings(schemas.get("DeleteMilestoneResponse").get("required")));
         var revision=schemas.get("UpdateMilestoneRequest").get("properties").get("revision");
@@ -91,14 +91,14 @@ class MilestoneOpenApiTests {
         assertFalse(request.get("properties").get("completed").get("default").asBoolean());
         assertFalse(schemas.get("UpdateMilestoneRequest").get("properties").get("completed").has("default"));
         var response=schemas.get("MilestoneResponse"); assertEquals(10,response.get("required").size());
-        for(String field:List.of("id","createdAt","updatedAt","projectName","scope"))
+        for(String field:List.of("id","createdAt","updatedAt","projectName","categoryId"))
             assertTrue(response.get("properties").get(field).get("readOnly").asBoolean());
         assertEquals("date",response.get("properties").get("dueDate").get("format").asString());
         assertEquals(Set.of("string","null"),strings(response.get("properties").get("dueDate").get("type")));
-        assertEquals(Set.of("id","revision","createdAt","updatedAt","projectId","projectName","scope","title","dueDate","completed"),strings(response.get("required")));
+        assertEquals(Set.of("id","revision","createdAt","updatedAt","projectId","projectName","categoryId","title","dueDate","completed"),strings(response.get("required")));
         assertEquals(Set.of("deletedId"),schemas.get("DeleteMilestoneResponse").get("properties").properties().stream().map(Map.Entry::getKey).collect(Collectors.toSet()));
         assertEquals("uuid",schemas.get("DeleteMilestoneResponse").get("properties").get("deletedId").get("format").asString());
-        assertEquals(2,paths.properties().stream().filter(p->p.getKey().startsWith("/api/v1/milestones")).count());
+        assertEquals(2,paths.properties().stream().filter(p->p.getKey().startsWith("/api/v2/milestones")).count());
         for(String audit:List.of("createdAt","updatedAt")) assertEquals("date-time",response.get("properties").get(audit).get("format").asString());
         assertEquals("#/components/schemas/MilestoneResponse",schemas.get("MilestoneListResponse").get("properties").get("items").get("items").get("$ref").asString());
         assertEquals(Set.of("items","total","nextCursor"),strings(schemas.get("MilestoneListResponse").get("required")));

@@ -155,10 +155,12 @@ class TaskPersistenceTests {
         var before = jdbc.queryForMap("select * from " + schema + ".projects");
         var checksums = jdbc.queryForList("select version,checksum from " + schema + ".flyway_schema_history where version is not null order by version");
         Flyway upgraded = Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema)
-                .locations("classpath:db/migration").load();
+                .locations("classpath:db/migration").target("14").load();
         upgraded.migrate();
         upgraded.validate();
-        assertEquals(before, jdbc.queryForMap("select * from " + schema + ".projects"));
+        var after=jdbc.queryForMap("select * from " + schema + ".projects");
+        assertTrue(after.containsKey("category_id"));assertNull(after.remove("category_id"));
+        assertEquals(before, after);
         assertEquals(42L, jdbc.queryForObject("select data_revision from " + schema + ".workspaces", Long.class));
         assertEquals(checksums, jdbc.queryForList("select version,checksum from " + schema + ".flyway_schema_history where version in ('1','2','3') order by version"));
         assertEquals(0L, jdbc.queryForObject("select count(*) from " + schema + ".tasks", Long.class));

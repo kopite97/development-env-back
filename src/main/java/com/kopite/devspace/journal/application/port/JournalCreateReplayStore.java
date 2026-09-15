@@ -4,7 +4,9 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 public interface JournalCreateReplayStore {
-    record Replay(String requestHash, JournalSnapshot result, Instant expiresAt) {}
+    record Replay(String requestHash, JournalSnapshot result, Instant expiresAt, boolean legacy) {
+        public Replay(String requestHash, JournalSnapshot result, Instant expiresAt) { this(requestHash,result,expiresAt,false); }
+    }
     Optional<Replay> find(UUID workspaceId, String key);
     void save(UUID workspaceId, String key, String requestHash, JournalSnapshot result, Instant now);
     void removeExpired(UUID workspaceId, Instant now);

@@ -49,10 +49,10 @@ class MilestoneCommandTests {
         this.transaction=new TransactionTemplate(manager); this.json=json;this.entityManager=entityManager;
     }
     private UUID owner() { return users.createOrReuse("milestone-command",UUID.randomUUID().toString(),"Owner").user().getId(); }
-    private UUID project(UUID owner) { return projects.create(owner,UUID.randomUUID().toString(),new CreateProjectCommand("Project",null,"server","Java",null,null,null)).id(); }
+    private UUID project(UUID owner) { return projects.create(owner,UUID.randomUUID().toString(),new CreateProjectCommand("Project",null,"Java",null,null,null)).id(); }
     private CreateMilestoneCommand input(UUID project) { return new CreateMilestoneCommand("Milestone",project,"2024-02-29",false,true); }
     private UpdateMilestoneCommand change(long revision,UUID project) { return new UpdateMilestoneCommand(revision,null,project,"2026-09-01",true,true); }
-    private void archive(UUID user,UUID project) { projects.update(user,project,new UpdateProjectCommand(1,null,null,null,null,null,null,null,"archived")); }
+    private void archive(UUID user,UUID project) { projects.update(user,project,new UpdateProjectCommand(1,null,null,null,null,null,null,"archived")); }
     private long counter(UUID user) { return jdbc.queryForObject("select data_revision from workspaces where owner_user_id=?",Long.class,user); }
 
     @Test
@@ -68,10 +68,10 @@ class MilestoneCommandTests {
         assertThrows(MilestoneNotFoundException.class,()->milestones.update(user,milestone.id(),change(99,foreign)));
         assertThrows(MilestoneNotFoundException.class,()->milestones.update(other,milestone.id(),change(99,null)));
         assertThrows(MilestoneNotFoundException.class,()->milestones.delete(other,milestone.id(),99));
-        assertEquals(milestone,milestones.create(user,"create",input(project)));
+        SnapshotAssertions.assertDataEquals(milestone,milestones.create(user,"create",input(project)));
         assertEquals(milestone.id(),milestones.delete(user,milestone.id(),2));
         long before=counter(user);
-        assertEquals(milestone,milestones.create(user,"create",input(project)));
+        SnapshotAssertions.assertDataEquals(milestone,milestones.create(user,"create",input(project)));
         assertEquals(before,counter(user));
         assertEquals(0L,jdbc.queryForObject("select count(*) from milestones where id=?",Long.class,milestone.id()));
         assertThrows(MilestoneNotFoundException.class,()->milestones.delete(user,milestone.id(),2));
@@ -86,7 +86,7 @@ class MilestoneCommandTests {
     void creationAndMutationRacesHaveSingleWinnerAndAtomicCounters() throws Exception {
         UUID user=owner(); UUID project=project(user);
         var same=race(()->milestones.create(user,"same",input(project)),()->milestones.create(user,"same",input(project)));
-        assertInstanceOf(MilestoneSnapshot.class,same.getFirst()); assertEquals(same.getFirst(),same.getLast());
+        assertInstanceOf(MilestoneSnapshot.class,same.getFirst()); SnapshotAssertions.assertDataEquals(same.getFirst(),same.getLast());
         var milestone=(MilestoneSnapshot)same.getFirst(); assertEquals(2,counter(user));
         assertEquals(1L,jdbc.queryForObject("select count(*) from milestones where project_id=?",Long.class,project));
         var edits=race(()->milestones.update(user,milestone.id(),change(1,null)),()->milestones.update(user,milestone.id(),new UpdateMilestoneCommand(1,null,null,null,false,false)));
@@ -134,7 +134,7 @@ class MilestoneCommandTests {
         var milestone=milestones.create(user,"hash",input(project));
         assertThrows(MilestoneConflictException.class,()->milestones.create(user,"hash",new CreateMilestoneCommand(" Milestone ",project,"2024-02-29",false,true)));
         String reordered="{\"dueDatePresent\":true,\"completed\":false,\"dueDate\":\"2024-02-29\",\"projectId\":\""+project+"\",\"title\":\"Milestone\"}";
-        assertEquals(milestone,milestones.create(user,"hash",json.readValue(reordered,CreateMilestoneCommand.class)));
+        SnapshotAssertions.assertDataEquals(milestone,milestones.create(user,"hash",json.readValue(reordered,CreateMilestoneCommand.class)));
         for(String key:new String[]{null,""," ","한글","x".repeat(129)}) assertThrows(MilestoneValidationException.class,()->milestones.create(user,key,input(project)));
         assertThrows(IllegalStateException.class,()->transaction.executeWithoutResult(s->{milestones.delete(user,milestone.id(),1); entityManager.flush();
             assertEquals(0L,jdbc.queryForObject("select count(*) from milestones where id=?",Long.class,milestone.id()));
@@ -181,7 +181,7 @@ class MilestoneCommandTests {
         assertNull(cleared.dueDate());
         var same=milestones.update(user,initial.id(),new UpdateMilestoneCommand(4,null,null,null,null,false));
         assertEquals(5,same.revision()); assertEquals(initial.createdAt(),same.createdAt());
-        assertEquals(initial,milestones.create(user,"omitted",new CreateMilestoneCommand("Milestone",source,null,null,false)));
+        SnapshotAssertions.assertDataEquals(initial,milestones.create(user,"omitted",new CreateMilestoneCommand("Milestone",source,null,null,false)));
         long before=counter(user);
         assertThrows(MilestoneConflictException.class,()->milestones.delete(user,initial.id(),4)); assertEquals(before,counter(user));
         jdbc.update("update milestones set revision=? where id=?",Milestone.MAX_REVISION,initial.id());

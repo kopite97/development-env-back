@@ -34,8 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestcontainersConfiguration.class)
 @AutoConfigureMockMvc
 class ProjectApiTests {
-    private static final String BASE = "/api/v1/projects";
-    private static final String CREATE = "{\"name\":\" Project \",\"scope\":\"unity\",\"stack\":\" Java \"}";
+    private static final String BASE = "/api/v2/projects";
+    private static final String CREATE = "{\"name\":\" Project \",\"stack\":\" Java \"}";
     private final MockMvc mvc;
     private final UserWorkspaceCreationService users;
     private final JdbcTemplate jdbc;
@@ -53,14 +53,14 @@ class ProjectApiTests {
     void createReadUpdateArchiveUnarchiveAndSameBodyReplayFollowContract() throws Exception {
         var owner = owner();
         String body = """
-                {"name":" Project ","scope":"unity","stack":" Java ","progress":12.1234567890123456789,
+                {"name":" Project ","stack":" Java ","progress":12.1234567890123456789,
                  "subtitle":" kept ","currentMilestone":"memo","repositoryUrl":" https://example.com/repo "}
                 """;
         String original = mvc.perform(mutation(post(BASE), owner).header("Idempotency-Key", "flow").content(body))
                 .andExpect(status().isCreated()).andExpect(header().string("Cache-Control", containsString("no-store")))
                 .andExpect(jsonPath("$.name").value("Project")).andExpect(jsonPath("$.stack").value("Java"))
                 .andExpect(jsonPath("$.subtitle").value(" kept ")).andExpect(jsonPath("$.status").value("active"))
-                .andExpect(jsonPath("$.colorToken").value("unity")).andExpect(jsonPath("$.revision").value(1))
+                .andExpect(jsonPath("$.colorToken").doesNotExist()).andExpect(jsonPath("$.categoryId").isEmpty()).andExpect(jsonPath("$.revision").value(1))
                 .andExpect(jsonPath("$.repositoryUrl").value("https://example.com/repo"))
                 .andExpect(jsonPath("$.workspaceId").doesNotExist()).andExpect(jsonPath("$.userId").doesNotExist())
                 .andReturn().getResponse().getContentAsString();
@@ -70,9 +70,9 @@ class ProjectApiTests {
         assertEquals(project.get("createdAt"), project.get("updatedAt"));
         mvc.perform(get(BASE + "/" + id).session(owner.session())).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id));
-        mvc.perform(mutation(patch(BASE + "/" + id), owner).content("{\"revision\":1,\"status\":\"archived\",\"scope\":\"server\",\"subtitle\":\"\"}"))
+        mvc.perform(mutation(patch(BASE + "/" + id), owner).content("{\"revision\":1,\"status\":\"archived\",\"categoryId\":null,\"subtitle\":\"\"}"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.revision").value(2))
-                .andExpect(jsonPath("$.status").value("archived")).andExpect(jsonPath("$.colorToken").value("server"))
+                .andExpect(jsonPath("$.status").value("archived")).andExpect(jsonPath("$.colorToken").doesNotExist())
                 .andExpect(jsonPath("$.name").value("Project")).andExpect(jsonPath("$.subtitle").value(""))
                 .andExpect(jsonPath("$.createdAt").value(project.get("createdAt").asString()));
         mvc.perform(get(BASE).session(owner.session())).andExpect(status().isOk()).andExpect(jsonPath("$.total").value(0));
@@ -107,7 +107,8 @@ class ProjectApiTests {
         }
         mvc.perform(get(BASE).session(b.session()).param("query", "Project")
                         .param("workspaceId", a.user().workspace().getId().toString()).header("userId", a.user().user().getId()))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.total").value(0)).andExpect(jsonPath("$.items").isEmpty());
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+        mvc.perform(get(BASE).session(b.session())).andExpect(status().isOk()).andExpect(jsonPath("$.total").value(0)).andExpect(jsonPath("$.items").isEmpty());
         mvc.perform(mutation(post(BASE), b).header("Idempotency-Key", "injection")
                         .param("workspaceId", a.user().workspace().getId().toString()).header("ownerUserId", a.user().user().getId()).content(CREATE))
                 .andExpect(status().isCreated());
@@ -167,7 +168,7 @@ class ProjectApiTests {
         assertEquals(105, ids.size());
         String firstCursor = defaults.get("nextCursor").asString();
         for (Map<String, String> params : List.of(Map.of("cursor", ""), Map.of("cursor", "tampered"),
-                Map.of("cursor", firstCursor + "x"), Map.of("cursor", firstCursor, "scope", "server"),
+                Map.of("cursor", firstCursor + "x"), Map.of("cursor", firstCursor, "category", "uncategorized"),
                 Map.of("cursor", firstCursor, "status", "all"), Map.of("cursor", firstCursor, "query", "changed"),
                 Map.of("cursor", firstCursor, "limit", "10"))) {
             var request = get(BASE).session(owner.session());
@@ -186,13 +187,13 @@ class ProjectApiTests {
     @Test
     void filtersUseLiteralCaseInsensitiveNameOrStackSearchAndEmptyResults() throws Exception {
         var owner = owner();
-        var p = create(owner, "{\"name\":\"100%_!\\\\literal\",\"scope\":\"server\",\"stack\":\"MiXeD\"}");
+        var p = create(owner, "{\"name\":\"100%_!\\\\literal\",\"categoryId\":\""+category(owner)+"\",\"stack\":\"MiXeD\"}");
         create(owner, CREATE);
         for (String query : List.of("%", "_", "!", "\\", "mixed", "LITERAL")) {
             assertEquals(1, list(owner, Map.of("query", query)).get("total").asInt());
         }
-        assertEquals(1, list(owner, Map.of("scope", "unity")).get("total").asInt());
-        assertEquals(1, list(owner, Map.of("scope", "server")).get("total").asInt());
+        assertEquals(1, list(owner, Map.of("category", "uncategorized")).get("total").asInt());
+        assertEquals(1, list(owner, Map.of("category", category(owner))).get("total").asInt());
         mvc.perform(mutation(patch(BASE + "/" + p.get("id").asString()), owner).content("{\"revision\":1,\"status\":\"archived\"}"))
                 .andExpect(status().isOk());
         assertEquals(1, list(owner, Map.of("status", "active")).get("total").asInt());
@@ -229,10 +230,10 @@ class ProjectApiTests {
             mvc.perform(mutation(patch(BASE + "/" + id), owner).content("{\"revision\":1,\"" + field + "\":\"bad\"}"))
                     .andExpect(status().isBadRequest());
         }
-        for (String body : List.of("{}", "null", "[]", "{\"name\":\"n\",\"scope\":\"unity\"}",
-                "{\"name\":null,\"stack\":\"s\",\"scope\":\"unity\"}",
-                "{\"name\":\"n\",\"stack\":\"s\",\"scope\":\"unity\",\"subtitle\":null}",
-                "{\"name\":\"n\",\"stack\":\"s\",\"scope\":\"unity\",\"status\":\"active\"}")) {
+        for (String body : List.of("{}", "null", "[]", "{\"name\":\"n\"}",
+                "{\"name\":null,\"stack\":\"s\"}",
+                "{\"name\":\"n\",\"stack\":\"s\",\"subtitle\":null}",
+                "{\"name\":\"n\",\"stack\":\"s\",\"status\":\"active\"}")) {
             mvc.perform(mutation(post(BASE), owner).header("Idempotency-Key", "invalid").content(body)).andExpect(status().isBadRequest());
         }
         mvc.perform(mutation(post(BASE), owner).content(CREATE)).andExpect(status().isBadRequest());
@@ -245,12 +246,12 @@ class ProjectApiTests {
     @Test
     void utf16BoundariesTrimmingAndIdempotencyPropertyOrderAreStable() throws Exception {
         var owner = owner();
-        String body = json.writeValueAsString(Map.of("name", " " + "😀".repeat(50) + " ", "scope", "unity", "stack", "s"));
+        String body = json.writeValueAsString(Map.of("name", " " + "😀".repeat(50) + " ", "stack", "s"));
         create(owner, body);
-        String tooLong = json.writeValueAsString(Map.of("name", "😀".repeat(51), "scope", "unity", "stack", "s"));
+        String tooLong = json.writeValueAsString(Map.of("name", "😀".repeat(51), "stack", "s"));
         mvc.perform(mutation(post(BASE), owner).header("Idempotency-Key", "long").content(tooLong)).andExpect(status().isBadRequest());
         for (var field : Map.of("subtitle", 4000, "currentMilestone", 200, "stack", 200, "repositoryUrl", 2000).entrySet()) {
-            var input = new java.util.HashMap<String, Object>(Map.of("name", "n", "scope", "unity", "stack", "s"));
+            var input = new java.util.HashMap<String, Object>(Map.of("name", "n", "stack", "s"));
             String value = field.getKey().equals("repositoryUrl") ? "https://example.com/" + "a".repeat(field.getValue() - 20) : "a".repeat(field.getValue());
             input.put(field.getKey(), value);
             create(owner, json.writeValueAsString(input));
@@ -260,12 +261,16 @@ class ProjectApiTests {
         }
         String first = mvc.perform(mutation(post(BASE), owner).header("Idempotency-Key", "order").content(CREATE))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
-        mvc.perform(mutation(post(BASE), owner).header("Idempotency-Key", "order").content("{\"stack\":\" Java \", \"scope\":\"unity\", \"name\":\" Project \"}"))
+        mvc.perform(mutation(post(BASE), owner).header("Idempotency-Key", "order").content("{\"stack\":\" Java \", \"name\":\" Project \"}"))
                 .andExpect(status().isCreated()).andExpect(content().string(first));
-        mvc.perform(mutation(post(BASE), owner).header("Idempotency-Key", "order").content("{\"stack\":\" Java \",\"scope\":\"unity\",\"name\":\" Project \",\"subtitle\":\"\"}"))
+        mvc.perform(mutation(post(BASE), owner).header("Idempotency-Key", "order").content("{\"stack\":\" Java \",\"name\":\" Project \",\"subtitle\":\"\"}"))
                 .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("IDEMPOTENCY_KEY_REUSED"));
     }
 
+    private final Map<UUID,UUID> categoryIds=new java.util.HashMap<>();
+    private String category(Owner owner) {
+        return categoryIds.computeIfAbsent(owner.user().workspace().getId(),workspace->{UUID id=UUID.randomUUID();jdbc.update("insert into project_categories(id,workspace_id,name,created_at,updated_at) values(?,?,'Selected Category',now(),now())",id,workspace);return id;}).toString();
+    }
     private record Owner(UserWorkspaceCreationResult user, MockHttpSession session, String csrf) {}
 
     private Owner owner() throws Exception {
@@ -305,8 +310,8 @@ class ProjectApiTests {
     private void seed(Owner owner, int count) {
         for (int i = 0; i < count; i++) {
             jdbc.update("""
-                    insert into projects(id,workspace_id,name,scope,stack,created_at,updated_at)
-                    values(?,?,'Tied','unity','Java','2026-01-01T00:00:00Z','2026-01-01T00:00:00Z')
+                    insert into projects(id,workspace_id,name,stack,created_at,updated_at)
+                    values(?,?,'Tied','Java','2026-01-01T00:00:00Z','2026-01-01T00:00:00Z')
                     """, UUID.randomUUID(), owner.user().workspace().getId());
         }
     }

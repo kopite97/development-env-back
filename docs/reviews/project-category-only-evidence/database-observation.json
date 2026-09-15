@@ -1,0 +1,35 @@
+{
+  "observedOn": "2026-09-14",
+  "database": "local PostgreSQL 16.4",
+  "method": "docker exec psql; BEGIN READ ONLY; metadata and anonymous aggregates; ROLLBACK",
+  "businessDataChanged": false,
+  "flyway": [
+    {"version": 1, "checksum": 944403044},
+    {"version": 2, "checksum": 110876580},
+    {"version": 3, "checksum": 414341906},
+    {"version": 4, "checksum": -955204733},
+    {"version": 5, "checksum": 1860118112},
+    {"version": 6, "checksum": -1297906720},
+    {"version": 7, "checksum": -2114780861},
+    {"version": 8, "checksum": 1181711704},
+    {"version": 9, "checksum": 470218938},
+    {"version": 10, "checksum": 756536271},
+    {"version": 11, "checksum": 1162911591},
+    {"version": 12, "checksum": -368663120},
+    {"version": 13, "checksum": 2072365722},
+    {"version": 14, "checksum": 2061689044}
+  ],
+  "allMigrationsSuccessful": true,
+  "projects": {"total": 2, "activeUnity": 2, "categorized": 0, "uncategorized": 2},
+  "categories": 1,
+  "links": 0,
+  "dashboards": {"schemaVersion1": 1, "widgets": 6, "allScope": 6, "withProjectId": 0},
+  "replaysAtObservation": {
+    "project": {"total": 2, "unexpired": 2, "withoutCategoryId": 2},
+    "task": {"total": 2, "unexpired": 2},
+    "journal": {"total": 2, "unexpired": 2},
+    "milestone": {"total": 1, "unexpired": 1},
+    "link": {"total": 0, "unexpired": 0}
+  },
+  "limitation": "Local observation only, not production inventory or future expiry guarantees; no names, keys, credentials or response bodies exported."
+}

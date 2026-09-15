@@ -2,13 +2,11 @@ package com.kopite.devspace.link.domain;
 
 import java.net.URI;
 
-public record LinkValues(String label, String description, String url, String scope) {
+public record LinkValues(String label, String description, String url, java.util.UUID projectId) {
     public LinkValues {
         label = text("label", label, 100, true);
         description = text("description", description, 300, false);
         url = text("url", url, 2000, true);
-        if (!"all".equals(scope) && !"unity".equals(scope) && !"server".equals(scope))
-            throw new LinkValidationException("scope", "must be all, unity or server");
         try {
             URI uri = URI.create(url);
             if (!("http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))

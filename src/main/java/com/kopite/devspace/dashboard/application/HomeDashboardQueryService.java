@@ -12,14 +12,12 @@ import java.util.UUID;
 public class HomeDashboardQueryService {
     private final CurrentUserService currentUser;
     private final HomeDashboardRepository dashboards;
-    private final ProjectRepository projects;
+    private final DashboardReferences references;
     public HomeDashboardSnapshot get(UUID user) {
         UUID workspace=currentUser.resolve(user).workspace().getId();
         var saved=dashboards.find(workspace);
-        if(saved.isEmpty()) return new HomeDashboardSnapshot(0,HomeDashboard.defaults());
+        if(saved.isEmpty()) return new HomeDashboardSnapshot(0,HomeDashboard.defaults()).observed(java.util.Set.of(),currentUser.resolve(user).workspace().getDataRevision());
         var result=HomeDashboardSnapshot.from(saved.get());
-        result.widgets().stream().map(DashboardWidget::projectId).filter(java.util.Objects::nonNull).distinct()
-            .forEach(id->projects.findOwned(workspace,id).orElseThrow(DashboardNotFoundException::new));
-        return result;
+        return result.observed(references.missingCategories(workspace,result.widgets()),currentUser.resolve(user).workspace().getDataRevision());
     }
 }

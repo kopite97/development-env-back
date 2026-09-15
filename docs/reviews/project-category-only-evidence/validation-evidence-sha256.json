@@ -1,0 +1,1587 @@
+[
+  {
+    "path": ".gradle/project-category-only-validation/browser/dashboard-selection.png",
+    "bytes": 86321,
+    "sha256": "46c907da86d020c2f19fb96f87ac9530229f95ba2b79f8680b2ca2a12aa4c777"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/browser/openapi.json",
+    "bytes": 107633,
+    "sha256": "e4abfcbcf28506060a7e27cb2018a0d3eff2e31a3bf626ffde3d7800f0bc8821"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/browser/project-relation.png",
+    "bytes": 62775,
+    "sha256": "c69a3608eea197cca73125fb551b083e204fe0f4cf1cd5e3a96ec25b5b77ac5d"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/browser/project-replay.png",
+    "bytes": 87284,
+    "sha256": "e91d6b1c0e917953f7523a6ad6aa46c06661aadc52903387381def18587a9a15"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/browser/result.json",
+    "bytes": 1938,
+    "sha256": "8684898eae46da10f215fcc5267341d489ae55ffef4b4b82961985e649951b48"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/browser/swagger.html",
+    "bytes": 228230,
+    "sha256": "4183b7de6b6274ee27cd166e1855e9b8ba908bd62ccaef86daf21ce990b5d401"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/browser/swagger.png",
+    "bytes": 584786,
+    "sha256": "998c275997904f2d21729fa9ec3040d7ada5173924349bed0315c85030fe3bb2"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/chrome.pid",
+    "bytes": 7,
+    "sha256": "59b59746779b4d9c093587109e73ace412186debe280329ec8aa7559dcfc54d6"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/result.json",
+    "bytes": 66,
+    "sha256": "d29e452e9a14fb5ef1c9554f13ae25e8c33a5a0d47d337f6783a578412d4eee6"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.AuthenticationOpenApiContractTests.xml",
+    "bytes": 15460,
+    "sha256": "b576d6b07f290075f43e0bd106f333e28cfe785a3514b1d5f91775ffc4b52b85"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.BackendOpenApiContractTests.xml",
+    "bytes": 11913,
+    "sha256": "310f8a1b874f35c43d27c197da108beefa236326b04bdbff56605a6af944cad2"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryApiTests.xml",
+    "bytes": 1864,
+    "sha256": "ef705fce42a4fac72c9fbb6f61ba5472b6b0fd2a8f895ea6beae34be0e60e070"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryCommandTests.xml",
+    "bytes": 11462,
+    "sha256": "17a6c92d8f36b397bc9379be7f7fd77f7b882e722c36e61a4d7b1fad4de3d0a7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryCutoverMigrationTests.xml",
+    "bytes": 120141,
+    "sha256": "b677331cbb2f877345ad49713809bbc330c07998606c3ad861359ab5d0205d1c"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryOnlyDashboardApiTests.xml",
+    "bytes": 2840,
+    "sha256": "a3cc3b9610fbf2f36c341ad6c79a20d08a2cbf7da3a789f65658e397927fc86b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryOnlyLinkApiTests.xml",
+    "bytes": 1846,
+    "sha256": "8315250c4c86eb20ae4d8146edd0a7cd2efa96f4b8e33e66a1c2017c20b5fa17"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryOnlyQueryApiTests.xml",
+    "bytes": 2132,
+    "sha256": "8a53a3be84e93507d28a5b1f0aa9b56680896833a34415884ec82d5fce281807"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryOnlyReplayApiTests.xml",
+    "bytes": 1860,
+    "sha256": "ae3e62c2ebab6b7b942b5071928161dbbbef5199dd076bcf1e4ccf426f92ce03"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryOnlyReplayConcurrencyTests.xml",
+    "bytes": 11081,
+    "sha256": "2b00a7a4ae3446cedf81c8fc0581c9a560c236f39511f3a3078b9b6790d01be5"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryOpenApiTests.xml",
+    "bytes": 1656,
+    "sha256": "5b281d149e1ae3ddf8cd0435f08131da8efed0fa6e506fd7d1676c3271164b2f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryPersistenceTests.xml",
+    "bytes": 8597,
+    "sha256": "778b58f4ff06161c62cd34fdc22650373fce56c34d58136c5b15914d6183f3a4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryRelationConcurrencyTests.xml",
+    "bytes": 1946,
+    "sha256": "a2a3d27f7f5e46236799f375c36040d8005c53f55745c49af121213f1ec0bba6"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategoryScopeRegressionTests.xml",
+    "bytes": 1875,
+    "sha256": "e9e1ce4c830583a7367ae05b2378bd42a8107ee8fe938ed6776011adc1ddfa60"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.CategorySnapshotReadTests.xml",
+    "bytes": 10810,
+    "sha256": "0090f36441c8f0c945cffead6b5826f2ddce7b2312ec901636d9bceeaf1cad59"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.DashboardCategoryConcurrencyTests.xml",
+    "bytes": 1957,
+    "sha256": "319879a8f6347c128ae95deaa2dbff0b2cd7d9fef23444de11f03214aa22566f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.DashboardCategoryReadTests.xml",
+    "bytes": 10964,
+    "sha256": "2dc5c3698032e066252d079a0dd82b22970886efbc657ac4f3bc00c71258e1ea"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.DashboardCommandTests.xml",
+    "bytes": 2856,
+    "sha256": "e7bd0f5358ffec47ec33398b03c59b60c26dbd17761d8f43df4c8ee673a0281b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.DashboardOverviewApiTests.xml",
+    "bytes": 2577,
+    "sha256": "26839b97f75fa463a6de30bff935b6318d9f94a9b805c41ee3d82130791cbc16"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.DashboardOverviewOpenApiTests.xml",
+    "bytes": 1725,
+    "sha256": "32e9e91680ad3a54647d1eb4b28d2624fb66e512b3e6b1588ef7cf48f5b4c5de"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.DashboardPersistenceTests.xml",
+    "bytes": 8484,
+    "sha256": "c1d3567f3277d037b75713d0be1372e2cedc7abf0918965745a15bb18e01a7cd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.DevspaceApplicationTests.xml",
+    "bytes": 3142,
+    "sha256": "2548858f65039bb2e2efbfbf045f503bf5d941569943c62711820ba792428ee9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.FinalCategoryRuntimeTests.xml",
+    "bytes": 11449,
+    "sha256": "63e4917de8b55dcfe8133aaf16db987946cfbe1260b12839189c5c9035407ed5"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.JournalApiTests.xml",
+    "bytes": 1989,
+    "sha256": "55872f5660429636f2e8ce1f75640a6b7a6183b70e62c8eb61f1f70dd23ab406"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.JournalCommandTests.xml",
+    "bytes": 11275,
+    "sha256": "de389477b2b9804e06befbb4ff877721eb8bca54ef9a5a9dcc0d8594c6720929"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.JournalOpenApiTests.xml",
+    "bytes": 1653,
+    "sha256": "a8d9d7ed03aeabc17b61784ae7dc00e13ac00612e3a1a78e3d71324035e39fa8"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.JournalPersistenceTests.xml",
+    "bytes": 7730,
+    "sha256": "b1e023d0917b9a40fa2cb726991d5ddbad1177ea641a62258c6c81f3109510bf"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.JournalQueryTests.xml",
+    "bytes": 10837,
+    "sha256": "cb39f144b8035185ee262c78f484c3fb4073084fb77c43c8fca16f1fc1cb2afa"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.LegacyCreationGoldenTests.xml",
+    "bytes": 487,
+    "sha256": "158ba9b708feaa4a7e0c1b95379d21723594595b2e9d7bf7c7b7bfd29da2e1c4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.LinkApiTests.xml",
+    "bytes": 2111,
+    "sha256": "a74bc0346f69e6409f9b316d3768e339557b6cd60ac592e0995b5596d78c70f4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.LinkCommandTests.xml",
+    "bytes": 11762,
+    "sha256": "c7a7310186362a0043587216b5d346d2b5b770e2e77805f98c03d5250a0eae89"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.LinkOpenApiTests.xml",
+    "bytes": 1618,
+    "sha256": "a2e9616bd6410a7b116878d1ff6c78c83bac1dc6e16dcbf6290a3316075e90d4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.LinkPersistenceTests.xml",
+    "bytes": 8012,
+    "sha256": "b7e9359331627145e5722452a083cbe39a7b1cf130e2515eaf871792958eacb6"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.LinkQueryTests.xml",
+    "bytes": 10995,
+    "sha256": "4708762adc2edc3078dbb67becd6430843cb075eda40eaadb77d0283d4dc3d73"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.LinkRelationshipConcurrencyTests.xml",
+    "bytes": 1947,
+    "sha256": "bab094c4e3d1877fad9802282031417a70265bd00eef70721024c84eb49467a9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.MilestoneApiTests.xml",
+    "bytes": 2065,
+    "sha256": "0ea7671f574af782dd6b15956e6a7b6a548f97d9388b2462a9e3a61f9914251d"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.MilestoneCommandTests.xml",
+    "bytes": 11843,
+    "sha256": "2f72d667db285b783625eaa4dbd93c417ae2bfd223913ef8ea6fa6066de0c2d4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.MilestoneOpenApiTests.xml",
+    "bytes": 1671,
+    "sha256": "45014cff9c08cbaab3ff33ee36c0fdc962b2af40fa3f3fb47949331289b36006"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.MilestonePersistenceTests.xml",
+    "bytes": 7796,
+    "sha256": "a2ff3635ac73c4d04cb7d54a78d595519ffa1d5029daa926b667d1f0c4720cc8"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.MilestoneQueryTests.xml",
+    "bytes": 10863,
+    "sha256": "85f9ea6a05cd64a5117f6f0ab420855b102a2d7dcefd338ea78a4dc6ceed3333"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.OverviewQueryTests.xml",
+    "bytes": 10998,
+    "sha256": "b486d85bff9483e63092fb4d76644969b127522fb9d236fe1c2dec85e0a69faf"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.ProductionSwaggerSecurityTests.xml",
+    "bytes": 11319,
+    "sha256": "fc7cd89205636651d53ef3d985bf0313c8460e679ba732a4d90cbf6c52072a56"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.project.application.command.ProjectFingerprintTests.xml",
+    "bytes": 525,
+    "sha256": "fe88b8c96a4bd966e37df0dada1fde3c984f9fdad58bb786a46f2e9a23229b51"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.ProjectApiTests.xml",
+    "bytes": 2541,
+    "sha256": "b9ea693fe79eda280e03d80afee69ac677b7db4ba83f6692cdff5e7a4d1bdc2f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.ProjectCommandTests.xml",
+    "bytes": 2411,
+    "sha256": "8e8f57444df2ff7717aef023b376a8ad4b3bc0815decc81952b9d7083dbb3605"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.ProjectLegacyReplayTests.xml",
+    "bytes": 10559,
+    "sha256": "d71acbba34b2689cbacf9877c99e217131d6979b5d00156f97b5c1249ef2b49e"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.ProjectOpenApiTests.xml",
+    "bytes": 1642,
+    "sha256": "21a7cbc69ea563c0389e80812dc3ef6381733826a1f5d0a288428b831cd08676"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.ProjectPersistenceTests.xml",
+    "bytes": 7565,
+    "sha256": "4ae7bfb31efc6b6d634a8b7b8e8ec367adad832a24e9ea9a915bb3cf65ca7c33"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.SecurityIntegrationTests.xml",
+    "bytes": 3640,
+    "sha256": "704008d0d572490c262551b4d8e379268b48f1cb43250ed5964dae5e67590f11"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.TaskApiTests.xml",
+    "bytes": 1927,
+    "sha256": "e817e1d7f91403d6ef6a5d4261413d023a4969dc5c050630efa0197556c5e073"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.TaskCommandTests.xml",
+    "bytes": 2133,
+    "sha256": "00e76e2233554b0b61489b5ee290b9f317d4d7b99b5aaa29247f4c02595c5b18"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.TaskOpenApiTests.xml",
+    "bytes": 1626,
+    "sha256": "d0592bf94178619bdcef08ed0445d6031bead38a138b3db5ba6a3e2fe13c20e0"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.TaskPersistenceTests.xml",
+    "bytes": 7560,
+    "sha256": "3ca4a216e7bc57d1966574a77b8d970fd92bac39c28063781d449d6035f24ab3"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.UserWorkspaceCreationConcurrencyTests.xml",
+    "bytes": 16971,
+    "sha256": "1c981c029b49a859d421c4b3723b0a940aba8821512ef5139c3cb3296440201c"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.UserWorkspacePersistenceRulesTests.xml",
+    "bytes": 78503,
+    "sha256": "ba5826ee1bcffb871435b01407482650c75f114dae6cc84180c741791ddf3d99"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/clean-build/TEST-com.kopite.devspace.UserWorkspacePersistenceTests.xml",
+    "bytes": 1852,
+    "sha256": "6376b54c95dd6f82b740b4c16b29b2d79e2f3572df0fe3d65784dd9bc19ba805"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-0bcdaa55-f821-40d8-8d36-9f5142abc8f1.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-30f5b352-5e36-4475-8330-ed70068f02db.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-432b57fd-afc7-4afd-9b22-f5faca5a3688.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-66acc516-1f1d-4ece-a13f-3c65a43123d8.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-68992f80-adc9-41e3-99ff-984676046d7c.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-7516cbb5-ee77-4c74-9a1b-8b40366159b8.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-79cb23f1-1b41-4f98-be51-db6f2d99099f.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-7f2351e9-cbee-4693-a25c-658bdb861897.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-d19dc05a-e1b6-4ede-9bdb-b0abefee1b24.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-d88b2d82-5d5c-44aa-91a6-bc707a2207de.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-dfee3c31-0779-443d-9963-d38bdcba108f.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-e75d1473-5561-48da-9847-fac02320e134.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-ec4b7f22-b8fa-459f-8871-c43ac3a2c4b5.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-f0a42774-ad6e-41e5-9643-f92e6465c1c2.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/dashboard-category-ff77f7c9-73d1-496a-96d4-2d9901f3ff74.txt",
+    "bytes": 561,
+    "sha256": "eaed6d0551da0a35e02ddcf44255c7516f99e1b92235576351be25f730b409f7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-278fbfc6-c2ed-4d99-8c38-5af7442c2b9c.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-29cfd4df-8db8-4327-ba3a-84ac2eaa181d.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-2da87b76-7541-439b-b4fc-0770bba79ed5.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-32b6419e-dadf-47f4-b6a3-5908dbc7aa61.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-551dba04-ff96-4755-bfe6-4a7cab8e3f3b.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-57403f08-267a-42d2-9907-3d138514aeec.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-74820677-666a-4989-ae8b-8739c91720bf.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-94815bee-4e8f-4c87-8e0c-888c0010b6e1.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-a928c6e1-9afa-40ce-97aa-e5f1afd29e75.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-b23e377e-63fe-4cdd-8e94-13c811c2f79d.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-c7b8463d-35e7-4fd4-a90e-0312db12bede.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-c84abb70-7b11-4e7d-a148-17d0245191aa.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-ce74904f-ddac-40aa-9441-4f935767ae5a.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-d903c493-19d7-4353-969f-119302f34e48.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/link-relations-efd3e6b9-aee7-41e7-b3ac-9fae4e51dd26.txt",
+    "bytes": 665,
+    "sha256": "765fe6bafd8f617ccd76c11153404380228632296280e5c31057450738a2b3dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-16b5edae-809b-4216-901d-652e2ffed715.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-2a5d8b00-520a-44ec-96c5-0b8d12a2ce21.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-2cf67a3c-ff8e-4313-9831-70e46382616c.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-5b146a7a-0236-4193-a3dc-4dea942ffdc3.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-6d11abe0-62e4-4679-beeb-b1a3d4e11b72.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-84f4cc5b-12cf-4ed3-90fa-ca4c5fe43d74.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-b59ca3b3-7119-44ce-bbfb-4b2f20af03f8.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-b636d5a2-02bd-4089-a5d5-80df8c86529d.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-b804d160-2007-42ff-8019-94b2cc04e846.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-cee969f4-1a50-4cbb-be12-9d208c83f336.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-e29379b8-5ff6-4411-882b-8babc59c17c0.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-e66563de-c206-4966-be13-c19b2ac230ea.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-e8bb91ba-c0e0-45c8-86b8-ae0efa0ecc1e.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-f64a1e14-a13f-4c0b-904f-d4039186e776.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/concurrency/version-race-fe9bdf05-d058-43c9-85dc-ed8a7fbdfebc.txt",
+    "bytes": 179,
+    "sha256": "78e62b1669d70bc9a684ba5930fa0f1cfeecc333841ca746c314fd4c713a53ef"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/result.json",
+    "bytes": 66,
+    "sha256": "d29e452e9a14fb5ef1c9554f13ae25e8c33a5a0d47d337f6783a578412d4eee6"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.AuthenticationOpenApiContractTests.xml",
+    "bytes": 15463,
+    "sha256": "9b55e3053637fe40413c4f6818911187b8d9f37b0f6f43b2f57a523cb7b1872b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.BackendOpenApiContractTests.xml",
+    "bytes": 11914,
+    "sha256": "9cb232c01b026d4e3de5eae8377840d7fd70ac4d4365ea73b13a46e0097aa93d"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryApiTests.xml",
+    "bytes": 1864,
+    "sha256": "e7fa43427478045e63465aeb2d2b135d9116326f6b5adfb71b5334e924976e6f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryCommandTests.xml",
+    "bytes": 11462,
+    "sha256": "7c1e7ff6da21853787f1fc1326c8fac097088ca1d5f6e886ab14945b33d090d3"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryCutoverMigrationTests.xml",
+    "bytes": 120140,
+    "sha256": "5260082e49a3483780aa059b281949ace7a2167701889695f85a42174b020fdb"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryOnlyDashboardApiTests.xml",
+    "bytes": 2840,
+    "sha256": "4c016176079aa4acf8fe2eefecd12fa552c0c2e7c71dfcb5a5d322d12b3cf179"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryOnlyLinkApiTests.xml",
+    "bytes": 1847,
+    "sha256": "15f43969e5c6cf8f94502bc0db629ddcaf12b8ec03aea9b9461e5cfcf83e72a8"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryOnlyQueryApiTests.xml",
+    "bytes": 2131,
+    "sha256": "e2a8dfb61fe2e7193b29f13dbf61ca53baefb9a99429eb5e8ef12fe1d0873f51"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryOnlyReplayApiTests.xml",
+    "bytes": 1860,
+    "sha256": "56a2fcb1575b77d9b54c31fa36baf85a4876e18b526921ef61670c571b9ddfee"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryOnlyReplayConcurrencyTests.xml",
+    "bytes": 11080,
+    "sha256": "c84c88c465ed714dd45f75d6b5efb738a85db84e7a9c08a5b0eb9ba2e35592a0"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryOpenApiTests.xml",
+    "bytes": 1657,
+    "sha256": "ab3addfbd838718ecdcc012b3fcb45077584a2c732ae3fbf5096e5755d810a2d"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryPersistenceTests.xml",
+    "bytes": 8596,
+    "sha256": "8f120eb96afe635d248d1d371744df47ea8abeaf1b9ef7d391b3ffbcae6a670f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryRelationConcurrencyTests.xml",
+    "bytes": 1947,
+    "sha256": "a13d56516e2c8e2fdf54a317f38d1cb4d534aef8833b66ad00a36523da74e104"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategoryScopeRegressionTests.xml",
+    "bytes": 1875,
+    "sha256": "c57005aa268d4769e71ee3e18697da1757a737e648f66f0fac36e55acdfcec28"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.CategorySnapshotReadTests.xml",
+    "bytes": 10811,
+    "sha256": "c48033247d0e8dc0c924fcaea5cfb6fbb5f0eceb474ace442c398dad3b97defd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.DashboardCategoryConcurrencyTests.xml",
+    "bytes": 1955,
+    "sha256": "40ba12ef33ca7efb15b2e6979e15662dad4711febdf0f633e1d9836c43a5c1d2"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.DashboardCategoryReadTests.xml",
+    "bytes": 10963,
+    "sha256": "c88d51620165c14b911277978854ce565ad9ad2e3c24f3ae8282185ee5f7663a"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.DashboardCommandTests.xml",
+    "bytes": 2859,
+    "sha256": "1c1d17244644ef65c7bbfc078710226e408c97f5341edbdb17f9bb490b2e2f86"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.DashboardOverviewApiTests.xml",
+    "bytes": 2577,
+    "sha256": "d1d51f47f0bb06ca7cc7b2b9efc452eaf92ce88ce817a281f42e59d68d91a603"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.DashboardOverviewOpenApiTests.xml",
+    "bytes": 1725,
+    "sha256": "8167a41f397a223b3bddb63c9ecf8e53800f1c0d21e145467847639cccced3b2"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.DashboardPersistenceTests.xml",
+    "bytes": 8484,
+    "sha256": "c085e8cc377086ef4c9f09bd7e5a710e34dfee7fb8fa264d27ea92249983ec60"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.DevspaceApplicationTests.xml",
+    "bytes": 3140,
+    "sha256": "f307445ed32aa9c05bf9695e4ef5e0455ae64dd53801cf29042d7b05ffc6d723"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.FinalCategoryRuntimeTests.xml",
+    "bytes": 11449,
+    "sha256": "5759c7cecd61c10087d16f25e88ce7a65f3615efc8d88bf8c62800d76ed26774"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.JournalApiTests.xml",
+    "bytes": 1988,
+    "sha256": "c1e26594ba7e3bb4e85767e760c1a4932a5b75b67903cbbaead20ce2f9c104f5"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.JournalCommandTests.xml",
+    "bytes": 11279,
+    "sha256": "43ba769293b4890b66c9a2f0f3fac6e3371d5ce0af3644ae62f3b44c921d7f3f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.JournalOpenApiTests.xml",
+    "bytes": 1653,
+    "sha256": "9bf502976e2614d01d57affa825fe5882f59f359f234bef6326948f01516b7df"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.JournalPersistenceTests.xml",
+    "bytes": 7730,
+    "sha256": "3a1b876b548e1be3e929923b3375bff26dd5c482ad86cf4786780b94153e3c88"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.JournalQueryTests.xml",
+    "bytes": 10836,
+    "sha256": "f3ee3ca4ef9147f3b0628a71c34550993f3933a4dba7a0b862e20207a2d4a226"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.LegacyCreationGoldenTests.xml",
+    "bytes": 487,
+    "sha256": "d02802603ca1ddc6c5f021d5c761a095b42815e1503da576aff4221c29dce772"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.LinkApiTests.xml",
+    "bytes": 2109,
+    "sha256": "5d59c4d413bf2752173b5e5b9914dc840a54525df2724db395492c581bd3c278"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.LinkCommandTests.xml",
+    "bytes": 11763,
+    "sha256": "2ac41744ab19bbd4522ddf96f792748555d215b32a6ca7fb3c489ec162ba945e"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.LinkOpenApiTests.xml",
+    "bytes": 1617,
+    "sha256": "a5fd1aa89c09d4aaa340fcd0794dbb192dbb3477a072287da55f2bb097a2e297"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.LinkPersistenceTests.xml",
+    "bytes": 8013,
+    "sha256": "a0c83182260d64edb9545bfe6afb6bb06d273994685f5aff60eb10a45d139670"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.LinkQueryTests.xml",
+    "bytes": 10993,
+    "sha256": "abb73ed3bed2003593a5eca53917c816398738a99316ce19c55082ba35018d43"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.LinkRelationshipConcurrencyTests.xml",
+    "bytes": 1946,
+    "sha256": "6875c583d8b58777e7a4c0d578b03de994e40136e392adb5b6441682ed62cd28"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.MilestoneApiTests.xml",
+    "bytes": 2064,
+    "sha256": "a53f83d400525a71dec7831893c44d69f266e5b6d098a6cdacc39450d3f8cfb0"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.MilestoneCommandTests.xml",
+    "bytes": 11842,
+    "sha256": "b02f7f89dc44f559639f53abd21474fc7c34a4402b7690303cc9e55ae8304478"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.MilestoneOpenApiTests.xml",
+    "bytes": 1671,
+    "sha256": "49bcb70f82242723f7585c1056343a12a7bd5560a69d85e932bdd1d9f61915fc"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.MilestonePersistenceTests.xml",
+    "bytes": 7794,
+    "sha256": "aef46f178ba764221e9a8d7112f6016d0b2c03219d04731baa023b2a1bb63919"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.MilestoneQueryTests.xml",
+    "bytes": 10863,
+    "sha256": "05c51d4ab76150e1e6d51339ba2f827c543d6b42f9fb0d9fb54ca4c59e2951da"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.OverviewQueryTests.xml",
+    "bytes": 10998,
+    "sha256": "5295c0448a3dc2693c8b247609b42afc69ceafa588eb344ea0884158129b8bc5"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.ProductionSwaggerSecurityTests.xml",
+    "bytes": 11316,
+    "sha256": "82c9bc2951dd4642ec46dffaf9a6bb598458358d1d56202207180a3ad429ff79"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.project.application.command.ProjectFingerprintTests.xml",
+    "bytes": 527,
+    "sha256": "481f43a0d7d5d27fda980a3e3421692deef4bc72688e810c28024a65ff93b0c7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.ProjectApiTests.xml",
+    "bytes": 2541,
+    "sha256": "c6ccf029ddc5643056d06c1b7adf55d905b74141396d3fbb3a22358cc362903c"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.ProjectCommandTests.xml",
+    "bytes": 2413,
+    "sha256": "5c8222f5a607a2e8ba107b8e5d35819d140d48d41afcda363eed2020446efce8"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.ProjectLegacyReplayTests.xml",
+    "bytes": 10560,
+    "sha256": "e477b4fedd76b86beb648941877050b4af9cc4023372e85839571133f791818f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.ProjectOpenApiTests.xml",
+    "bytes": 1641,
+    "sha256": "e54310b6013f1a65ef2499d4bdde4bf4c3b0272d450e0dc735350b86626db729"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.ProjectPersistenceTests.xml",
+    "bytes": 7564,
+    "sha256": "842349419f147dfa94a0c2b49626ed6c78de1b47c653888f60ec0ad0278e767e"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.SecurityIntegrationTests.xml",
+    "bytes": 3641,
+    "sha256": "9de8af1ff87c417fce6f59c13711186da04a54e7a128a239f71f8dbe4ddadd1e"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.TaskApiTests.xml",
+    "bytes": 1927,
+    "sha256": "47fd5fe8197d67c02e0a03ccd10fea0086c95ee99cc4b9a5f4bd22d60946742d"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.TaskCommandTests.xml",
+    "bytes": 2133,
+    "sha256": "4ac59aa9a431aa39992f9a5e267c2c3de03b2008a908996fb9a250db15961e15"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.TaskOpenApiTests.xml",
+    "bytes": 1626,
+    "sha256": "4c54d60a974de1d29cc348170df2a9e0084224cb43a4e8edb9711ba71894d48c"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.TaskPersistenceTests.xml",
+    "bytes": 7561,
+    "sha256": "342333c91d8ab8b7a8370b646812de8d01b3684f49a0c593eb1ff3ebcb934fb5"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.UserWorkspaceCreationConcurrencyTests.xml",
+    "bytes": 16974,
+    "sha256": "376d9a7c8375a0f4bbd4726ecf8e061ac6d7d4a8e43f747bebafb09efb1ac615"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.UserWorkspacePersistenceRulesTests.xml",
+    "bytes": 78502,
+    "sha256": "71edbe10871640af61f2986bfce76607fd9a0245e77a6153c05bdaa632033ce7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/full-suite/TEST-com.kopite.devspace.UserWorkspacePersistenceTests.xml",
+    "bytes": 1851,
+    "sha256": "35b0ed88d18c00c410f6c52e700df3dd91029df3282eddbbb681ea2e71720624"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/migration/contract-upgrade.json",
+    "bytes": 32993,
+    "sha256": "1a3d908a6de6cd7a4bd12465a37f956219412b76b3e8f29d5e0b80cb3914da10"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/migration/populated-upgrade.json",
+    "bytes": 30421,
+    "sha256": "9e0ff970a4791e3dbe729c746838bac00352c6ef82042d9bba015bb56b10ef31"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/migration/TEST-com.kopite.devspace.CategoryCutoverMigrationTests.xml",
+    "bytes": 83539,
+    "sha256": "32d0594892b637465359c8d31183b0b8744ee8a40e51ac1a02e116d7ae6408fc"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/migration/v1-v14-source-checksums.json",
+    "bytes": 2306,
+    "sha256": "dc921abbbcdcada02a2c79c243561fa8dab77ee29a685240a143d5339885682a"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/migration-test.log",
+    "bytes": 1384,
+    "sha256": "5bbe543cf0901c867e4e19ec9cdf3bccb306a84dcf1f4f348dc262240dba06d5"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/openapi/openapi.json",
+    "bytes": 107627,
+    "sha256": "561b04efd80b7e80d22a1c351196434aa39f8426b61ca2b235d00a6be55dfa29"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/openapi/scope-audit.json",
+    "bytes": 80,
+    "sha256": "154b454f74ca376d5fd57af79f645261d7a1fc7ab0e7cd0291a944efd0d3cba4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.AuthenticationOpenApiContractTests.xml",
+    "bytes": 12776,
+    "sha256": "8f98d956f6c613b94d1ec1692509941fbdd1c6ae112ef737f69ae644b918de81"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.BackendOpenApiContractTests.xml",
+    "bytes": 396641,
+    "sha256": "a2fff87bb78eb9b6335aa71f656870174e7b2f97bb956678de221caf03930e17"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryApiTests.xml",
+    "bytes": 63061,
+    "sha256": "c4a0bc21f03e89b907ea9bfcb5a9e89bef0f8c4e4d05c878c5814c2992796cf3"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryCommandTests.xml",
+    "bytes": 17668,
+    "sha256": "1dbf59f6776f6cc2a586162d50b9fce0cb424501147262c3bf2e063110cdd1e4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryCutoverMigrationTests.xml",
+    "bytes": 111943,
+    "sha256": "d59fd9c21a393bbb48152614d94f06b36cb4dbfa884773f49410863dd2594e0b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryOnlyDashboardApiTests.xml",
+    "bytes": 2833,
+    "sha256": "5d38db89dbb94ab6dd18a8ed32ce0712f56b15bda1b644895557dca617ed656b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryOnlyLinkApiTests.xml",
+    "bytes": 1843,
+    "sha256": "c0e9cacaa782b757fc047b73fc82964f2bd448b823dfd21eda07dcaa1ad5ae36"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryOnlyQueryApiTests.xml",
+    "bytes": 2127,
+    "sha256": "0757c3dd89770571706ad8c9d55d2b061f049bb1fa48adafaa49c60cb26fd78a"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryOnlyReplayApiTests.xml",
+    "bytes": 1856,
+    "sha256": "b85b53d04cfce5391573f9c44d210c7d172d0bc958725c13486f84c74008dc2e"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryOnlyReplayConcurrencyTests.xml",
+    "bytes": 11033,
+    "sha256": "7581d298152326118ef405c736eb28f3a460c26f4a1af19a37d12e9f4416dd84"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryOpenApiTests.xml",
+    "bytes": 97438,
+    "sha256": "70c40fcc886c42e3202a3d2874b1d7a3fdaf6b238e712e570f5db3b4cb5b168c"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryPersistenceTests.xml",
+    "bytes": 14553,
+    "sha256": "9dddb50b0c212823bf46f4bb0784ccb1ecc4d07baa19dfdcc620ef23a744c795"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryRelationConcurrencyTests.xml",
+    "bytes": 1943,
+    "sha256": "1c501f58a98013c43ec47625e7d0b41bc741fac797660c77cc6098ef16280bc8"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategoryScopeRegressionTests.xml",
+    "bytes": 1870,
+    "sha256": "2793008d53f300e77b58623612d35ac9568437faab8b26ce67a876806cbe003b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.CategorySnapshotReadTests.xml",
+    "bytes": 10762,
+    "sha256": "ba6d9eaf29a40c5ab32e100d33a6c7f264de645de4b564f2d56748ba55bb6f83"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.DashboardCategoryConcurrencyTests.xml",
+    "bytes": 1953,
+    "sha256": "8873342f11e929b1cfbfd609f13a1283a913a3e7793d5a0da09363b08a4adac9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.DashboardCategoryReadTests.xml",
+    "bytes": 10916,
+    "sha256": "4a66a2f1bc34d5080df4c347610b5f6ad0bce989f2f9bdc38e2cd7165f9d6072"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.DashboardCommandTests.xml",
+    "bytes": 2854,
+    "sha256": "0945455840713a410dc625e02795529fc4232746fc8ae5bf509f3f8d5dabf876"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.DashboardOverviewApiTests.xml",
+    "bytes": 2574,
+    "sha256": "ccb5416ed5a5a784fcfa8e5cef7ce3bc57b655798418d2c40aa56fd967931983"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.DashboardOverviewOpenApiTests.xml",
+    "bytes": 97178,
+    "sha256": "9733861e56d14ba6773b00c2053481ad816655aeaa1bbad4d358f7bae28de9ca"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.DashboardPersistenceTests.xml",
+    "bytes": 8451,
+    "sha256": "5db385539d34b87347317a13c548a3aab570352da6298db93ab088ab1ec918e7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.DevspaceApplicationTests.xml",
+    "bytes": 3134,
+    "sha256": "59db79e7131d53ec91469b3764be6a5d8e5ef04645804ecbbf0a487f5627bd31"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.JournalApiTests.xml",
+    "bytes": 20424,
+    "sha256": "0ce75e8cb9e9fbbf2c84a7b73e7e07d7c65e01d44832f113c1a2f6b61872847b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.JournalCommandTests.xml",
+    "bytes": 17431,
+    "sha256": "b7477fc2e45de34e8c295956ce2deffd1df0a85ef15106a40115f69987e74064"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.JournalOpenApiTests.xml",
+    "bytes": 1663143,
+    "sha256": "3026282df814605d7c7ce8747bc689f65b9c4205998c04ed3ae4f356f0db5eff"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.JournalPersistenceTests.xml",
+    "bytes": 13688,
+    "sha256": "74f6df6c4d66660af7898f2d14645b53098829b3c9dfecaecb1074f5573ec8e2"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.JournalQueryTests.xml",
+    "bytes": 10787,
+    "sha256": "ba2e49a15b858c9dd55ae906eb08a446be149c744ccad90c10a13261fce25616"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.LegacyCreationGoldenTests.xml",
+    "bytes": 487,
+    "sha256": "5738be2a912f56b8490cb213114f6112b2b788ae75360cdb34eba8efa55672fc"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.LinkApiTests.xml",
+    "bytes": 2108,
+    "sha256": "a7860889da5efe07e7953a2cec3ce620287e179eca93044e6fb5411bf635b7b9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.LinkCommandTests.xml",
+    "bytes": 11712,
+    "sha256": "de643e5271339a779a22d4f7a3b059ef584c614e42a1b596d010e464439a73a4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.LinkOpenApiTests.xml",
+    "bytes": 100011,
+    "sha256": "6dccb203fbd4b494f33b8fdd9e46b6f4aa6be3cac36b9cca7bdd97f1299328a0"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.LinkPersistenceTests.xml",
+    "bytes": 7982,
+    "sha256": "48d8a6cc25d8a7247c052e410c3580a9bef2fd1dc0639f3c5fae6a1e2d86afa7"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.LinkQueryTests.xml",
+    "bytes": 10947,
+    "sha256": "6d161867a77afe50757216dcbb9198125f90f8bf8cb0ca1fbe7be40ae5b7490d"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.LinkRelationshipConcurrencyTests.xml",
+    "bytes": 1942,
+    "sha256": "169b4c4e8d6e1e062043a843f1758c30ab59545092ae4d650d851fd61e1586e4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.MilestoneApiTests.xml",
+    "bytes": 20583,
+    "sha256": "c0044016fc16a649163c34813a9bd993fa8cd613003b1fbb3ec46b260476db01"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.MilestoneCommandTests.xml",
+    "bytes": 28468,
+    "sha256": "81f2875bed38c96d95e4da4a1d990293bfa301774f643149b521908eed802784"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.MilestoneOpenApiTests.xml",
+    "bytes": 1663169,
+    "sha256": "5a14e0c5cd88488a915f3b6840a698e49ad8b172302a6c3ca8027c1f22ce20d5"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.MilestonePersistenceTests.xml",
+    "bytes": 13760,
+    "sha256": "33f0d716b4ce9ce1663e90c5f38b156da3a89153a31b977aab3f7b833bf3e2e9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.MilestoneQueryTests.xml",
+    "bytes": 10814,
+    "sha256": "4aa14891ab4a7e7b25b1f9bbdd39a33c1f7d6980d138a209a80f5aedd1dcad8c"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.OverviewQueryTests.xml",
+    "bytes": 10948,
+    "sha256": "3a1b2ddb5f3674fac99c43cec0e48ce74216e7844da9463bfbdbc4cee0baa324"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.ProductionSwaggerSecurityTests.xml",
+    "bytes": 11268,
+    "sha256": "53a8569e852fcb671ca21ca9cdee1509bd339c786d78bbd675db374445cdad97"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.project.application.command.ProjectFingerprintTests.xml",
+    "bytes": 527,
+    "sha256": "c29b9f80b1377305a556d8231037d733520a50605eccdc38044198448dba5788"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.ProjectApiTests.xml",
+    "bytes": 41769,
+    "sha256": "1c09e5e6ca6356146a103ada1070fc64da4222e9ecbebffe3bef977148593129"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.ProjectCommandTests.xml",
+    "bytes": 10337,
+    "sha256": "e006d3839d31b1b2f8063604ee860c0d8bb9a217ac43f0fda3860d5defb71604"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.ProjectLegacyReplayTests.xml",
+    "bytes": 16033,
+    "sha256": "e1f312456dc84b22c15b0a947b27613933564209cfe2c04b5562e718cd55e78f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.ProjectOpenApiTests.xml",
+    "bytes": 192578,
+    "sha256": "d3f0dcbe1b8c30063b6dc676e7e431a45e2b51fbacabae8cfd5473b77ca8cc46"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.ProjectPersistenceTests.xml",
+    "bytes": 14352,
+    "sha256": "f9fbeb22f670dd4437a6a6c86b58f6bc02cbbfe355d6cdffa8cec8b189c0d53f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.SecurityIntegrationTests.xml",
+    "bytes": 3636,
+    "sha256": "580998682e113f0bbca752e86d9e53974e69444c0ffc86ddf19627dc09c601b9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.TaskApiTests.xml",
+    "bytes": 20287,
+    "sha256": "1fbac76651db130c0bd5007526e899d00c3d8de5dd694e6c3a3ccf93a28e98b6"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.TaskCommandTests.xml",
+    "bytes": 10708,
+    "sha256": "66cf9c39f38007e6ed72556a5787a498e2bf945435e534acc7a80be9e401ad8a"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.TaskOpenApiTests.xml",
+    "bytes": 1663105,
+    "sha256": "663d58a704e79c97eb3a75be875b8df48fd37b15418dfe716711f05b1c2c796a"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.TaskPersistenceTests.xml",
+    "bytes": 13501,
+    "sha256": "ac8f0bf1bbc831cfb922d127cb4ea45e652f0378b3f7f361347a4dcc6e4f2b0b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.UserWorkspaceCreationConcurrencyTests.xml",
+    "bytes": 16905,
+    "sha256": "acc0716ba169fd52ef3d7caa9c778fb713d647146a9e8682f855aead132a417a"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.UserWorkspacePersistenceRulesTests.xml",
+    "bytes": 78215,
+    "sha256": "93ad983e128bd027d98384a8926c90981399c202c459b9bf0d90eb2f22babc78"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/full-diagnostic/TEST-com.kopite.devspace.UserWorkspacePersistenceTests.xml",
+    "bytes": 1848,
+    "sha256": "e272e0061fb0d27f74a3e1ce976f0f174be675d5560b75065156397c11cb33ee"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/session2-compilation.log",
+    "bytes": 4372,
+    "sha256": "00487c701a716f8c12f5be5691c344b631ea7aa24e722bb27100c5e906e1ee43"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/session3-retired-route.xml",
+    "bytes": 24270,
+    "sha256": "94670c85ceda125f5677e3912263157037104e35915f403ada99965604515260"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/session4-observation-shadowing.xml",
+    "bytes": 32900,
+    "sha256": "7b313b3d015877c907b827adeb83b4b2edef9ebd23451de64e4d3f5fc5261e54"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/session6-retired-filter-fixture.xml",
+    "bytes": 58473,
+    "sha256": "37a316fcd011147925bba99ff62d7efd45ee83c0414678c632f4f9ff9fd1e0a6"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/recovery/session7-jdbc-boolean-fixture.xml",
+    "bytes": 111100,
+    "sha256": "67fd2afe84cc6c669b7a59b8a5b828770a23105dd6139d3280c8eacdeb8b3205"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/replay/all-resources.txt",
+    "bytes": 494,
+    "sha256": "eefc1bfe0d0dc1274b5a072214be110179910f21c523fcaf38b615ab2fc87b10"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session3/TEST-com.kopite.devspace.CategoryOnlyReplayApiTests.xml",
+    "bytes": 15207,
+    "sha256": "3efaec5672ef7c0a29463857273af99c405315639d9893589072c9abe1ad3b12"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session3/TEST-com.kopite.devspace.CategoryOnlyReplayConcurrencyTests.xml",
+    "bytes": 11079,
+    "sha256": "c1c7dab1539d2cc172a639e9c0e12645066a7e641977e3d31a1f3a518627db1e"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session3/TEST-com.kopite.devspace.LegacyCreationGoldenTests.xml",
+    "bytes": 487,
+    "sha256": "f83211b01166e44d9ac4a79ccce9eb7d3dc138ecf9a21e3d3d79b525cdfbe6de"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session3/TEST-com.kopite.devspace.project.application.command.ProjectFingerprintTests.xml",
+    "bytes": 525,
+    "sha256": "d5faeb5a85711e49dbe50cc4056047b788f5dc0d5c7d0f913eb2f92c012b9da9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session3/TEST-com.kopite.devspace.ProjectCommandTests.xml",
+    "bytes": 2413,
+    "sha256": "e04ad2327267e01b923432be4a1452a45a6878110dba11916951f531d1c2ab1f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session3/TEST-com.kopite.devspace.ProjectLegacyReplayTests.xml",
+    "bytes": 10560,
+    "sha256": "2daec2bacb044b5222098b797848c6486c07a0016ffb5133249160fdb686bc2f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session3-compile.log",
+    "bytes": 4078,
+    "sha256": "2ce46dab00ceca04b0fa1ef42f6017fe281271bdaa3b6f97faf9a07a377cfba2"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session3-test-compile.log",
+    "bytes": 6260,
+    "sha256": "f0d0e47731c593cb2b877f4c5bedef9162cba6383da8d44e611c605215701870"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session3-tests.log",
+    "bytes": 4288,
+    "sha256": "038c40320fc1fd91232477c600c7030bac60451f398ef16482e47da266269dce"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/date-ties.xml",
+    "bytes": 15037,
+    "sha256": "90d2434d8d6dec15e7c44166e349b22d880fd7cde84bae0e58b632c7a39551d9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/query-count-and-plan.txt",
+    "bytes": 360,
+    "sha256": "8185037f0d9987272e414448765fe56a67230d5bee5f870624f9b66beb0ffa67"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/query-plan.txt",
+    "bytes": 1831,
+    "sha256": "66f2946fbbd036ab79b6009e50f4f4f2f5423a91c72d893265338605b050f2ac"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/TEST-com.kopite.devspace.CategoryCommandTests.xml",
+    "bytes": 14654,
+    "sha256": "ac34705288c480f51234e0853e9a9b3eb16615fb0ecb469d69a5a2299cd7771e"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/TEST-com.kopite.devspace.CategoryOnlyQueryApiTests.xml",
+    "bytes": 11687,
+    "sha256": "84a3548851a6e2a32bfbc4c75104c4e9f85a2218e88ac81ee003d67fa927665d"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/TEST-com.kopite.devspace.CategoryOnlyReplayApiTests.xml",
+    "bytes": 1860,
+    "sha256": "798ef92a5b8ac21ce125c363dc849bdb192d557f1c410cabd3861f7fa0d49700"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/TEST-com.kopite.devspace.CategoryScopeRegressionTests.xml",
+    "bytes": 10820,
+    "sha256": "0fe6cca274d3760b5129da745170d3ab7072221811862b308148d053caf1fb6b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/TEST-com.kopite.devspace.CategorySnapshotReadTests.xml",
+    "bytes": 10810,
+    "sha256": "fa24987630ddde826014efc43886733e6e525b22d12c4d7898c7b3f196dfb289"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/TEST-com.kopite.devspace.JournalQueryTests.xml",
+    "bytes": 10837,
+    "sha256": "a41212b3b61717c6c28e7593e15d6b1168b7a8ba4182e37d88b35931baf79797"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/TEST-com.kopite.devspace.MilestoneQueryTests.xml",
+    "bytes": 10859,
+    "sha256": "129d0ae461ac0567c5b29d4fa26b1d75856a8c1ed06d02dbf4619dc503579bf6"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4/TEST-com.kopite.devspace.OverviewQueryTests.xml",
+    "bytes": 10994,
+    "sha256": "56cee885c47a6e6ed288ee46bc61aaf5d14438e5a25f6a6cb2f03c5f673937b8"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4-compile.log",
+    "bytes": 5432,
+    "sha256": "a5dec332fcfc604f84bb758492e146752f9972981e8bdb7c4547c0dc454c4210"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4-date-ties.log",
+    "bytes": 3326,
+    "sha256": "2445fa2fb888b4f64a71208783920f7742b56e65d514f30881118ea9cd1f5c51"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4-final.log",
+    "bytes": 9246,
+    "sha256": "0d092c6a7d33d6c001932c70cbed7928bf3070edb0d27fb43dfadd2be04e0fe1"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4-overview-counter.log",
+    "bytes": 3326,
+    "sha256": "d01317c98b783deffe89e0ac298647641e1ca667f6138cbf9be3a2d08a8613c2"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4-test-compile.log",
+    "bytes": 12864,
+    "sha256": "0288fe644f82f114d07e97214031defcdf926bb36bf5b5b4b187afa0c499ed67"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4-test-recovery.log",
+    "bytes": 9076,
+    "sha256": "0ee5428eee766296cb546101533672e7c3c120fa5ae3f3d4dfb83ac12bde8205"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4-test.log",
+    "bytes": 6082,
+    "sha256": "338c25235dddad129f56346ee9b52c3d9c294b2991e4e0eb98588cf23805e5ab"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session4-verified.log",
+    "bytes": 10328,
+    "sha256": "b6aa43635b0f14fa3c3bf9a2e9f869e334e63398b5a4c1114b4ddf30fbe92835"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5/targeted-TEST-com.kopite.devspace.LinkQueryTests.xml",
+    "bytes": 14779,
+    "sha256": "4b3aff94908c14c065ceeb7dfe7ac4884e67d0544003e57d96fc443762051932"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5/targeted-TEST-com.kopite.devspace.LinkRelationshipConcurrencyTests.xml",
+    "bytes": 11054,
+    "sha256": "bf8579f2c57ccfd45cc68ec9347d7f363549f7a45435bca213dbc53b08afa051"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5/TEST-com.kopite.devspace.CategoryOnlyLinkApiTests.xml",
+    "bytes": 15189,
+    "sha256": "89b15bed9211a159b351e82d051cfc325d1714b78517f76aed52bc3a5d3db114"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5/TEST-com.kopite.devspace.CategoryOnlyReplayApiTests.xml",
+    "bytes": 1860,
+    "sha256": "d64902791e1f3154e0f6107d032fb4a39325854ac9be050051cdba3ac884d090"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5/TEST-com.kopite.devspace.LinkApiTests.xml",
+    "bytes": 2112,
+    "sha256": "8e6f229c221c9a59d7ddd6d056e47cb2ca06a92d4b6823f46ba1905895aa81b4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5/TEST-com.kopite.devspace.LinkCommandTests.xml",
+    "bytes": 11759,
+    "sha256": "f05d9d5a932d8fa6ba1ac420fc9a6167e470a3371ff10a17a9983869aab185ff"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5/TEST-com.kopite.devspace.LinkPersistenceTests.xml",
+    "bytes": 17099,
+    "sha256": "f906bff3caf56e04f71763a26f35dadb380623ea0ea5e2538a1cbab0b2796a67"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5/TEST-com.kopite.devspace.LinkQueryTests.xml",
+    "bytes": 10841,
+    "sha256": "315e1ae96019a79555ba6dd613a5c4a2880acdbe82c30964e37f3482385cd420"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5-concurrency.log",
+    "bytes": 4312,
+    "sha256": "cd1db542c30462c2a22c935873f52c3e00f660305246486fc89c655c25f9983f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session5-test.log",
+    "bytes": 6244,
+    "sha256": "5c2f68bf7ff1c93afae85d86163f9ca98c55667e9be4487bc5d8e656544f63b8"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6/TEST-com.kopite.devspace.CategoryCutoverMigrationTests.xml",
+    "bytes": 87906,
+    "sha256": "53f29950d62da9c2af49fd302e36614ecd9d269737e7fa66316a2cd61cffed69"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6/TEST-com.kopite.devspace.CategoryOnlyDashboardApiTests.xml",
+    "bytes": 1880,
+    "sha256": "0d480bb6000c407004f3c800e14eafa160f8aaa9109324649f95954d587ee755"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6/TEST-com.kopite.devspace.CategoryRelationConcurrencyTests.xml",
+    "bytes": 11055,
+    "sha256": "97c5d623e50b94bdea7d8500ae387ec0102a05f836e28c0a71ef2ea5dd815429"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6/TEST-com.kopite.devspace.CategoryScopeRegressionTests.xml",
+    "bytes": 1875,
+    "sha256": "e0d96113830d5969b9bf129b3ebfc7230c432be720b00faad5840708e13cace1"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6/TEST-com.kopite.devspace.DashboardCategoryConcurrencyTests.xml",
+    "bytes": 1957,
+    "sha256": "dc5e6358ed43d28ee29e1f2676bdb893dd2ae3afcb5c9bd8f01a76e1e474426b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6/TEST-com.kopite.devspace.DashboardCategoryReadTests.xml",
+    "bytes": 14755,
+    "sha256": "febf91cd7ff8382c0fe40638ff2649918e0db3677870dd4ed054cd767f4948f8"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6/TEST-com.kopite.devspace.DashboardCommandTests.xml",
+    "bytes": 11945,
+    "sha256": "da3470579a3c54fbcf09a5d0c586d8b4e37d89a911d1daae7959451e8872bfff"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6/TEST-com.kopite.devspace.DashboardOverviewApiTests.xml",
+    "bytes": 16879,
+    "sha256": "bb98b77ebf93308b7eefd81f7fd52d6dd47f219a9486b23c522b3abbfc517020"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6/TEST-com.kopite.devspace.DashboardPersistenceTests.xml",
+    "bytes": 8485,
+    "sha256": "374e7de2d09def4028fd01ee3684d0c7a454ade5c9eaa4552bcae7ac8d24ce20"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6-compile.log",
+    "bytes": 6944,
+    "sha256": "206e3e19eb71f9b76d452689fb6e49dbd00bfa6a6b28163dc3926c8665d9c6ee"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6-read-snapshots.log",
+    "bytes": 3326,
+    "sha256": "835252662fc645e477ae36c8926ef43cf5c3f32dae0c6f6017debfac80fdc734"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6-test.log",
+    "bytes": 6048,
+    "sha256": "1a078dc5b4d837bb92482ce7961c0be45b41b2b016e1a8a68b8fd735abe561d1"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session6-validation.log",
+    "bytes": 5302,
+    "sha256": "abe6f60fefe62057e92c08922e4cc68142e93ea6fe0f793ee46c3a4164452409"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/bridge-flag.txt",
+    "bytes": 53,
+    "sha256": "fcbe8d00f80c8c5798fcff065e39a55336aaf233cb6dab7471147d6af3031860"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/bridge-jar-entries.txt",
+    "bytes": 1161,
+    "sha256": "fd53e5c8a068e0d2e7b07dd0f61b5945a2b0444f78aa4dcdeab7a5371898b94f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/final-flag.txt",
+    "bytes": 54,
+    "sha256": "9e3ad8be73e4bb5daa93e631c47dfeca16cfa60b6f9eae3acd13f1da210f64dc"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/final-jar-entries.txt",
+    "bytes": 1229,
+    "sha256": "9ac63a2e5592a5e4c8863b638d18ee564c2ae64e749e836301167df1131ca9f1"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/TEST-com.kopite.devspace.CategoryCutoverMigrationTests.xml",
+    "bytes": 111943,
+    "sha256": "d06a8d49f4efa83e5c663fa248cdf585212cb6b1ba8613a0dec36b5013f1565d"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/TEST-com.kopite.devspace.CategoryOnlyReplayConcurrencyTests.xml",
+    "bytes": 12233,
+    "sha256": "b926ce8258f8b46f4bad19a61a6b55e2f1110a57974aa7b052b2cd4b0bfa3cc3"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/TEST-com.kopite.devspace.CategoryRelationConcurrencyTests.xml",
+    "bytes": 1947,
+    "sha256": "1bff94521f7355018f09f8f3fed935725b75d02ff2eada8abe5d037ea1c197c4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/TEST-com.kopite.devspace.DashboardCategoryConcurrencyTests.xml",
+    "bytes": 1957,
+    "sha256": "a101b01242ca93f7fc65e28bb77301462c23248bcfb02dfc36c3c4d35f6892dd"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/TEST-com.kopite.devspace.FinalCategoryRuntimeTests.xml",
+    "bytes": 11450,
+    "sha256": "1a0a8ab8365b4d37e2404dd0e01673e7f1c85b551ff7c8163323b776cddc9930"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/TEST-com.kopite.devspace.LinkRelationshipConcurrencyTests.xml",
+    "bytes": 1947,
+    "sha256": "92351804a941c6ca1e6cc8c22cfb84d52048f7da77ffe7ecb57a3f2576027486"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7/TEST-com.kopite.devspace.UserWorkspaceCreationConcurrencyTests.xml",
+    "bytes": 16969,
+    "sha256": "f94d3e9e841dc5e46b7fe91a65ac1f926f8731ddc3412be8a5c24eb9fb97d316"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7-final-runtime.log",
+    "bytes": 5302,
+    "sha256": "0c44fdf2237a298a06a19c528c7650d8d745804d159dae369294d13831844cf8"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7-full-diagnostic.log",
+    "bytes": 39852,
+    "sha256": "a682f93430e182d0ea296bb8611110622bbbc116a00f50233607f775b608fda4"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7-migration.log",
+    "bytes": 2830,
+    "sha256": "5ab8f3a47eb29e5199fa0102dbc77cdb4c8ba67c971810b40bb4f93ebc12d606"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7-package-bridge.log",
+    "bytes": 1230,
+    "sha256": "d1de15d2692e92c7926255ae1f19e09ed025d33f7aa35af2e01a8e4394aeb5b9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7-package-final.log",
+    "bytes": 1230,
+    "sha256": "d1de15d2692e92c7926255ae1f19e09ed025d33f7aa35af2e01a8e4394aeb5b9"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session7-regression-recovery.log",
+    "bytes": 12036,
+    "sha256": "770c7840aa71413c657d994d8e1766a782d03ce0bdd17b0e323efd951262949a"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-browser-final-server.log",
+    "bytes": 30672,
+    "sha256": "167852d1fbe1621b3bb63e894d1d37fdfd073b43b8c3a5321b01d01d830f3f0c"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-browser-server.log",
+    "bytes": 30670,
+    "sha256": "413d50a539a38312f88295f8909a5dd49dec1d638881cbc32efc2931937c8b48"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-clean-build.log",
+    "bytes": 18288,
+    "sha256": "0852658c65b41a31d5c1d69a72d40681f0cdbf50f99e5779bbe0239b23c0b371"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-full-suite.log",
+    "bytes": 18038,
+    "sha256": "31c322705822f09db73acbaed9a33b23ec727e75b2e8bfc958848f2533179f4f"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi/TEST-com.kopite.devspace.AuthenticationOpenApiContractTests.xml",
+    "bytes": 15462,
+    "sha256": "f4d8f5add3f5ad65626aaa8568725c334154f79d4127013e1bb9791ee1e5850e"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi/TEST-com.kopite.devspace.BackendOpenApiContractTests.xml",
+    "bytes": 11915,
+    "sha256": "ba05869733f1861505ad450f0b2420afb1663a8687242d99481c0bd1aa59624b"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi/TEST-com.kopite.devspace.CategoryOpenApiTests.xml",
+    "bytes": 1657,
+    "sha256": "7dacc7c787b0b16f9bec59c54bbea6f35d150837ce7ce07644f1de78e84fe33d"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi/TEST-com.kopite.devspace.DashboardOverviewOpenApiTests.xml",
+    "bytes": 1725,
+    "sha256": "fec29ff8e1335cec2bd6bb2b89ed02f0cb2fc35b71a7feac09ff7644c948c311"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi/TEST-com.kopite.devspace.JournalOpenApiTests.xml",
+    "bytes": 1653,
+    "sha256": "0d047de483d877e59660c6e5f0e552d1795190fa48d9b71ac7250e144aed8dc3"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi/TEST-com.kopite.devspace.LinkOpenApiTests.xml",
+    "bytes": 1618,
+    "sha256": "cae952172fae73b6e15f989d0a8b837cbcb5d709add09da5b0c8f6d7aa1d3e37"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi/TEST-com.kopite.devspace.MilestoneOpenApiTests.xml",
+    "bytes": 1671,
+    "sha256": "d1f474301c5770059c0fffb37f83f0b4aaf6f72cb294dfa6387d0a8265e924ae"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi/TEST-com.kopite.devspace.ProjectOpenApiTests.xml",
+    "bytes": 1642,
+    "sha256": "fff31e52ccb16568dfca44f9dedfa3ecc5915b9d02e9424c766a4d779fcc9329"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi/TEST-com.kopite.devspace.TaskOpenApiTests.xml",
+    "bytes": 1626,
+    "sha256": "fe5b7945b461de2a31aaadaa55c06a063975d11bb42db20825e1c9fb5fd39024"
+  },
+  {
+    "path": ".gradle/project-category-only-validation/session8-openapi.log",
+    "bytes": 4268,
+    "sha256": "74cd935adfbfefea79d02500d82d74afbbd2fdbbc1447ed150ea4f894cf3ee90"
+  }
+]

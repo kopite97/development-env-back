@@ -48,3 +48,31 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// A bridge artifact must never contain the later contract migration.
+def categoryStage = providers.gradleProperty('categoryStage').orElse('bridge')
+if (!(categoryStage.get() in ['bridge', 'final'])) {
+    throw new GradleException('categoryStage must be bridge or final')
+}
+tasks.named('processResources') {
+    inputs.property('categoryStage', categoryStage)
+    doFirst {
+        // Copy tasks do not remove files left by a previous final build.
+        if (categoryStage.get() == 'bridge') {
+            def stale = new File(destinationDir, 'db/migration/V17__retire_classification_scope.sql')
+            def buildRoot = layout.buildDirectory.get().asFile.toPath().toAbsolutePath().normalize()
+            if (!stale.toPath().toAbsolutePath().normalize().startsWith(buildRoot)) {
+                throw new GradleException('Refusing to remove a migration outside the build directory')
+            }
+            if (stale.exists() && !stale.delete()) throw new GradleException('Cannot remove stale final migration')
+        }
+    }
+    from('src/main/migration-stages/cutover') { into 'db/migration' }
+    if (categoryStage.get() == 'final') {
+        from('src/main/migration-stages/contract') { into 'db/migration' }
+    }
+    doLast {
+        new File(destinationDir, 'category-transition.properties').text =
+            "app.category-transition.legacy-replay-enabled=${categoryStage.get() == 'bridge'}\n"
+    }
+}

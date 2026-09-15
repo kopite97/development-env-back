@@ -11,10 +11,10 @@ public record JournalResponse(
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) Instant updatedAt,
     @Schema(maxLength=120) String title, UUID projectId,
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) String projectName,
-    @Schema(accessMode=Schema.AccessMode.READ_ONLY,allowableValues={"unity","server"}) String scope,
+    @Schema(accessMode=Schema.AccessMode.READ_ONLY,types={"string","null"},format="uuid") UUID categoryId,
     @Schema(maxLength=20000) String body,
     @Schema(type="string",format="date") LocalDate entryDate) {
     public static JournalResponse from(JournalSnapshot j) {
-        return new JournalResponse(j.id(),j.revision(),j.createdAt(),j.updatedAt(),j.title(),j.projectId(),j.projectName(),j.scope(),j.body(),j.entryDate());
+        return new JournalResponse(j.id(),j.revision(),j.createdAt(),j.updatedAt(),j.title(),j.projectId(),j.projectName(),j.categoryId(),j.body(),j.entryDate());
     }
 }

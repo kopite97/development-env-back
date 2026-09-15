@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value="/api/v1/journals",produces="application/json")
+@RequestMapping(value="/api/v2/journals",produces="application/json")
 @RequiredArgsConstructor
 @Tag(name="Journals")
 @SecurityRequirement(name="sessionCookie")
@@ -52,7 +52,8 @@ public class JournalController {
     public ResponseEntity<JournalResponse> create(Authentication auth,
         @RequestHeader("Idempotency-Key") @Parameter(schema=@Schema(minLength=1,maxLength=128,pattern="[!-~]+")) String key,
         @Valid @RequestBody CreateJournalRequest request) {
-        return ResponseEntity.status(201).cacheControl(CacheControl.noStore()).body(JournalResponse.from(commands.create(user(auth),key,request.command())));
+        var result=commands.create(user(auth),key,request.command());
+        return com.kopite.devspace.global.response.WorkspaceResponses.created(JournalResponse.from(result),result.dataRevision());
     }
 
     @GetMapping("/{id}")
@@ -60,7 +61,8 @@ public class JournalController {
     @ApiResponse(responseCode="200",description="Full owned Journal",content=@Content(schema=@Schema(implementation=JournalResponse.class)))
     @Operation(summary="Read an owned Journal")
     public ResponseEntity<JournalResponse> get(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id) {
-        return ok(JournalResponse.from(queries.get(user(auth),id(id))));
+        var result=queries.get(user(auth),id(id));
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(JournalResponse.from(result),result.dataRevision());
     }
 
     @PatchMapping(value="/{id}",consumes="application/json")
@@ -70,7 +72,8 @@ public class JournalController {
         parameters=@Parameter(name="X-CSRF-Token",in=ParameterIn.HEADER,required=true,schema=@Schema(type="string")))
     @ApiResponse(responseCode="409",description="REVISION_CONFLICT or PROJECT_ARCHIVED",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<JournalResponse> update(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,@Valid @RequestBody UpdateJournalRequest request) {
-        return ok(JournalResponse.from(commands.update(user(auth),id(id),request.command())));
+        var result=commands.update(user(auth),id(id),request.command());
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(JournalResponse.from(result),result.dataRevision());
     }
 
     @DeleteMapping("/{id}")
@@ -81,7 +84,8 @@ public class JournalController {
     @ApiResponse(responseCode="409",description="REVISION_CONFLICT",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<DeleteJournalResponse> delete(Authentication auth,@PathVariable @Parameter(schema=@Schema(type="string",format="uuid")) String id,
         @RequestParam @Parameter(schema=@Schema(type="integer",minimum="1",maximum="9007199254740991")) long revision) {
-        return ok(new DeleteJournalResponse(commands.delete(user(auth),id(id),revision)));
+        var result=commands.deleteObserved(user(auth),id(id),revision);
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(new DeleteJournalResponse(result.id()),result.dataRevision());
     }
 
     @GetMapping
@@ -89,7 +93,7 @@ public class JournalController {
     @Operation(summary="List owned Journals",description="newest: entryDate DESC, createdAt DESC, id DESC; oldest reverses all three. Inclusive calendar date bounds. Literal title/Project-name/body search. Cursor binds workspace, all filters and limit; no cross-page snapshot guarantee.")
     @ApiResponse(responseCode="400",description="VALIDATION_ERROR or INVALID_CURSOR",content=@Content(schema=@Schema(implementation=ApiError.class)))
     public ResponseEntity<JournalListResponse> list(Authentication auth,
-        @RequestParam(defaultValue="all") @Parameter(schema=@Schema(allowableValues={"all","unity","server"},defaultValue="all")) String scope,
+        @RequestParam(defaultValue="all") @Parameter(schema=@Schema(pattern="all|uncategorized|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",defaultValue="all")) String category,
         @RequestParam(required=false) @Parameter(schema=@Schema(format="uuid")) String projectId,
         @RequestParam(defaultValue="all") @Parameter(schema=@Schema(allowableValues={"all","active","archived"},defaultValue="all")) String projectStatus,
         @RequestParam(defaultValue="") String query,
@@ -97,11 +101,19 @@ public class JournalController {
         @RequestParam(required=false) @Parameter(schema=@Schema(type="string",format="date")) String to,
         @RequestParam(defaultValue="newest") @Parameter(schema=@Schema(allowableValues={"newest","oldest"},defaultValue="newest")) String sort,
         @RequestParam(defaultValue="20") @Parameter(schema=@Schema(type="integer",minimum="1",maximum="100",defaultValue="20")) int limit,
-        @RequestParam(required=false) String cursor) {
-        var request=new JournalListRequest(scope,projectId,projectStatus,query,from,to,sort,limit);
-        return ok(JournalListResponse.from(queries.list(user(auth),request.filter(),cursor)));
+        @RequestParam(required=false) String cursor, jakarta.servlet.http.HttpServletRequest http) {
+        validateQuery(http);
+        var request=new JournalListRequest(category,projectId,projectStatus,query,from,to,sort,limit);
+        var result=queries.list(user(auth),request.filter(),cursor);
+        return com.kopite.devspace.global.response.WorkspaceResponses.ok(JournalListResponse.from(result),result.dataRevision());
     }
 
+    private void validateQuery(jakarta.servlet.http.HttpServletRequest request) {
+        request.getParameterMap().forEach((name,values)->{
+            if(!java.util.Set.of("category","projectId","projectStatus","query","limit","cursor","from","to","sort").contains(name)||values.length!=1 || (name.equals("category") && values[0].isEmpty()))
+                throw new com.kopite.devspace.journal.domain.JournalValidationException(name,"invalid query parameter");
+        });
+    }
     private UUID user(Authentication auth) { return ((InternalUserPrincipal)auth.getPrincipal()).userId(); }
     private UUID id(String value) { return JournalRequestFields.uuid(value,"id"); }
     private <T> ResponseEntity<T> ok(T body) { return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body); }

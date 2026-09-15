@@ -1,0 +1,81 @@
+{
+  "result": "CATEGORY_ONLY_SWAGGER_DOCUMENTATION_PASS",
+  "anonymous": true,
+  "requiredCsrfDocumented": true,
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/api/v1/project-categories",
+      "label": "List Project Categories"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/project-categories",
+      "label": "Create a Project Category"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/project-categories/{id}",
+      "label": "Read a Project Category"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/project-categories/{id}",
+      "label": "Rename a Project Category"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/project-categories/{id}",
+      "label": "Delete a Project Category"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v2/projects",
+      "label": "Create an owned Project"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v2/projects/{id}",
+      "label": "Update, archive or unarchive an owned Project"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/dashboards/home",
+      "label": "Read"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v2/dashboards/home",
+      "label": "Save"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/links",
+      "label": "List owned Links"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v2/overview",
+      "label": "Overview"
+    }
+  ],
+  "schemas": [
+    "CategoryResponse",
+    "CategoryListResponse",
+    "DeleteCategoryResponse",
+    "CreateCategoryRequest",
+    "RenameCategoryRequest",
+    "CreateProjectRequest",
+    "UpdateProjectRequest",
+    "ProjectResponse",
+    "DashboardSelectionDto",
+    "DashboardSelectionCategory",
+    "DashboardSelectionUncategorized",
+    "DashboardWidgetResponse",
+    "LinkResponse"
+  ],
+  "selectionVisible": true,
+  "workspaceHeaderVisible": true,
+  "replayDescriptionVisible": true,
+  "nullableRelationVisible": true
+}

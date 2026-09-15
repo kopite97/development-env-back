@@ -12,7 +12,7 @@ import java.util.*;
 @JsonDeserialize(using=SaveHomeDashboardRequest.Deserializer.class)
 @Schema(additionalProperties=Schema.AdditionalPropertiesValue.FALSE,description="Atomic full replacement; all fields required. First save compares 0 and returns 1; stale first or later saves return 409. Same-value saves increment revision. No Idempotency-Key. Empty widgets allowed; IDs unique after trim.")
 public record SaveHomeDashboardRequest(
-    @NotNull @Schema(allowableValues={"1"}) Integer schemaVersion,
+    @NotNull @Schema(allowableValues={"2"}) Integer schemaVersion,
     @NotNull @Min(0) @Max(9007199254740991L) Long revision,
     @NotNull @Valid List<@NotNull DashboardWidgetRequest> widgets) {
     public List<DashboardWidget> values() {return widgets.stream().map(DashboardWidgetRequest::value).toList();}
@@ -23,7 +23,7 @@ public record SaveHomeDashboardRequest(
                 String field=field(p,seen,"body");var token=p.nextToken();
                 switch(field) {
                     case "schemaVersion" -> {if(token!=JsonToken.VALUE_NUMBER_INT)throw invalid(field);
-                        if(!p.getBigIntegerValue().equals(BigInteger.ONE))throw new UnsupportedDashboardSchemaException();schema=1;}
+                        if(!p.getBigIntegerValue().equals(BigInteger.TWO))throw new UnsupportedDashboardSchemaException();schema=2;}
                     case "revision" -> {revision=integer(p,field);HomeDashboard.validateRevision(revision);}
                     case "widgets" -> {
                         if(token!=JsonToken.START_ARRAY)throw invalid(field);widgets=new ArrayList<>();
@@ -37,19 +37,31 @@ public record SaveHomeDashboardRequest(
             return new SaveHomeDashboardRequest(schema,revision,List.copyOf(widgets));
         }
         private DashboardWidgetRequest widget(JsonParser p,String path) {
-            object(p,path);Set<String> seen=new HashSet<>();Map<String,String> strings=new HashMap<>();Integer limit=null;
+            object(p,path);Set<String> seen=new HashSet<>();Map<String,String> strings=new HashMap<>();Integer limit=null;DashboardSelection selection=null;
             while(p.nextToken()!=JsonToken.END_OBJECT) {
                 String field=field(p,seen,path);var token=p.nextToken();
-                if(Set.of("id","type","title","scope","size","projectId").contains(field)) {
+                if(Set.of("id","type","title","size").contains(field)) {
                     if(token!=JsonToken.VALUE_STRING)throw invalid(path+"."+field);strings.put(field,p.getString());
+                } else if(field.equals("selection")) {selection=selection(p,path+".selection");
                 } else if(field.equals("limit")) {
                     long n=integer(p,path+".limit");if(n<1||n>20)throw invalid(path+".limit");limit=(int)n;
                 } else throw invalid(path+"."+field);
             }
             try {
-                UUID project=strings.containsKey("projectId")?uuid(strings.get("projectId"),"projectId"):null;
-                return DashboardWidgetRequest.from(new DashboardWidget(strings.get("id"),strings.get("type"),strings.get("title"),strings.get("scope"),strings.get("size"),project,limit));
+                return DashboardWidgetRequest.from(new DashboardWidget(strings.get("id"),strings.get("type"),strings.get("title"),strings.get("size"),selection,limit));
             } catch(DashboardValidationException ex) {throw new DashboardValidationException(path+"."+ex.getField(),ex.getMessage());}
+        }
+        private DashboardSelection selection(JsonParser p,String path) {
+            object(p,path);Set<String> seen=new HashSet<>();Map<String,String> values=new HashMap<>();
+            while(p.nextToken()!=JsonToken.END_OBJECT) {
+                String field=field(p,seen,path);
+                if(!Set.of("kind","projectId","categoryId").contains(field)||p.nextToken()!=JsonToken.VALUE_STRING)throw invalid(path+"."+field);
+                values.put(field,p.getString());
+            }
+            try {
+                return new DashboardSelection(values.get("kind"),values.containsKey("projectId")?uuid(values.get("projectId"),"projectId"):null,
+                    values.containsKey("categoryId")?uuid(values.get("categoryId"),"categoryId"):null);
+            } catch(DashboardValidationException ex){throw new DashboardValidationException(path+"."+ex.getField(),ex.getMessage());}
         }
         private void object(JsonParser p,String field) {if(p.currentToken()!=JsonToken.START_OBJECT)throw invalid(field);}
         private String field(JsonParser p,Set<String> seen,String path) {

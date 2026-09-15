@@ -24,9 +24,9 @@ public class ProjectCreateReplayAdapter implements ProjectCreateReplayStore {
         return jdbc.query("""
                 select request_hash, response_body, expires_at from project_create_idempotency
                 where workspace_id=? and method='POST' and path='/api/v1/projects' and key=?
-                """, (rs, row) -> new Replay(rs.getString(1), json.readValue(rs.getString(2), ProjectSnapshot.class),
-                rs.getTimestamp(3).toInstant()), workspaceId, key).stream().findFirst();
+                """, (rs, row) -> replay(rs.getString(1),rs.getString(2),rs.getTimestamp(3).toInstant()), workspaceId, key).stream().findFirst();
     }
+
 
     @Override
     public void save(UUID workspaceId, String key, String requestHash, ProjectSnapshot result, Instant now) {
@@ -42,5 +42,10 @@ public class ProjectCreateReplayAdapter implements ProjectCreateReplayStore {
     public void removeExpired(UUID workspaceId, Instant now) {
         jdbc.update("delete from project_create_idempotency where workspace_id=? and expires_at<=?",
                 workspaceId, Timestamp.from(now));
+    }
+    private Replay replay(String hash,String body,Instant expiresAt) {
+        var tree=json.readTree(body);
+        boolean legacy=tree.has("scope");
+        return new Replay(hash,legacy?null:json.readValue(body,ProjectSnapshot.class),expiresAt,legacy);
     }
 }

@@ -50,6 +50,7 @@ class ProjectCommandTests {
     private final PersonalWorkspaceRepository workspaces;
     private final ProjectRepository projects;
     private final JsonMapper json;
+    @Autowired private com.kopite.devspace.projectcategory.domain.ProjectCategoryRepository categories;
 
     @Autowired
     ProjectCommandTests(ProjectCommandService commands, UserWorkspaceCreationService users, JdbcTemplate jdbc,
@@ -71,7 +72,7 @@ class ProjectCommandTests {
         var results = race(() -> commands.create(owner.user().getId(), "same-key", input("one")),
                 () -> commands.create(owner.user().getId(), "same-key", input("one")));
         assertInstanceOf(ProjectSnapshot.class, results.getFirst());
-        assertEquals(results.getFirst(), results.getLast());
+        SnapshotAssertions.assertDataEquals(results.getFirst(), results.getLast());
         assertCounts(owner, 1, 1, 1);
 
         var other = owner();
@@ -105,14 +106,14 @@ class ProjectCommandTests {
         var p = commands.create(owner.user().getId(), "persisted", input("original"));
         commands.update(owner.user().getId(), p.id(), change(1, "archived"));
         var fresh = freshService(Clock.systemUTC());
-        assertEquals(p, transaction.execute(tx -> fresh.create(owner.user().getId(), "persisted", input("original"))));
+        SnapshotAssertions.assertDataEquals(p, transaction.execute(tx -> fresh.create(owner.user().getId(), "persisted", input("original"))));
         assertEquals(201, jdbc.queryForObject("select response_status from project_create_idempotency where workspace_id=?", Integer.class, owner.workspace().getId()));
         String stored = jdbc.queryForObject("select response_body from project_create_idempotency where workspace_id=?", String.class, owner.workspace().getId());
-        assertEquals(p, json.readValue(stored, ProjectSnapshot.class));
+        SnapshotAssertions.assertDataEquals(p, json.readValue(stored, ProjectSnapshot.class));
         assertCounts(owner, 1, 1, 2);
         // No public deletion API exists. A retained retry result must not resurrect even an administratively removed row.
         jdbc.update("delete from projects where id=?", p.id());
-        assertEquals(p, commands.create(owner.user().getId(), "persisted", input("original")));
+        SnapshotAssertions.assertDataEquals(p, commands.create(owner.user().getId(), "persisted", input("original")));
         assertCounts(owner, 0, 1, 2);
     }
 
@@ -124,7 +125,7 @@ class ProjectCommandTests {
                 .create(owner.user().getId(), "expiring", input("original")));
         var before = transaction.execute(tx -> freshService(Clock.fixed(start.plusSeconds(86399), ZoneOffset.UTC))
                 .create(owner.user().getId(), "expiring", input("original")));
-        assertEquals(first, before);
+        SnapshotAssertions.assertDataEquals(first, before);
         assertCounts(owner, 1, 1, 1);
         var after = transaction.execute(tx -> freshService(Clock.fixed(start.plusSeconds(86400), ZoneOffset.UTC))
                 .create(owner.user().getId(), "expiring", input("new")));
@@ -159,13 +160,13 @@ class ProjectCommandTests {
     @Test
     void requestHashPreservesOmissionAndRawValuesAndInvalidKeysDoNotWrite() {
         var owner = owner();
-        var omitted = new CreateProjectCommand("name", null, "unity", "stack", null, null, null);
+        var omitted = new CreateProjectCommand("name", null, "stack", null, null, null);
         var first = commands.create(owner.user().getId(), "hash", omitted);
-        assertEquals(first, commands.create(owner.user().getId(), "hash", omitted));
+        SnapshotAssertions.assertDataEquals(first, commands.create(owner.user().getId(), "hash", omitted));
         assertThrows(ProjectIdempotencyConflictException.class, () -> commands.create(owner.user().getId(), "hash",
-                new CreateProjectCommand("name", "", "unity", "stack", null, null, null)));
+                new CreateProjectCommand("name", "", "stack", null, null, null)));
         assertThrows(ProjectIdempotencyConflictException.class, () -> commands.create(owner.user().getId(), "hash",
-                new CreateProjectCommand(" name ", null, "unity", "stack", null, null, null)));
+                new CreateProjectCommand(" name ", null, "stack", null, null, null)));
         for (String key : new String[]{null, "", " ", "two words", "한글", "x".repeat(129)}) {
             assertThrows(ProjectValidationException.class, () -> commands.create(owner.user().getId(), key, omitted));
         }
@@ -176,7 +177,7 @@ class ProjectCommandTests {
     }
 
     private ProjectCommandService freshService(Clock clock) {
-        return new ProjectCommandService(currentUser, workspaces, projects, new ProjectCreateReplayAdapter(jdbc, json), clock);
+        return new ProjectCommandService(currentUser, workspaces, projects, new ProjectCreateReplayAdapter(jdbc, json), clock, categories);
     }
 
     private List<Object> race(Callable<ProjectSnapshot> first, Callable<ProjectSnapshot> second) throws Exception {
@@ -200,11 +201,11 @@ class ProjectCommandTests {
     }
 
     private CreateProjectCommand input(String name) {
-        return new CreateProjectCommand(name, null, "unity", "Java", new BigDecimal("23.456"), null, null);
+        return new CreateProjectCommand(name, null, "Java", new BigDecimal("23.456"), null, null);
     }
 
     private UpdateProjectCommand change(long revision, String status) {
-        return new UpdateProjectCommand(revision, null, null, null, null, null, null, null, status);
+        return new UpdateProjectCommand(revision, null, null, null, null, null, null, status);
     }
 
     private void assertCounts(UserWorkspaceCreationResult owner, long projectCount, long replayCount, long dataRevision) {

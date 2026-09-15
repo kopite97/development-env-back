@@ -37,11 +37,11 @@ class DashboardCommandTests {
     UUID workspace(UUID u) {return jdbc.queryForObject("select id from workspaces where owner_user_id=?",UUID.class,u);}
     long counter(UUID u) {return jdbc.queryForObject("select data_revision from workspaces where owner_user_id=?",Long.class,u);}
     List<String> state(UUID u) {return jdbc.queryForList("select row_to_json(d)::text from dashboards d where workspace_id=?",String.class,workspace(u));}
-    List<DashboardWidget> layout(String id) {return List.of(new DashboardWidget(id,"board","Board","unity","wide",null,null));}
-    List<DashboardWidget> selected(UUID p) {return List.of(new DashboardWidget("p","overview","Project","server","small",p,3));}
+    List<DashboardWidget> layout(String id) {return List.of(new DashboardWidget(id,"board","Board","wide",com.kopite.devspace.dashboard.domain.DashboardSelection.all(),null));}
+    List<DashboardWidget> selected(UUID p) {return List.of(new DashboardWidget("p","overview","Project","small",new com.kopite.devspace.dashboard.domain.DashboardSelection("project",p,null),3));}
     UUID project(UUID u,boolean archived) {
         UUID p=UUID.randomUUID();
-        jdbc.update("insert into projects(id,workspace_id,name,scope,stack,status,created_at,updated_at) values(?,?,'Project','unity','Java',?,now(),now())",p,workspace(u),archived?"archived":"active");return p;
+        jdbc.update("insert into projects(id,workspace_id,name,stack,status,created_at,updated_at) values(?,?,'Project','Java',?,now(),now())",p,workspace(u),archived?"archived":"active");return p;
     }
     @Test void defaultsDoNotWriteAndAllRevisionTransitions() {
         UUID u=owner();project(u,false);
@@ -63,10 +63,10 @@ class DashboardCommandTests {
         assertThrows(DashboardNotFoundException.class,()->commands.save(u,99,selected(foreign)));
         assertThrows(DashboardNotFoundException.class,()->commands.save(u,0,selected(UUID.randomUUID())));
         assertTrue(state(u).isEmpty());assertEquals(0,counter(u));
-        var result=commands.save(u,0,selected(p));assertEquals("all",result.widgets().getFirst().scope());
+        var result=commands.save(u,0,selected(p));assertEquals("project",result.widgets().getFirst().selection().kind());
         assertEquals(result,queries.get(u));assertEquals(0,queries.get(other).revision());
         var before=state(u);
-        jdbc.update("update dashboards set widgets=jsonb_set(widgets,'{0,projectId}',to_jsonb(cast(? as text))) where workspace_id=?",foreign.toString(),workspace(u));
+        jdbc.update("update dashboards set widgets=jsonb_set(widgets,'{0,selection,projectId}',to_jsonb(cast(? as text))) where workspace_id=?",foreign.toString(),workspace(u));
         assertThrows(DashboardNotFoundException.class,()->queries.get(u));assertEquals(1,counter(u));
         assertNotEquals(before,state(u));
         assertEquals(2,commands.save(u,1,List.of()).revision());assertTrue(queries.get(u).widgets().isEmpty());

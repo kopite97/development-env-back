@@ -13,7 +13,10 @@ public final class LinkRequestFields {
             if(parser.currentToken()!=JsonToken.PROPERTY_NAME) throw invalid("body");
             String name=parser.currentName();var token=parser.nextToken();
             if(fields.containsKey(name)) throw invalid(name);
-            if(Set.of("label","description","url","scope").contains(name)) {
+            if(name.equals("projectId")) {
+                if(token!=JsonToken.VALUE_NULL&&token!=JsonToken.VALUE_STRING)throw invalid(name);
+                fields.put(name,token==JsonToken.VALUE_NULL?null:parser.getString());
+            } else if(Set.of("label","description","url").contains(name)) {
                 if(token!=JsonToken.VALUE_STRING) throw invalid(name);
                 fields.put(name,parser.getString());
             } else if(patch&&name.equals("revision")) {

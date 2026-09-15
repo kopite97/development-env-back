@@ -44,6 +44,7 @@ public class TaskCommandService {
         var previous = replays.find(workspace.getId(), key);
         if (previous.isPresent() && previous.get().expiresAt().isAfter(now)) {
             var saved = previous.get();
+            if(saved.legacy()) throw new TaskConflictException("IDEMPOTENCY_KEY_REUSED");
             Project originalProject = projects.findOwned(workspace.getId(), saved.result().projectId()).orElseThrow(TaskNotFoundException::new);
             Task original = tasks.findOwned(workspace.getId(), saved.result().id()).orElseThrow(TaskNotFoundException::new);
             projects.findOwned(workspace.getId(), original.getProjectId()).orElseThrow(TaskNotFoundException::new);
@@ -54,7 +55,7 @@ public class TaskCommandService {
         replays.removeExpired(workspace.getId(), now);
         Task task = tasks.save(Task.create(workspace.getId(), values, now));
         workspace.recordBusinessMutation();
-        var result = TaskSnapshot.from(task, project);
+        var result = TaskSnapshot.from(task, project).observed(workspace.getDataRevision());
         replays.save(workspace.getId(), key, hash, result, now);
         return result;
     }
@@ -70,7 +71,7 @@ public class TaskCommandService {
         if (!task.getProjectId().equals(target.getId())) requireActive(target);
         task.update(command.revision(), values, projectClock.instant());
         workspace.recordBusinessMutation();
-        return TaskSnapshot.from(task, target);
+        return TaskSnapshot.from(task, target).observed(workspace.getDataRevision());
     }
 
     @Transactional
@@ -79,7 +80,7 @@ public class TaskCommandService {
         Task task = lockTask(workspace.getId(), id, null);
         task.delete(revision, projectClock.instant());
         workspace.recordBusinessMutation();
-        return snapshot(workspace.getId(), task);
+        return snapshot(workspace.getId(), task).observed(workspace.getDataRevision());
     }
 
     @Transactional
@@ -88,7 +89,7 @@ public class TaskCommandService {
         Task task = lockTask(workspace.getId(), id, null);
         task.restore(revision, projectClock.instant());
         workspace.recordBusinessMutation();
-        return snapshot(workspace.getId(), task);
+        return snapshot(workspace.getId(), task).observed(workspace.getDataRevision());
     }
 
     private TaskSnapshot snapshot(UUID workspace, Task task) {

@@ -23,12 +23,12 @@ class LinkOpenApiTests {
     private final MockMvc mvc;private final JsonMapper json;
     @Autowired LinkOpenApiTests(MockMvc mvc,JsonMapper json){this.mvc=mvc;this.json=json;}
     @Test void allSixOperationsAndCollectionContractAreDocumented() throws Exception {
-        mvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());mvc.perform(get("/api/v1/links")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());mvc.perform(get("/api/v2/links")).andExpect(status().isUnauthorized());
         String body=mvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         var output=Path.of("build/reports/link-api/openapi.json");Files.createDirectories(output.getParent());Files.writeString(output,body);
         var api=json.readTree(body);var paths=api.get("paths");var schemas=api.get("components").get("schemas");
-        var methods=Map.of("/api/v1/links",Set.of("get","post"),"/api/v1/links/{id}",Set.of("get","patch","delete"),"/api/v1/links/order",Set.of("put"));
-        assertEquals(3,paths.properties().stream().filter(p->p.getKey().startsWith("/api/v1/links")).count());
+        var methods=Map.of("/api/v2/links",Set.of("get","post"),"/api/v2/links/{id}",Set.of("get","patch","delete"),"/api/v2/links/order",Set.of("put"));
+        assertEquals(3,paths.properties().stream().filter(p->p.getKey().startsWith("/api/v2/links")).count());
         for(var entry:methods.entrySet()) {
             assertEquals(entry.getValue(),keys(paths.get(entry.getKey())));
             for(String method:entry.getValue()) {
@@ -36,30 +36,30 @@ class LinkOpenApiTests {
                 assertTrue(op.get("responses").has(success));assertTrue(op.get("security").valueStream().anyMatch(s->s.has("sessionCookie")));
                 var errors = new HashSet<>(Set.of("400","401","403","500"));
                 if (!method.equals("get")) errors.add("409");
-                if (!method.equals("get") || entry.getKey().endsWith("/{id}")) errors.add("404");
+                errors.add("404");
                 for(String code:errors) assertEquals("#/components/schemas/ApiError",op.get("responses").get(code).get("content").get("application/json").get("schema").get("$ref").asString());
                 if(method.equals("get")) assertFalse(op.get("responses").has("409"));
-                if(method.equals("get") && entry.getKey().equals("/api/v1/links")) assertFalse(op.get("responses").has("404"));
+                if(method.equals("get") && entry.getKey().equals("/api/v2/links")) assertTrue(op.get("responses").has("404"));
                 if(!method.equals("get")){var csrf=parameter(op,"X-CSRF-Token");assertTrue(csrf.get("required").asBoolean());assertEquals("header",csrf.get("in").asString());}
             }
         }
-        var create=paths.get("/api/v1/links").get("post");assertFalse(create.get("responses").has("200"));assertTrue(create.get("responses").has("429"));
+        var create=paths.get("/api/v2/links").get("post");assertFalse(create.get("responses").has("200"));assertTrue(create.get("responses").has("429"));
         assertTrue(parameter(create,"Idempotency-Key").get("required").asBoolean());assertEquals(128,parameter(create,"Idempotency-Key").get("schema").get("maxLength").asInt());
-        var list=paths.get("/api/v1/links").get("get");assertEquals(Set.of("scope","query"),list.get("parameters").valueStream().map(p->p.get("name").asString()).collect(Collectors.toSet()));
-        assertEquals("all",parameter(list,"scope").get("schema").get("default").asString());assertEquals(Set.of("all","unity","server"),strings(parameter(list,"scope").get("schema").get("enum")));
-        var delete=paths.get("/api/v1/links/{id}").get("delete");assertTrue(parameter(delete,"revision").get("required").asBoolean());assertEquals("query",parameter(delete,"revision").get("in").asString());bounds(parameter(delete,"revision").get("schema"),1);
+        var list=paths.get("/api/v2/links").get("get");assertEquals(Set.of("category","projectId","projectStatus","query"),list.get("parameters").valueStream().map(p->p.get("name").asString()).collect(Collectors.toSet()));
+        assertEquals("all",parameter(list,"category").get("schema").get("default").asString());
+        var delete=paths.get("/api/v2/links/{id}").get("delete");assertTrue(parameter(delete,"revision").get("required").asBoolean());assertEquals("query",parameter(delete,"revision").get("in").asString());bounds(parameter(delete,"revision").get("schema"),1);
         assertFalse(delete.has("requestBody"));assertFalse(delete.get("parameters").valueStream().anyMatch(p->p.get("name").asString().equals("Idempotency-Key")));
-        assertEquals("#/components/schemas/LinkResponse",paths.get("/api/v1/links/{id}").get("get").get("responses").get("200").get("content").get("application/json").get("schema").get("$ref").asString());
+        assertEquals("#/components/schemas/LinkResponse",paths.get("/api/v2/links/{id}").get("get").get("responses").get("200").get("content").get("application/json").get("schema").get("$ref").asString());
         for(String name:List.of("CreateLinkRequest","UpdateLinkRequest")) {
-            var schema=schemas.get(name);var properties=schema.get("properties");var expected=new HashSet<>(Set.of("label","description","url","scope"));if(name.startsWith("Update"))expected.add("revision");
+            var schema=schemas.get(name);var properties=schema.get("properties");var expected=new HashSet<>(Set.of("label","description","url","projectId"));if(name.startsWith("Update"))expected.add("revision");
             assertEquals(expected,keys(properties));assertFalse(schema.get("additionalProperties").asBoolean());assertEquals(100,properties.get("label").get("maxLength").asInt());assertEquals(300,properties.get("description").get("maxLength").asInt());assertEquals(2000,properties.get("url").get("maxLength").asInt());assertEquals("uri",properties.get("url").get("format").asString());
         }
         assertEquals(Set.of("label","url"),strings(schemas.get("CreateLinkRequest").get("required")));assertEquals(Set.of("revision"),strings(schemas.get("UpdateLinkRequest").get("required")));
-        assertEquals("all",schemas.get("CreateLinkRequest").get("properties").get("scope").get("default").asString());assertFalse(schemas.get("UpdateLinkRequest").get("properties").get("scope").has("default"));bounds(schemas.get("UpdateLinkRequest").get("properties").get("revision"),1);
+        assertEquals("uuid",schemas.get("CreateLinkRequest").get("properties").get("projectId").get("format").asString());assertTrue(strings(schemas.get("UpdateLinkRequest").get("properties").get("projectId").get("type")).contains("null"));bounds(schemas.get("UpdateLinkRequest").get("properties").get("revision"),1);
         assertEquals("",schemas.get("CreateLinkRequest").get("properties").get("description").get("default").asString());
         assertFalse(schemas.get("UpdateLinkRequest").get("properties").get("description").has("default"));
         var order=schemas.get("ReorderLinksRequest");assertEquals(Set.of("collectionRevision","ids"),keys(order.get("properties")));assertEquals(Set.of("collectionRevision","ids"),strings(order.get("required")));bounds(order.get("properties").get("collectionRevision"),0);assertEquals("uuid",order.get("properties").get("ids").get("items").get("format").asString());
-        var fields=Map.of("LinkResponse",Set.of("id","revision","createdAt","updatedAt","label","description","url","scope","position"),"LinkMutationResponse",Set.of("item","collectionRevision"),"DeleteLinkResponse",Set.of("deletedId","collectionRevision"),"LinkListResponse",Set.of("items","total","nextCursor","collectionRevision"));
+        var fields=Map.of("LinkResponse",Set.of("id","revision","createdAt","updatedAt","label","description","url","projectId","projectName","categoryId","position"),"LinkMutationResponse",Set.of("item","collectionRevision"),"DeleteLinkResponse",Set.of("deletedId","collectionRevision"),"LinkListResponse",Set.of("items","total","nextCursor","collectionRevision"));
         for(var entry:fields.entrySet()){var schema=schemas.get(entry.getKey());assertEquals(entry.getValue(),keys(schema.get("properties")));assertEquals(entry.getValue(),strings(schema.get("required")));}
         for(String field:List.of("id","position","createdAt","updatedAt"))assertTrue(schemas.get("LinkResponse").get("properties").get(field).get("readOnly").asBoolean());
         for(String audit:List.of("createdAt","updatedAt"))assertEquals("date-time",schemas.get("LinkResponse").get("properties").get(audit).get("format").asString());

@@ -58,15 +58,15 @@ class ProjectOpenApiTests {
         Files.writeString(output, body);
         JsonNode api = json.readTree(body);
         var paths = api.get("paths");
-        assertEquals(Set.of("/api/v1/projects", "/api/v1/projects/{id}"), paths.properties().stream()
-                .map(java.util.Map.Entry::getKey).filter(name -> name.startsWith("/api/v1/projects")).collect(Collectors.toSet()));
-        assertEquals(Set.of("get", "post"), keys(paths.get("/api/v1/projects")));
-        assertEquals(Set.of("get", "patch"), keys(paths.get("/api/v1/projects/{id}")));
+        assertEquals(Set.of("/api/v2/projects", "/api/v2/projects/{id}", "/api/v2/projects/category-counts"), paths.properties().stream()
+                .map(java.util.Map.Entry::getKey).filter(name -> name.startsWith("/api/v2/projects")).collect(Collectors.toSet()));
+        assertEquals(Set.of("get", "post"), keys(paths.get("/api/v2/projects")));
+        assertEquals(Set.of("get", "patch"), keys(paths.get("/api/v2/projects/{id}")));
 
-        var create = paths.get("/api/v1/projects").get("post");
-        var list = paths.get("/api/v1/projects").get("get");
-        var get = paths.get("/api/v1/projects/{id}").get("get");
-        var patch = paths.get("/api/v1/projects/{id}").get("patch");
+        var create = paths.get("/api/v2/projects").get("post");
+        var list = paths.get("/api/v2/projects").get("get");
+        var get = paths.get("/api/v2/projects/{id}").get("get");
+        var patch = paths.get("/api/v2/projects/{id}").get("patch");
         for (var operation : List.of(create, list, get, patch)) {
             assertTrue(operation.get("security").valueStream().anyMatch(value -> value.has("sessionCookie")));
             for (String code : List.of("400", "401", "403", "500")) {
@@ -92,7 +92,7 @@ class ProjectOpenApiTests {
         var key = parameter(create, "Idempotency-Key");
         assertTrue(key.get("required").asBoolean());
         assertEquals(128, key.get("schema").get("maxLength").asInt());
-        assertEquals("all", parameter(list, "scope").get("schema").get("default").asString());
+        assertEquals("all", parameter(list, "category").get("schema").get("default").asString());
         assertEquals("active", parameter(list, "status").get("schema").get("default").asString());
         var limit = parameter(list, "limit").get("schema");
         assertEquals(20, limit.get("default").asInt());
@@ -102,7 +102,7 @@ class ProjectOpenApiTests {
         var schemas = api.get("components").get("schemas");
         var createSchema = schemas.get("CreateProjectRequest");
         var patchSchema = schemas.get("UpdateProjectRequest");
-        assertEquals(Set.of("name", "scope", "stack"), strings(createSchema.get("required")));
+        assertEquals(Set.of("name", "stack"), strings(createSchema.get("required")));
         assertEquals(Set.of("revision"), strings(patchSchema.get("required")));
         assertFalse(createSchema.get("additionalProperties").asBoolean());
         assertFalse(patchSchema.get("additionalProperties").asBoolean());
@@ -117,11 +117,14 @@ class ProjectOpenApiTests {
             assertEquals(4000, properties.get("subtitle").get("maxLength").asInt());
             assertEquals(200, properties.get("currentMilestone").get("maxLength").asInt());
             assertEquals(2000, properties.get("repositoryUrl").get("maxLength").asInt());
-            assertEquals(Set.of("unity", "server"), strings(properties.get("scope").get("enum")));
+            assertFalse(properties.has("scope"));
             assertEquals(0, properties.get("progress").get("minimum").asInt());
             assertEquals(100, properties.get("progress").get("maximum").asInt());
             assertTrue(hasType(properties.get("progress"), "number"));
-            for (var property : properties.values()) assertFalse(nullable(property));
+            for (var property : properties.properties()) {
+                if(property.getKey().equals("categoryId"))assertTrue(nullable(property.getValue()));
+                else assertFalse(nullable(property.getValue()));
+            }
         }
         for (String field : List.of("subtitle", "currentMilestone", "repositoryUrl")) {
             assertEquals("", createSchema.get("properties").get(field).get("default").asString());
@@ -129,8 +132,10 @@ class ProjectOpenApiTests {
         assertEquals(0, createSchema.get("properties").get("progress").get("default").asInt());
         assertEquals(9007199254740991L, patchSchema.get("properties").get("revision").get("maximum").asLong());
         var response = schemas.get("ProjectResponse");
-        assertEquals(13, response.get("required").size());
-        for (String field : List.of("id", "revision", "createdAt", "updatedAt", "colorToken")) {
+        assertEquals(12, response.get("required").size());
+        assertTrue(nullable(response.get("properties").get("categoryId")));
+        assertFalse(schemas.has("LegacyProjectResponse"));
+        for (String field : List.of("id", "revision", "createdAt", "updatedAt")) {
             assertTrue(response.get("properties").get(field).get("readOnly").asBoolean());
         }
         assertEquals("date-time", response.get("properties").get("createdAt").get("format").asString());

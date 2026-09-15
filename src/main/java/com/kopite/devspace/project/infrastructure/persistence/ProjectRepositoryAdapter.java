@@ -25,4 +25,8 @@ public class ProjectRepositoryAdapter implements ProjectRepository {
     public Optional<Project> lockOwned(UUID workspaceId, UUID id) {
         return repository.lockOwned(workspaceId, id);
     }
+    @Override
+    public java.util.List<Project> findOwnedByIds(UUID workspaceId,java.util.Set<UUID> ids) {
+        return ids.isEmpty()?java.util.List.of():repository.findByWorkspaceIdAndIdIn(workspaceId,ids);
+    }
 }

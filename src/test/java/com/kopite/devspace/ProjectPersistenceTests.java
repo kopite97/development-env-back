@@ -66,7 +66,7 @@ class ProjectPersistenceTests {
         assertEquals(created.getCreatedAt(), reloaded.getCreatedAt());
         assertEquals(reloaded.getCreatedAt(), reloaded.getUpdatedAt());
         assertEquals(1, reloaded.getRevision());
-        assertEquals("unity", reloaded.colorToken());
+        assertNull(reloaded.getCategoryId());
         Boolean inaccessible = transaction.execute(
                 tx -> projects.findOwned(UUID.randomUUID(), created.getId()).isEmpty());
         assertEquals(Boolean.TRUE, inaccessible);
@@ -108,10 +108,10 @@ class ProjectPersistenceTests {
         assertEquals(100, values("😀".repeat(50)).name().length());
         assertThrows(ProjectValidationException.class, () -> values("😀".repeat(51)));
         assertThrows(ProjectValidationException.class, () -> values(" \t "));
-        assertThrows(ProjectValidationException.class, () -> new ProjectValues("n", "", "all", "s", BigDecimal.ZERO, "", ""));
-        assertThrows(ProjectValidationException.class, () -> new ProjectValues("n", "", "server", "s", BigDecimal.valueOf(101), "", ""));
-        assertThrows(ProjectValidationException.class, () -> new ProjectValues("n", "", "server", "s", BigDecimal.ZERO, "", "file:///tmp/a"));
-        assertEquals("https://user:password@example.com/repo", new ProjectValues("n", "", "server", "s",
+        assertThrows(ProjectValidationException.class, () -> new com.kopite.devspace.project.application.command.ProjectCategorySelection(true, "not-a-uuid"));
+        assertThrows(ProjectValidationException.class, () -> new ProjectValues("n", "", "s", BigDecimal.valueOf(101), "", ""));
+        assertThrows(ProjectValidationException.class, () -> new ProjectValues("n", "", "s", BigDecimal.ZERO, "", "file:///tmp/a"));
+        assertEquals("https://user:password@example.com/repo", new ProjectValues("n", "", "s",
                 BigDecimal.ZERO, "", " https://user:password@example.com/repo ").repositoryUrl());
         var project = Project.create(UUID.randomUUID(), values("n"), Instant.now());
         assertThrows(ProjectValidationException.class, () -> project.update(0, values("new"), "active", Instant.now()));
@@ -167,7 +167,7 @@ class ProjectPersistenceTests {
         var before = jdbc.queryForMap("select * from " + schema + ".workspaces");
         Integer checksum = jdbc.queryForObject("select checksum from " + schema + ".flyway_schema_history where version='1'", Integer.class);
         Flyway upgraded = Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema)
-                .locations("classpath:db/migration").load();
+                .locations("classpath:db/migration").target("14").load();
         upgraded.migrate();
         upgraded.validate();
         assertEquals(before, jdbc.queryForMap("select * from " + schema + ".workspaces"));
@@ -178,6 +178,6 @@ class ProjectPersistenceTests {
     }
 
     private ProjectValues values(String name) {
-        return new ProjectValues(name, "", "unity", " Java ", new BigDecimal("12.1234567890123456789"), "memo", "");
+        return new ProjectValues(name, "", " Java ", new BigDecimal("12.1234567890123456789"), "memo", "");
     }
 }

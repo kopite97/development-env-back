@@ -12,7 +12,7 @@ final class MilestoneRequestHash {
         try {
             var bytes = new ByteArrayOutputStream();
             var output = new DataOutputStream(bytes);
-            output.writeInt(1);
+            output.writeInt(2);
             for (Object value : new Object[]{command.title(), command.projectId(), command.dueDatePresent(), command.dueDate(), command.completed()}) {
                 if (value == null) output.writeInt(-1);
                 else {

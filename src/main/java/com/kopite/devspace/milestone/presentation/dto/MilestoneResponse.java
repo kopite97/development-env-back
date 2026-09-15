@@ -11,10 +11,10 @@ public record MilestoneResponse(
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) Instant updatedAt,
     @Schema(maxLength=200) String title, UUID projectId,
     @Schema(accessMode=Schema.AccessMode.READ_ONLY) String projectName,
-    @Schema(accessMode=Schema.AccessMode.READ_ONLY,allowableValues={"unity","server"}) String scope,
+    @Schema(accessMode=Schema.AccessMode.READ_ONLY,types={"string","null"},format="uuid") UUID categoryId,
     @Schema(types={"string","null"},format="date") LocalDate dueDate,
     boolean completed) {
     public static MilestoneResponse from(MilestoneSnapshot j) {
-        return new MilestoneResponse(j.id(),j.revision(),j.createdAt(),j.updatedAt(),j.title(),j.projectId(),j.projectName(),j.scope(),j.dueDate(),j.completed());
+        return new MilestoneResponse(j.id(),j.revision(),j.createdAt(),j.updatedAt(),j.title(),j.projectId(),j.projectName(),j.categoryId(),j.dueDate(),j.completed());
     }
 }

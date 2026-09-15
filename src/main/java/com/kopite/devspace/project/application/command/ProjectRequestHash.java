@@ -15,14 +15,24 @@ final class ProjectRequestHash {
         try {
             var bytes = new ByteArrayOutputStream();
             var output = new DataOutputStream(bytes);
-            output.writeInt(1);
+            output.writeInt(3);
             // Fixed field order and length prefixes preserve values and omission without JSON formatting noise.
-            for (Object value : new Object[]{command.name(), command.subtitle(), command.scope(), command.stack(),
+            for (Object value : new Object[]{command.name(), command.subtitle(), command.stack(),
                     command.progress(), command.currentMilestone(), command.repositoryUrl()}) {
                 if (value == null) {
                     output.writeInt(-1);
                 } else {
                     byte[] field = value.toString().getBytes(StandardCharsets.UTF_8);
+                    output.writeInt(field.length);
+                    output.write(field);
+                }
+            }
+            output.writeBoolean(command.category().present());
+            {
+                String value=command.category().rawValue();
+                if(value==null) output.writeInt(-1);
+                else {
+                    byte[] field=value.getBytes(StandardCharsets.UTF_8);
                     output.writeInt(field.length);
                     output.write(field);
                 }

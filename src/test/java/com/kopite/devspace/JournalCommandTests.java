@@ -48,10 +48,10 @@ class JournalCommandTests {
         this.transaction=new TransactionTemplate(manager); this.json=json;
     }
     private UUID owner() { return users.createOrReuse("journal-command",UUID.randomUUID().toString(),"Owner").user().getId(); }
-    private UUID project(UUID owner) { return projects.create(owner,UUID.randomUUID().toString(),new CreateProjectCommand("Project",null,"server","Java",null,null,null)).id(); }
+    private UUID project(UUID owner) { return projects.create(owner,UUID.randomUUID().toString(),new CreateProjectCommand("Project",null,"Java",null,null,null)).id(); }
     private CreateJournalCommand input(UUID project) { return new CreateJournalCommand("Journal",project," Body\n ","2024-02-29"); }
     private UpdateJournalCommand change(long revision,UUID project) { return new UpdateJournalCommand(revision,null,project,null,"2026-09-01"); }
-    private void archive(UUID user,UUID project) { projects.update(user,project,new UpdateProjectCommand(1,null,null,null,null,null,null,null,"archived")); }
+    private void archive(UUID user,UUID project) { projects.update(user,project,new UpdateProjectCommand(1,null,null,null,null,null,null,"archived")); }
     private long counter(UUID user) { return jdbc.queryForObject("select data_revision from workspaces where owner_user_id=?",Long.class,user); }
 
     @Test
@@ -65,10 +65,10 @@ class JournalCommandTests {
         assertThrows(JournalNotFoundException.class,()->journals.update(user,journal.id(),change(99,foreign)));
         assertThrows(JournalNotFoundException.class,()->journals.update(other,journal.id(),change(99,null)));
         assertThrows(JournalNotFoundException.class,()->journals.delete(other,journal.id(),99));
-        assertEquals(journal,journals.create(user,"create",input(project)));
+        SnapshotAssertions.assertDataEquals(journal,journals.create(user,"create",input(project)));
         assertEquals(journal.id(),journals.delete(user,journal.id(),2));
         long before=counter(user);
-        assertEquals(journal,journals.create(user,"create",input(project)));
+        SnapshotAssertions.assertDataEquals(journal,journals.create(user,"create",input(project)));
         assertEquals(before,counter(user));
         assertEquals(0L,jdbc.queryForObject("select count(*) from journals where id=?",Long.class,journal.id()));
         assertThrows(JournalNotFoundException.class,()->journals.delete(user,journal.id(),2));
@@ -81,7 +81,7 @@ class JournalCommandTests {
     void creationAndMutationRacesHaveSingleWinnerAndAtomicCounters() throws Exception {
         UUID user=owner(); UUID project=project(user);
         var same=race(()->journals.create(user,"same",input(project)),()->journals.create(user,"same",input(project)));
-        assertInstanceOf(JournalSnapshot.class,same.getFirst()); assertEquals(same.getFirst(),same.getLast());
+        assertInstanceOf(JournalSnapshot.class,same.getFirst()); SnapshotAssertions.assertDataEquals(same.getFirst(),same.getLast());
         var journal=(JournalSnapshot)same.getFirst(); assertEquals(2,counter(user));
         var edits=race(()->journals.update(user,journal.id(),change(1,null)),()->journals.update(user,journal.id(),change(1,null)));
         assertEquals(1,edits.stream().filter(JournalSnapshot.class::isInstance).count());
@@ -123,7 +123,7 @@ class JournalCommandTests {
         var journal=journals.create(user,"hash",input(project));
         assertThrows(JournalConflictException.class,()->journals.create(user,"hash",new CreateJournalCommand(" Journal ",project," Body\n ","2024-02-29")));
         String reordered="{\"entryDate\":\"2024-02-29\",\"body\":\" Body\\n \",\"projectId\":\""+project+"\",\"title\":\"Journal\"}";
-        assertEquals(journal,journals.create(user,"hash",json.readValue(reordered,CreateJournalCommand.class)));
+        SnapshotAssertions.assertDataEquals(journal,journals.create(user,"hash",json.readValue(reordered,CreateJournalCommand.class)));
         for(String key:new String[]{null,""," ","한글","x".repeat(129)}) assertThrows(JournalValidationException.class,()->journals.create(user,key,input(project)));
         assertThrows(IllegalStateException.class,()->transaction.executeWithoutResult(s->{journals.delete(user,journal.id(),1);throw new IllegalStateException("rollback");}));
         assertEquals(1L,jdbc.queryForObject("select revision from journals where id=?",Long.class,journal.id())); assertEquals(2,counter(user));

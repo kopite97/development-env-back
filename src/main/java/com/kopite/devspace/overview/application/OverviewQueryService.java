@@ -13,14 +13,20 @@ import java.util.UUID;
 public class OverviewQueryService {
     private final CurrentUserService currentUser;
     private final ProjectRepository projects;
-    private final OverviewProjectRepository aggregate;
+    private final ProjectCategoryAggregation aggregate;
+    private final com.kopite.devspace.projectcategory.application.CategoryFilterOwnership categoryOwnership;
     private final TaskQueryService tasks;
+    public ProjectCategoryCountsSnapshot categoryCounts(UUID user) {
+        var workspace=currentUser.resolve(user).workspace();
+        return new ProjectCategoryCountsSnapshot(aggregate.counts(workspace.getId(),new OverviewFilter("all",null)),workspace.getDataRevision());
+    }
     public OverviewSnapshot get(UUID user,OverviewFilter filter) {
         UUID workspace=currentUser.resolve(user).workspace().getId();
+        categoryOwnership.validate(workspace,filter.category());
         if(filter.projectId()!=null) projects.findOwned(workspace,filter.projectId()).orElseThrow(ProjectNotFoundException::new);
         var counts=aggregate.counts(workspace,filter);
         // Task stats joins this transaction; its aggregation has no LIMIT or search restriction.
-        var stats=tasks.stats(user,new TaskListFilter(filter.scope(),filter.projectId(),"all","",null,false,20));
+        var stats=tasks.stats(user,new TaskListFilter(filter.category(),filter.projectId(),"all","",null,false,20));
         return new OverviewSnapshot(filter,counts,stats);
     }
 }

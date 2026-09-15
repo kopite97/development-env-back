@@ -27,6 +27,7 @@ public class ProjectCommandService {
     private final ProjectRepository projects;
     private final ProjectCreateReplayStore replays;
     private final Clock projectClock;
+    private final com.kopite.devspace.projectcategory.domain.ProjectCategoryRepository categories;
 
     @Transactional
     public ProjectSnapshot create(UUID userId, String key, CreateProjectCommand command) {
@@ -39,13 +40,15 @@ public class ProjectCommandService {
         Instant now = projectClock.instant().truncatedTo(ChronoUnit.MICROS);
         var previous = replays.find(workspace.getId(), key);
         if (previous.isPresent() && previous.get().expiresAt().isAfter(now)) {
-            if (!previous.get().requestHash().equals(requestHash)) throw new ProjectIdempotencyConflictException();
+            if (previous.get().legacy() || !previous.get().requestHash().equals(requestHash)) throw new ProjectIdempotencyConflictException();
             return previous.get().result();
         }
+        validateCategory(workspace.getId(),values.categoryId());
+        capacity(workspace);
         replays.removeExpired(workspace.getId(), now);
         Project project = projects.save(Project.create(workspace.getId(), values, now));
         workspace.recordBusinessMutation();
-        var result = ProjectSnapshot.from(project);
+        var result = ProjectSnapshot.from(project).observed(workspace.getDataRevision());
         replays.save(workspace.getId(), key, requestHash, result, now);
         return result;
     }
@@ -55,10 +58,12 @@ public class ProjectCommandService {
         var workspace = lockWorkspace(userId);
         var project = projects.lockOwned(workspace.getId(), id).orElseThrow(ProjectNotFoundException::new);
         project.checkRevision(command.revision());
+        if(command.category().present()) validateCategory(workspace.getId(),command.category().id());
+        capacity(workspace);
         project.update(command.revision(), command.applyTo(project.values()),
                 command.status() == null ? project.getStatus() : command.status(), projectClock.instant());
         workspace.recordBusinessMutation();
-        return ProjectSnapshot.from(project);
+        return ProjectSnapshot.from(project).observed(workspace.getDataRevision());
     }
 
     private PersonalWorkspace lockWorkspace(UUID userId) {
@@ -66,5 +71,11 @@ public class ProjectCommandService {
         var workspace = workspaces.lockByOwnerId(userId).orElseThrow(ProjectNotFoundException::new);
         currentUser.resolve(userId);
         return workspace;
+    }
+    private void validateCategory(UUID workspace,UUID category) {
+        if(category!=null) categories.lockOwned(workspace,category).orElseThrow(ProjectNotFoundException::new);
+    }
+    private void capacity(PersonalWorkspace workspace) {
+        if(workspace.getDataRevision()==Long.MAX_VALUE) throw new com.kopite.devspace.project.domain.ProjectRevisionConflictException();
     }
 }

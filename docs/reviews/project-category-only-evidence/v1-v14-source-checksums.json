@@ -1,0 +1,72 @@
+[
+  {
+    "file": "V10__create_link_collections_and_links.sql",
+    "sha256": "843c73e110f4694dfc6ff098ecc62e9963dc1f7d77da51715ceb47554f210193",
+    "unchanged": true
+  },
+  {
+    "file": "V11__create_link_create_idempotency.sql",
+    "sha256": "51449801bcde34de80382f059570632bcbbd7dc5984c8f4acf62fd5c0564a084",
+    "unchanged": true
+  },
+  {
+    "file": "V12__create_home_dashboards.sql",
+    "sha256": "406a28b59c9c566871f624dbbf45024c1fbf13ae32a3694004cef3d666488df9",
+    "unchanged": true
+  },
+  {
+    "file": "V13__create_project_categories.sql",
+    "sha256": "c1f66f7b0bff915b958c91d574c6d492849f364c4f682c0fc48793a63d696ab1",
+    "unchanged": true
+  },
+  {
+    "file": "V14__create_project_category_create_idempotency.sql",
+    "sha256": "c28af8587dd7264d2cd6e8e15256356a8a7e18b171edcc571b64306e28f3f840",
+    "unchanged": true
+  },
+  {
+    "file": "V1__create_users_auth_identities_workspaces.sql",
+    "sha256": "41bc46bdf20de2727058a881cb52400f7d1eecbdbcdc81435c0865c84ef2c578",
+    "unchanged": true
+  },
+  {
+    "file": "V2__create_projects.sql",
+    "sha256": "4c9bea26202f9fe368a2a1d8c55138758c85ab4e3ba4a4d794807b9414737c27",
+    "unchanged": true
+  },
+  {
+    "file": "V3__create_project_create_idempotency.sql",
+    "sha256": "03eca471394ec0d58d45dcad34ee952858274e63fed9fb3d2996a77912d3cabc",
+    "unchanged": true
+  },
+  {
+    "file": "V4__create_tasks.sql",
+    "sha256": "1cb9b1acd44899a04393bf8da99c462a212c50755d03d82d60ce96ba4be39662",
+    "unchanged": true
+  },
+  {
+    "file": "V5__create_task_create_idempotency.sql",
+    "sha256": "2ba3b0d960fa8ce0c72751e07da04fbe41a2da4103333b678d505d039cf13eca",
+    "unchanged": true
+  },
+  {
+    "file": "V6__create_journals.sql",
+    "sha256": "bc52af7ef7216a1026261a3c763350c3e54d44e0b72c89ee2cbbb56474c8fd67",
+    "unchanged": true
+  },
+  {
+    "file": "V7__create_journal_create_idempotency.sql",
+    "sha256": "554dd7117230ee9e89302b0cbb149dff6092ac95468251b8d8b07bc2fa0a8b43",
+    "unchanged": true
+  },
+  {
+    "file": "V8__create_milestones.sql",
+    "sha256": "ddadae3d4d444b3be974aef45e1800fd56e33b17bc9a825ac09846d1e1be6504",
+    "unchanged": true
+  },
+  {
+    "file": "V9__create_milestone_create_idempotency.sql",
+    "sha256": "8b8f9163bb3dfba0f385b43bb1af59d8f85e7131ee91346417d3eb1064f81793",
+    "unchanged": true
+  }
+]

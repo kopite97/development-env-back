@@ -45,14 +45,14 @@ public class MilestoneSearchAdapter implements MilestoneSearchRepository {
     private String where(MilestoneListFilter f) {
         return " where t.workspaceId=:workspace"
             + (f.projectId()==null ? "" : " and t.projectId=:projectId")
-            + ("all".equals(f.scope()) ? "" : " and p.scope=:scope")
+            + ("all".equals(f.category()) ? "" : ("uncategorized".equals(f.category()) ? " and p.categoryId is null" : " and p.categoryId=:categoryId"))
             + ("all".equals(f.projectStatus()) ? "" : " and p.status=:projectStatus")
             + ("all".equals(f.status()) ? "" : " and t.completed=:completed");
     }
     private <T> TypedQuery<T> bind(TypedQuery<T> query, UUID workspace, MilestoneListFilter f) {
         query.setParameter("workspace",workspace);
         if(f.projectId()!=null) query.setParameter("projectId",f.projectId());
-        if(!"all".equals(f.scope())) query.setParameter("scope",f.scope());
+        if(com.kopite.devspace.projectcategory.application.CategoryFilter.id(f.category())!=null) query.setParameter("categoryId",com.kopite.devspace.projectcategory.application.CategoryFilter.id(f.category()));
         if(!"all".equals(f.projectStatus())) query.setParameter("projectStatus",f.projectStatus());
         if(!"all".equals(f.status())) query.setParameter("completed","done".equals(f.status()));
         return query;

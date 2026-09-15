@@ -68,12 +68,12 @@ class TaskCommandTests {
 
     private UUID owner() { return users.createOrReuse("task-command", UUID.randomUUID().toString(), "Owner").user().getId(); }
     private UUID project(UUID owner) {
-        return projects.create(owner, UUID.randomUUID().toString(), new CreateProjectCommand("Project", null, "server", "Java", null, null, null)).id();
+        return projects.create(owner, UUID.randomUUID().toString(), new CreateProjectCommand("Project", null, "Java", null, null, null)).id();
     }
     private CreateTaskCommand input(UUID project) { return new CreateTaskCommand("Task", project, null, null, null, null); }
     private UpdateTaskCommand change(long revision, UUID project) { return new UpdateTaskCommand(revision, null, project, null, "doing", null, null); }
     private void archive(UUID user, UUID id) {
-        projects.update(user, id, new UpdateProjectCommand(1, null, null, null, null, null, null, null, "archived"));
+        projects.update(user, id, new UpdateProjectCommand(1, null, null, null, null, null, null, "archived"));
     }
     private long counter(UUID user) { return jdbc.queryForObject("select data_revision from workspaces where owner_user_id=?", Long.class, user); }
 
@@ -96,7 +96,7 @@ class TaskCommandTests {
         assertThrows(TaskNotFoundException.class, () -> tasks.delete(user, UUID.randomUUID(), 2));
         var deleted = tasks.delete(user, task.id(), 2);
         assertNotNull(deleted.deletedAt());
-        assertEquals(task, tasks.create(user, "create", input(project)));
+        SnapshotAssertions.assertDataEquals(task, tasks.create(user, "create", input(project)));
         assertEquals(5, counter(user));
         var restored = tasks.restore(user, task.id(), 3);
         assertNull(restored.deletedAt());
@@ -115,7 +115,7 @@ class TaskCommandTests {
         UUID project = project(user);
         var same = race(() -> tasks.create(user, "same", input(project)), () -> tasks.create(user, "same", input(project)));
         assertInstanceOf(TaskSnapshot.class, same.getFirst());
-        assertEquals(same.getFirst(), same.getLast());
+        SnapshotAssertions.assertDataEquals(same.getFirst(), same.getLast());
         assertEquals(2, counter(user));
         TaskSnapshot task = (TaskSnapshot) same.getFirst();
         var updates = race(() -> tasks.update(user, task.id(), change(1, null)), () -> tasks.delete(user, task.id(), 1));
@@ -151,7 +151,7 @@ class TaskCommandTests {
         UUID user = owner();
         UUID project = project(user);
         var task = tasks.create(user, "key", input(project));
-        assertEquals(task, tasks.create(user, "key", input(project)));
+        SnapshotAssertions.assertDataEquals(task, tasks.create(user, "key", input(project)));
         assertEquals("IDEMPOTENCY_KEY_REUSED", assertThrows(TaskConflictException.class,
                 () -> tasks.create(user, "key", new CreateTaskCommand("Task", project, "", null, null, null))).getCode());
         assertEquals("IDEMPOTENCY_KEY_REUSED", assertThrows(TaskConflictException.class,
@@ -178,7 +178,7 @@ class TaskCommandTests {
         String firstJson = "{\"title\":\"Task\",\"projectId\":\"" + project + "\"}";
         String secondJson = "{ \"projectId\": \"" + project + "\", \"title\": \"Task\" }";
         var first = tasks.create(user, "order", json.readValue(firstJson, CreateTaskCommand.class));
-        assertEquals(first, tasks.create(user, "order", json.readValue(secondJson, CreateTaskCommand.class)));
+        SnapshotAssertions.assertDataEquals(first, tasks.create(user, "order", json.readValue(secondJson, CreateTaskCommand.class)));
         var delegate = new com.kopite.devspace.task.infrastructure.persistence.TaskCreateReplayAdapter(jdbc, json);
         TaskCreateReplayStore failing = new TaskCreateReplayStore() {
             public java.util.Optional<Replay> find(UUID workspace, String key) { return delegate.find(workspace, key); }

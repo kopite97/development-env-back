@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 final class ProjectRequestFields {
-    private static final Set<String> STRINGS = Set.of("name", "subtitle", "scope", "stack", "currentMilestone", "repositoryUrl");
+    private static final Set<String> STRINGS = Set.of("name", "subtitle", "stack", "currentMilestone", "repositoryUrl");
     private ProjectRequestFields() {}
 
     static Map<String, Object> read(JsonParser parser, boolean patch) {
@@ -20,7 +20,10 @@ final class ProjectRequestFields {
             String field = parser.currentName();
             JsonToken token = parser.nextToken();
             if (fields.containsKey(field)) throw invalid(field, "must not be repeated");
-            if (STRINGS.contains(field) || (patch && field.equals("status"))) {
+            if(field.equals("categoryId")) {
+                if(token!=JsonToken.VALUE_NULL && token!=JsonToken.VALUE_STRING) throw invalid(field,"must be a UUID or null");
+                fields.put(field,token==JsonToken.VALUE_NULL?null:parser.getString());
+            } else if (STRINGS.contains(field) || (patch && field.equals("status"))) {
                 if (token != JsonToken.VALUE_STRING) throw invalid(field, "must be a non-null string");
                 fields.put(field, parser.getString());
             } else if (field.equals("progress")) {

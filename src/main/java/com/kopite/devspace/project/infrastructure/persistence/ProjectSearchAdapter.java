@@ -30,14 +30,14 @@ public class ProjectSearchAdapter implements ProjectSearchRepository {
 
     private String where(ProjectListFilter filter) {
         return " where p.workspaceId = :workspaceId"
-                + (filter.scope().equals("all") ? "" : " and p.scope = :scope")
+                + (filter.category().equals("all") ? "" : ("uncategorized".equals(filter.category()) ? " and p.categoryId is null" : " and p.categoryId=:categoryId"))
                 + (filter.status().equals("all") ? "" : " and p.status = :status")
                 + " and (lower(p.name) like lower(:pattern) escape '!' or lower(p.stack) like lower(:pattern) escape '!')";
     }
 
     private <T> TypedQuery<T> bind(TypedQuery<T> query, UUID workspaceId, ProjectListFilter filter) {
         query.setParameter("workspaceId", workspaceId);
-        if (!filter.scope().equals("all")) query.setParameter("scope", filter.scope());
+        if(com.kopite.devspace.projectcategory.application.CategoryFilter.id(filter.category())!=null) query.setParameter("categoryId",com.kopite.devspace.projectcategory.application.CategoryFilter.id(filter.category()));
         if (!filter.status().equals("all")) query.setParameter("status", filter.status());
         return query.setParameter("pattern", "%" + filter.query().replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%");
     }

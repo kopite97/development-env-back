@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestcontainersConfiguration.class)
 @AutoConfigureMockMvc
 class TaskApiTests {
-    private static final String BASE="/api/v1/tasks";
+    private static final String BASE="/api/v2/tasks";
     private final MockMvc mvc;
     private final UserWorkspaceCreationService users;
     private final JdbcTemplate jdbc;
@@ -48,9 +48,13 @@ class TaskApiTests {
     private MockHttpServletRequestBuilder mutation(MockHttpServletRequestBuilder request,Owner owner) {
         return request.session(owner.session()).contentType("application/json").header("X-CSRF-Token",owner.csrf());
     }
+    private final Map<UUID,UUID> categoryIds=new java.util.HashMap<>();
+    private String category(Owner owner) {
+        return categoryIds.computeIfAbsent(owner.workspace(),workspace->{UUID id=UUID.randomUUID();jdbc.update("insert into project_categories(id,workspace_id,name,created_at,updated_at) values(?,?,'Selected Category',now(),now())",id,workspace);return id;}).toString();
+    }
     private String project(Owner owner) throws Exception {
-        return json.readTree(mvc.perform(mutation(post("/api/v1/projects"),owner).header("Idempotency-Key",UUID.randomUUID().toString())
-            .content("{\"name\":\"Project\",\"scope\":\"server\",\"stack\":\"Java\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("id").asString();
+        return json.readTree(mvc.perform(mutation(post("/api/v2/projects"),owner).header("Idempotency-Key",UUID.randomUUID().toString())
+            .content("{\"name\":\"Project\",\"stack\":\"Java\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).get("id").asString();
     }
     private String body(String project) { return "{\"title\":\" Task \",\"projectId\":\""+project+"\"}"; }
     private JsonNode create(Owner owner,String body) throws Exception {
@@ -75,12 +79,12 @@ class TaskApiTests {
             .andExpect(status().isOk()).andExpect(jsonPath("$.revision").value(2)).andExpect(jsonPath("$.tag").value("label"));
         mvc.perform(mutation(patch(path),owner).content("{\"revision\":1}"))
             .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("REVISION_CONFLICT"));
-        mvc.perform(mutation(patch("/api/v1/projects/"+project),owner).content("{\"revision\":1,\"name\":\"Renamed%_!\",\"scope\":\"unity\",\"status\":\"archived\"}"))
+        mvc.perform(mutation(patch("/api/v2/projects/"+project),owner).content("{\"revision\":1,\"name\":\"Renamed%_!\",\"categoryId\":\""+category(owner)+"\",\"status\":\"archived\"}"))
             .andExpect(status().isOk());
         var detail=read(owner,path,Map.of());
-        assertEquals("Renamed%_!",detail.get("projectName").asString()); assertEquals("unity",detail.get("scope").asString());
+        assertEquals("Renamed%_!",detail.get("projectName").asString()); assertEquals(category(owner),detail.get("categoryId").asString());assertFalse(detail.has("scope"));
         assertEquals(2,detail.get("revision").asInt());
-        assertEquals(1,read(owner,BASE,Map.of("query","%_!","scope","unity")).get("total").asInt());
+        assertEquals(1,read(owner,BASE,Map.of("query","%_!","category",category(owner))).get("total").asInt());
         assertEquals(0,read(owner,BASE,Map.of("projectStatus","active")).get("total").asInt());
         assertEquals(1,read(owner,BASE+"/stats",Map.of()).get("counts").get("done").asInt());
         mvc.perform(mutation(delete(path),owner).param("revision","2")).andExpect(status().isOk()).andExpect(jsonPath("$.revision").value(3));
@@ -143,7 +147,7 @@ class TaskApiTests {
         }
         assertEquals(0,read(other,BASE,Map.of("query","Task")).get("total").asInt());
         for(String endpoint:List.of(BASE,BASE+"/stats"))
-            mvc.perform(get(endpoint).session(other.session()).param("projectId",project).param("scope","unity")).andExpect(status().isNotFound());
+            mvc.perform(get(endpoint).session(other.session()).param("projectId",project).param("category",category(owner))).andExpect(status().isNotFound());
         mvc.perform(mutation(post(BASE),other).header("Idempotency-Key","foreign").content(body(project))).andExpect(status().isNotFound());
         jdbc.update("update users set disabled_at=now() where id=?",other.user());
         mvc.perform(get(BASE).session(other.session())).andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("ACCOUNT_DISABLED"));
@@ -163,7 +167,7 @@ class TaskApiTests {
             page=read(owner,BASE,Map.of("limit","2","cursor",page.get("nextCursor").asString()));
         }
         assertEquals(5,seen.size());
-        for(var entry:Map.of("scope","unity","projectId",project,"projectStatus","active","status","todo","deleted","true","query","Tied","limit","3").entrySet()) {
+        for(var entry:Map.of("category",category(owner),"projectId",project,"projectStatus","active","status","todo","deleted","true","query","Tied","limit","3").entrySet()) {
             var request=get(BASE).session(owner.session()).param("limit","2").param("cursor",cursor);
             if(entry.getKey().equals("limit")) request=get(BASE).session(owner.session()).param("cursor",cursor);
             mvc.perform(request.param(entry.getKey(),entry.getValue())).andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("INVALID_CURSOR"));
@@ -171,8 +175,8 @@ class TaskApiTests {
         mvc.perform(get(BASE).session(owner.session()).param("limit","2").param("cursor",cursor+"x")).andExpect(status().isBadRequest());
         var other=owner();
         mvc.perform(get(BASE).session(other.session()).param("limit","2").param("cursor",cursor)).andExpect(status().isBadRequest());
-        mvc.perform(get("/api/v1/projects").session(owner.session()).param("limit","2").param("cursor",cursor)).andExpect(status().isBadRequest());
-        assertEquals(0,read(owner,BASE,Map.of("projectId",project,"scope","unity")).get("total").asInt());
+        mvc.perform(get("/api/v2/projects").session(owner.session()).param("limit","2").param("cursor",cursor)).andExpect(status().isBadRequest());
+        assertEquals(0,read(owner,BASE,Map.of("projectId",project,"category",category(owner))).get("total").asInt());
         var stats=read(owner,BASE+"/stats",Map.of());
         assertEquals(5,stats.get("total").asInt()); assertEquals(3,stats.get("counts").get("todo").asInt());
         assertEquals(2,stats.get("counts").get("doing").asInt()); assertEquals(0,stats.get("counts").get("done").asInt());

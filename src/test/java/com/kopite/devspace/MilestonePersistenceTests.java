@@ -139,9 +139,13 @@ class MilestonePersistenceTests {
         var before=new java.util.HashMap<String,java.util.List<java.util.Map<String,Object>>>();
         tables.forEach(table->before.put(table,jdbc.queryForList("select * from "+schema+"."+table)));
         var checksums=jdbc.queryForList("select version,checksum from "+schema+".flyway_schema_history where version is not null order by version");
-        var upgraded=Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema).locations("classpath:db/migration").load();
+        var upgraded=Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema).locations("classpath:db/migration").target("14").load();
         upgraded.migrate(); upgraded.validate();
-        tables.forEach(table->assertEquals(before.get(table),jdbc.queryForList("select * from "+schema+"."+table),table));
+        tables.forEach(table->{
+            var after=jdbc.queryForList("select * from "+schema+"."+table);
+            if(table.equals("projects"))after.forEach(row->{assertTrue(row.containsKey("category_id"));assertNull(row.remove("category_id"));});
+            assertEquals(before.get(table),after,table);
+        });
         assertEquals(42L,jdbc.queryForObject("select data_revision from "+schema+".workspaces",Long.class));
         assertEquals(checksums,jdbc.queryForList("select version,checksum from "+schema+".flyway_schema_history where version in ('1','2','3','4','5','6','7') order by version"));
         assertEquals(0L,jdbc.queryForObject("select count(*) from "+schema+".milestones",Long.class));

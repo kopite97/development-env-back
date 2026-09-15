@@ -15,7 +15,7 @@ public class HomeDashboardCommandService {
     private final CurrentUserService currentUser;
     private final PersonalWorkspaceRepository workspaces;
     private final HomeDashboardRepository dashboards;
-    private final ProjectRepository projects;
+    private final DashboardReferences references;
     private final Clock projectClock;
     public HomeDashboardSnapshot save(UUID user,long expected,List<DashboardWidget> widgets) {
         HomeDashboard.validateRevision(expected);
@@ -23,10 +23,9 @@ public class HomeDashboardCommandService {
         // Lock before loading Workspace state so a waiting command reads the winner's counter.
         var workspace=workspaces.lockByOwnerId(user).orElseThrow(DashboardNotFoundException::new);
         currentUser.resolve(user);
-        values.stream().map(DashboardWidget::projectId).filter(Objects::nonNull).distinct().sorted()
-            .forEach(id->projects.lockOwned(workspace.getId(),id).orElseThrow(DashboardNotFoundException::new));
         var saved=dashboards.lock(workspace.getId());
         if(saved.isPresent()) saved.get().validateStored();
+        var missing=references.validateSave(workspace.getId(),values,saved.map(HomeDashboard::getWidgets).orElse(List.of()));
         long revision=saved.map(HomeDashboard::getRevision).orElse(0L);
         if(expected!=revision || revision==HomeDashboard.MAX_REVISION || workspace.getDataRevision()==Long.MAX_VALUE)
             throw new DashboardConflictException();
@@ -36,6 +35,6 @@ public class HomeDashboardCommandService {
         else {dashboard=saved.get();dashboard.replace(expected,values,now);}
         workspace.recordBusinessMutation();
         dashboards.flush();
-        return HomeDashboardSnapshot.from(dashboard);
+        return HomeDashboardSnapshot.from(dashboard).observed(missing,workspace.getDataRevision());
     }
 }

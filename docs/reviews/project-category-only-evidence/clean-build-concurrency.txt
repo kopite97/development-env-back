@@ -1,0 +1,83 @@
+FILE version-race-fe9bdf05-d058-43c9-85dc-ed8a7fbdfebc.txt
+legacyFirst=true observed PostgreSQL Lock; exactly one v2 creation and counter increment
+legacyFirst=false observed PostgreSQL Lock; exactly one v2 creation and counter increment
+
+FILE version-race-5b146a7a-0236-4193-a3dc-4dea942ffdc3.txt
+legacyFirst=true observed PostgreSQL Lock; exactly one v2 creation and counter increment
+legacyFirst=false observed PostgreSQL Lock; exactly one v2 creation and counter increment
+
+FILE version-race-16b5edae-809b-4216-901d-652e2ffed715.txt
+legacyFirst=true observed PostgreSQL Lock; exactly one v2 creation and counter increment
+legacyFirst=false observed PostgreSQL Lock; exactly one v2 creation and counter increment
+
+FILE link-relations-b23e377e-63fe-4cdd-8e94-13c811c2f79d.txt
+assignment-order firstA=true PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+assignment-order firstA=false PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-order firstA=true PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-order firstA=false PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-assignment firstA=true PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-assignment firstA=false PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+
+FILE link-relations-278fbfc6-c2ed-4d99-8c38-5af7442c2b9c.txt
+assignment-order firstA=true PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+assignment-order firstA=false PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-order firstA=true PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-order firstA=false PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-assignment firstA=true PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-assignment firstA=false PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+
+FILE link-relations-a928c6e1-9afa-40ce-97aa-e5f1afd29e75.txt
+assignment-order firstA=true PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+assignment-order firstA=false PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-order firstA=true PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-order firstA=false PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-assignment firstA=true PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+creation-assignment firstA=false PostgreSQL Lock observed; exact revisions, relation, order and counters verified
+
+FILE dashboard-category-68992f80-adc9-41e3-99ff-984676046d7c.txt
+delete-save saveFirst=true PostgreSQL Lock observed; exact state/revisions/counters verified
+delete-save saveFirst=false PostgreSQL Lock observed; exact state/revisions/counters verified
+first-save saveFirst=true PostgreSQL Lock observed; exact state/revisions/counters verified
+first-save saveFirst=false PostgreSQL Lock observed; exact state/revisions/counters verified
+replace-save saveFirst=true PostgreSQL Lock observed; exact state/revisions/counters verified
+replace-save saveFirst=false PostgreSQL Lock observed; exact state/revisions/counters verified
+
+FILE dashboard-category-79cb23f1-1b41-4f98-be51-db6f2d99099f.txt
+delete-save saveFirst=true PostgreSQL Lock observed; exact state/revisions/counters verified
+delete-save saveFirst=false PostgreSQL Lock observed; exact state/revisions/counters verified
+first-save saveFirst=true PostgreSQL Lock observed; exact state/revisions/counters verified
+first-save saveFirst=false PostgreSQL Lock observed; exact state/revisions/counters verified
+replace-save saveFirst=true PostgreSQL Lock observed; exact state/revisions/counters verified
+replace-save saveFirst=false PostgreSQL Lock observed; exact state/revisions/counters verified
+
+FILE dashboard-category-dfee3c31-0779-443d-9963-d38bdcba108f.txt
+delete-save saveFirst=true PostgreSQL Lock observed; exact state/revisions/counters verified
+delete-save saveFirst=false PostgreSQL Lock observed; exact state/revisions/counters verified
+first-save saveFirst=true PostgreSQL Lock observed; exact state/revisions/counters verified
+first-save saveFirst=false PostgreSQL Lock observed; exact state/revisions/counters verified
+replace-save saveFirst=true PostgreSQL Lock observed; exact state/revisions/counters verified
+replace-save saveFirst=false PostgreSQL Lock observed; exact state/revisions/counters verified
+
+FILE assignment-delete-55de9909-698e-4969-bbc6-25e5b6b45a1c.txt
+create assignFirst=true observed PostgreSQL Lock wait
+create assignFirst=false observed PostgreSQL Lock wait
+active-patch assignFirst=true observed PostgreSQL Lock wait
+active-patch assignFirst=false observed PostgreSQL Lock wait
+archived-patch assignFirst=true observed PostgreSQL Lock wait
+archived-patch assignFirst=false observed PostgreSQL Lock wait
+
+FILE assignment-delete-bbf5ef93-66f0-4e5a-bc5d-4fcd7d816fca.txt
+create assignFirst=true observed PostgreSQL Lock wait
+create assignFirst=false observed PostgreSQL Lock wait
+active-patch assignFirst=true observed PostgreSQL Lock wait
+active-patch assignFirst=false observed PostgreSQL Lock wait
+archived-patch assignFirst=true observed PostgreSQL Lock wait
+archived-patch assignFirst=false observed PostgreSQL Lock wait
+
+FILE assignment-delete-d4f82a35-76d0-4ede-8ece-52e42ca7caee.txt
+create assignFirst=true observed PostgreSQL Lock wait
+create assignFirst=false observed PostgreSQL Lock wait
+active-patch assignFirst=true observed PostgreSQL Lock wait
+active-patch assignFirst=false observed PostgreSQL Lock wait
+archived-patch assignFirst=true observed PostgreSQL Lock wait
+archived-patch assignFirst=false observed PostgreSQL Lock wait
