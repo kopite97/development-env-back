@@ -1,0 +1,17 @@
+# Only include files required to build the application.
+**
+!Dockerfile
+!.dockerignore
+!gradlew
+!build.gradle
+!settings.gradle
+!gradle/
+!gradle/**
+!src/
+!src/main/
+!src/main/**
+# Never include local credentials, even under source directories.
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
