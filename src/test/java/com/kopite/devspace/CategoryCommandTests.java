@@ -65,7 +65,7 @@ class CategoryCommandTests {
     @Test void activeAndArchivedUsageBothRestrictAndRollbackAfterFlush() {
         UUID u=owner();var c=commands.create(u,"c","Category");
         for(String status:List.of("active","archived")) {
-            UUID p=UUID.randomUUID();jdbc.update("insert into projects(id,workspace_id,name,scope,stack,status,category_id,created_at,updated_at) values(?,?,'Project','server','Java',?,?,now(),now())",p,workspace(u),status,c.id());
+            UUID p=UUID.randomUUID();jdbc.update("insert into projects(id,workspace_id,name,stack,status,category_id,created_at,updated_at) values(?,?,'Project','Java',?,?,now(),now())",p,workspace(u),status,c.id());
             conflict("CATEGORY_IN_USE",()->commands.delete(u,c.id(),1));assertEquals(1,counter(u));
             jdbc.update("delete from projects where id=?",p);
         }

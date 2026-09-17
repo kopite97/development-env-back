@@ -1,0 +1,64 @@
+{
+  "layoutGetMockMvc" : [ {
+    "samples" : 50,
+    "p50Ms" : 12.2583,
+    "p95Ms" : 15.6399,
+    "maxMs" : 17.8577,
+    "placements" : 6,
+    "preparedStatementsPerRequest" : 7.0,
+    "responseBytes" : 2298
+  }, {
+    "samples" : 50,
+    "p50Ms" : 12.0509,
+    "p95Ms" : 18.9448,
+    "maxMs" : 21.5932,
+    "placements" : 60,
+    "preparedStatementsPerRequest" : 7.0,
+    "responseBytes" : 22116
+  } ],
+  "independentUpdateTransactions" : [ {
+    "samples" : 60,
+    "p50Ms" : 8.1467,
+    "p95Ms" : 13.6148,
+    "maxMs" : 16.1812,
+    "sameWorkspace" : true,
+    "transactionsPerSecond" : 175.29098303183287,
+    "transactionBodyLatency" : {
+      "samples" : 60,
+      "p50Ms" : 7.3296,
+      "p95Ms" : 12.9509,
+      "maxMs" : 15.1675
+    },
+    "maxActivePoolConnections" : 2,
+    "maxPoolAwaiting" : 0,
+    "sampledActiveConnectionMs" : 551.4344,
+    "sampledPoolWaitMs" : 0.0,
+    "workspaceLockWaitSamples" : 10,
+    "monitorSamples" : 23
+  }, {
+    "samples" : 60,
+    "p50Ms" : 5.6507,
+    "p95Ms" : 6.941,
+    "maxMs" : 7.0624,
+    "sameWorkspace" : false,
+    "transactionsPerSecond" : 342.9459168573351,
+    "transactionBodyLatency" : {
+      "samples" : 60,
+      "p50Ms" : 4.9559,
+      "p95Ms" : 6.1244,
+      "maxMs" : 6.1443
+    },
+    "maxActivePoolConnections" : 2,
+    "maxPoolAwaiting" : 0,
+    "sampledActiveConnectionMs" : 345.5292,
+    "sampledPoolWaitMs" : 0.0,
+    "workspaceLockWaitSamples" : 0,
+    "monitorSamples" : 12
+  } ],
+  "controlledWorkspaceLock" : {
+    "workspaceLockObserved" : true,
+    "blockedWindowMs" : 105.8783,
+    "waiterTransactionMs" : 132.5761,
+    "independentUpdateSucceeded" : true
+  }
+}

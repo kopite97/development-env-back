@@ -1,0 +1,38 @@
+﻿[
+    {
+        "suite":  "com.kopite.devspace.BackendOpenApiContractTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  13.722,
+        "sha256":  "B9C0E7063752723FAE8253B564A5CC8E4719AD7AF7EAFB34D7F2CCDCDCF411B1"
+    },
+    {
+        "suite":  "com.kopite.devspace.DashboardOverviewOpenApiTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.055,
+        "sha256":  "FC1102C5533913A0100427919AD0D9067C49F2B1C0EA94A666F6B00D63D4C798"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetApiTests",
+        "tests":  9,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.09,
+        "sha256":  "76C5EFD90666859806D98F2CCA4CCD8E5D54F2F06461A9CA58178F9ABD24FBD2"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetInputTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.637,
+        "sha256":  "DD0F7DF29FEEED855B35937AA447C8E66F33297B84A75AA3F365A53DA6F51E62"
+    }
+]

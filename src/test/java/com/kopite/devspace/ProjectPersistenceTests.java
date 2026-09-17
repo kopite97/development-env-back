@@ -124,7 +124,7 @@ class ProjectPersistenceTests {
     void databaseEnforcesDefaultsConstraintsAndWorkspaceForeignKey() {
         var owner = users.createOrReuse("project-test", UUID.randomUUID().toString(), "Owner");
         UUID id = UUID.randomUUID();
-        jdbc.update("insert into projects(id,workspace_id,name,scope,stack,created_at,updated_at) values(?,?,?,'server','Java',now(),now())",
+        jdbc.update("insert into projects(id,workspace_id,name,stack,created_at,updated_at) values(?,?,?,'Java',now(),now())",
                 id, owner.workspace().getId(), "DB defaults");
         var row = jdbc.queryForMap("select subtitle,progress,current_milestone,repository_url,status,revision from projects where id=?", id);
         assertEquals("", row.get("subtitle"));
@@ -135,7 +135,7 @@ class ProjectPersistenceTests {
         assertEquals(1L, row.get("revision"));
         for (String assignment : new String[]{"name=null", "name=''", "name=repeat('x',101)", "stack=' '",
                 "stack=repeat('x',201)", "subtitle=repeat('x',4001)", "current_milestone=repeat('x',201)",
-                "repository_url=repeat('x',2001)", "scope='all'", "status='deleted'", "progress=-1",
+                "repository_url=repeat('x',2001)", "status='deleted'", "progress=-1",
                 "progress=101", "progress='NaN'", "revision=0", "revision=9007199254740992"}) {
             assertThrows(DataIntegrityViolationException.class,
                     () -> jdbc.update("update projects set " + assignment + " where id=?", id), assignment);

@@ -1,0 +1,96 @@
+{
+  "purpose": "Source integrity baseline; SHA-256 values are not Flyway database checksums.",
+  "capturedOn": "2026-09-17",
+  "migrations": [
+    {
+      "version": 1,
+      "path": "src/main/resources/db/migration/V1__create_users_auth_identities_workspaces.sql",
+      "sha256": "41bc46bdf20de2727058a881cb52400f7d1eecbdbcdc81435c0865c84ef2c578"
+    },
+    {
+      "version": 2,
+      "path": "src/main/resources/db/migration/V2__create_projects.sql",
+      "sha256": "4c9bea26202f9fe368a2a1d8c55138758c85ab4e3ba4a4d794807b9414737c27"
+    },
+    {
+      "version": 3,
+      "path": "src/main/resources/db/migration/V3__create_project_create_idempotency.sql",
+      "sha256": "03eca471394ec0d58d45dcad34ee952858274e63fed9fb3d2996a77912d3cabc"
+    },
+    {
+      "version": 4,
+      "path": "src/main/resources/db/migration/V4__create_tasks.sql",
+      "sha256": "1cb9b1acd44899a04393bf8da99c462a212c50755d03d82d60ce96ba4be39662"
+    },
+    {
+      "version": 5,
+      "path": "src/main/resources/db/migration/V5__create_task_create_idempotency.sql",
+      "sha256": "2ba3b0d960fa8ce0c72751e07da04fbe41a2da4103333b678d505d039cf13eca"
+    },
+    {
+      "version": 6,
+      "path": "src/main/resources/db/migration/V6__create_journals.sql",
+      "sha256": "bc52af7ef7216a1026261a3c763350c3e54d44e0b72c89ee2cbbb56474c8fd67"
+    },
+    {
+      "version": 7,
+      "path": "src/main/resources/db/migration/V7__create_journal_create_idempotency.sql",
+      "sha256": "554dd7117230ee9e89302b0cbb149dff6092ac95468251b8d8b07bc2fa0a8b43"
+    },
+    {
+      "version": 8,
+      "path": "src/main/resources/db/migration/V8__create_milestones.sql",
+      "sha256": "ddadae3d4d444b3be974aef45e1800fd56e33b17bc9a825ac09846d1e1be6504"
+    },
+    {
+      "version": 9,
+      "path": "src/main/resources/db/migration/V9__create_milestone_create_idempotency.sql",
+      "sha256": "8b8f9163bb3dfba0f385b43bb1af59d8f85e7131ee91346417d3eb1064f81793"
+    },
+    {
+      "version": 10,
+      "path": "src/main/resources/db/migration/V10__create_link_collections_and_links.sql",
+      "sha256": "843c73e110f4694dfc6ff098ecc62e9963dc1f7d77da51715ceb47554f210193"
+    },
+    {
+      "version": 11,
+      "path": "src/main/resources/db/migration/V11__create_link_create_idempotency.sql",
+      "sha256": "51449801bcde34de80382f059570632bcbbd7dc5984c8f4acf62fd5c0564a084"
+    },
+    {
+      "version": 12,
+      "path": "src/main/resources/db/migration/V12__create_home_dashboards.sql",
+      "sha256": "406a28b59c9c566871f624dbbf45024c1fbf13ae32a3694004cef3d666488df9"
+    },
+    {
+      "version": 13,
+      "path": "src/main/resources/db/migration/V13__create_project_categories.sql",
+      "sha256": "c1f66f7b0bff915b958c91d574c6d492849f364c4f682c0fc48793a63d696ab1"
+    },
+    {
+      "version": 14,
+      "path": "src/main/resources/db/migration/V14__create_project_category_create_idempotency.sql",
+      "sha256": "c28af8587dd7264d2cd6e8e15256356a8a7e18b171edcc571b64306e28f3f840"
+    },
+    {
+      "version": 15,
+      "path": "src/main/resources/db/migration/V15__prepare_category_only_relations.sql",
+      "sha256": "9895fc1d3024ed1ad89bdfc5dd6997fe41770563091e81f8222cd781ffcc2897"
+    },
+    {
+      "version": 16,
+      "path": "src/main/migration-stages/cutover/V16__category_only_cutover.sql",
+      "sha256": "9bd1bb3dde3ce5fc2aece686532701712e10c76e81ffba84be2bd6994d7b26ac"
+    },
+    {
+      "version": 17,
+      "path": "src/main/migration-stages/contract/V17__retire_classification_scope.sql",
+      "sha256": "9236d9117d488e35ae6a58ad7946da9dcbf7bd27806e17e29f47fba809ee6389"
+    },
+    {
+      "version": 18,
+      "path": "src/main/resources/db/migration/V18__independent_widgets_and_placements.sql",
+      "sha256": "6787dcbd8021d10a5c0884790e39d5ed6c682960e08297f467e5457ab326c873"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+[
+    {
+        "suite":  "com.kopite.devspace.CategoryCommandTests",
+        "tests":  7,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  15.403,
+        "timestamp":  "2026-09-16T12:19:01.514Z",
+        "xmlSha256":  "DFDB88872898F34EBA59D4DF580BB5FB533B730659B5C9E20183DE6949CAE2B9"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryOnlyDashboardApiTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  4.24,
+        "timestamp":  "2026-09-16T12:19:16.923Z",
+        "xmlSha256":  "0FDF4EE084BDB990FBD8BF6EF8DA5AD5614D91E1D047386CBE78A75A1C9D1110"
+    },
+    {
+        "suite":  "com.kopite.devspace.DashboardCategoryConcurrencyTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  4.031,
+        "timestamp":  "2026-09-16T12:19:21.165Z",
+        "xmlSha256":  "B913953EF9B9823E29BAF9F4405398F3EE61F5CD26EF664166EF2FFB36819939"
+    },
+    {
+        "suite":  "com.kopite.devspace.DashboardCommandTests",
+        "tests":  11,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.511,
+        "timestamp":  "2026-09-16T12:19:25.197Z",
+        "xmlSha256":  "5C386AE7F40187B9231AFF06B6FB25DA8E181CF127F8217E02E92DDE0BE74347"
+    },
+    {
+        "suite":  "com.kopite.devspace.OverviewQueryTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.383,
+        "timestamp":  "2026-09-16T12:19:28.709Z",
+        "xmlSha256":  "1B36507F45078B661247A32E8489E174B7DE0FD505906513893BC6453684EE32"
+    }
+]

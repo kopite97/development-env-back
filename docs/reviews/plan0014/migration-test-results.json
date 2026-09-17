@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-17",
+  "purpose": "Session 1 contract validation; isolated existing tests, not a local backup restoration or Session 2 completion",
+  "database": "Testcontainers PostgreSQL 16.4; application config isolated from .env",
+  "results": [
+    {
+      "suite": "CategoryCutoverMigrationTests",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 13.172
+    },
+    {
+      "suite": "WidgetMigrationTests",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 5.06
+    }
+  ]
+}

@@ -1,0 +1,463 @@
+{
+  "unsavedLayout" : {
+    "id" : "home",
+    "schemaVersion" : 3,
+    "initialized" : false,
+    "layoutRevision" : 0,
+    "placements" : [ ],
+    "widgets" : [ ]
+  },
+  "types" : [ {
+    "createRequest" : {
+      "type" : "overview",
+      "title" : "Example",
+      "configVersion" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      }
+    },
+    "createResponse" : {
+      "id" : "f719cf05-6586-422e-b60d-9bd686884085",
+      "type" : "overview",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.055774Z",
+      "updatedAt" : "2026-09-16T14:09:55.055774Z"
+    },
+    "createStatus" : 201,
+    "location" : "/api/v1/widgets/f719cf05-6586-422e-b60d-9bd686884085",
+    "dataResponse" : {
+      "widgetId" : "f719cf05-6586-422e-b60d-9bd686884085",
+      "type" : "overview",
+      "configRevision" : 1,
+      "configVersion" : 1,
+      "payloadVersion" : 1,
+      "availability" : "empty",
+      "freshness" : "current",
+      "readAt" : "2026-09-16T14:09:55.073252700Z",
+      "sourceObservedAt" : null,
+      "lastSuccessfulSyncAt" : null,
+      "data" : {
+        "projects" : [ {
+          "categoryId" : null,
+          "active" : 0,
+          "archived" : 0
+        } ],
+        "tasks" : {
+          "todo" : 0,
+          "doing" : 0,
+          "done" : 0,
+          "total" : 0,
+          "asOf" : "2026-09-16T14:09:55.071704900Z"
+        },
+        "kind" : "overview"
+      },
+      "page" : null,
+      "problem" : null
+    }
+  }, {
+    "createRequest" : {
+      "type" : "board",
+      "title" : "Example",
+      "configVersion" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      }
+    },
+    "createResponse" : {
+      "id" : "e08bb289-698a-41c1-b6aa-13783ae92119",
+      "type" : "board",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.083347Z",
+      "updatedAt" : "2026-09-16T14:09:55.083347Z"
+    },
+    "createStatus" : 201,
+    "location" : "/api/v1/widgets/e08bb289-698a-41c1-b6aa-13783ae92119",
+    "dataResponse" : {
+      "widgetId" : "e08bb289-698a-41c1-b6aa-13783ae92119",
+      "type" : "board",
+      "configRevision" : 1,
+      "configVersion" : 1,
+      "payloadVersion" : 1,
+      "availability" : "empty",
+      "freshness" : "current",
+      "readAt" : "2026-09-16T14:09:55.103258800Z",
+      "sourceObservedAt" : null,
+      "lastSuccessfulSyncAt" : null,
+      "data" : {
+        "columns" : [ {
+          "status" : "todo",
+          "items" : [ ]
+        }, {
+          "status" : "doing",
+          "items" : [ ]
+        }, {
+          "status" : "done",
+          "items" : [ ]
+        } ],
+        "statistics" : {
+          "todo" : 0,
+          "doing" : 0,
+          "done" : 0,
+          "total" : 0,
+          "asOf" : "2026-09-16T14:09:55.101701Z"
+        },
+        "kind" : "board"
+      },
+      "page" : {
+        "total" : 0,
+        "nextCursor" : null
+      },
+      "problem" : null
+    }
+  }, {
+    "createRequest" : {
+      "type" : "deploy",
+      "title" : "Example",
+      "configVersion" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      }
+    },
+    "createResponse" : {
+      "id" : "03bc39ed-22bd-44ef-99e7-f226e4f16095",
+      "type" : "deploy",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.113398Z",
+      "updatedAt" : "2026-09-16T14:09:55.113398Z"
+    },
+    "createStatus" : 201,
+    "location" : "/api/v1/widgets/03bc39ed-22bd-44ef-99e7-f226e4f16095",
+    "dataResponse" : {
+      "widgetId" : "03bc39ed-22bd-44ef-99e7-f226e4f16095",
+      "type" : "deploy",
+      "configRevision" : 1,
+      "configVersion" : 1,
+      "payloadVersion" : 1,
+      "availability" : "unavailable",
+      "freshness" : "unknown",
+      "readAt" : "2026-09-16T14:09:55.127177500Z",
+      "sourceObservedAt" : null,
+      "lastSuccessfulSyncAt" : null,
+      "data" : null,
+      "page" : null,
+      "problem" : {
+        "code" : "NOT_CONFIGURED",
+        "retryable" : false
+      }
+    }
+  }, {
+    "createRequest" : {
+      "type" : "links",
+      "title" : "Example",
+      "configVersion" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      }
+    },
+    "createResponse" : {
+      "id" : "1302dad8-2339-497e-9359-e403f08f2f7f",
+      "type" : "links",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.134464Z",
+      "updatedAt" : "2026-09-16T14:09:55.134464Z"
+    },
+    "createStatus" : 201,
+    "location" : "/api/v1/widgets/1302dad8-2339-497e-9359-e403f08f2f7f",
+    "dataResponse" : {
+      "widgetId" : "1302dad8-2339-497e-9359-e403f08f2f7f",
+      "type" : "links",
+      "configRevision" : 1,
+      "configVersion" : 1,
+      "payloadVersion" : 1,
+      "availability" : "empty",
+      "freshness" : "current",
+      "readAt" : "2026-09-16T14:09:55.148805600Z",
+      "sourceObservedAt" : null,
+      "lastSuccessfulSyncAt" : null,
+      "data" : {
+        "items" : [ ],
+        "collectionRevision" : 0,
+        "kind" : "links"
+      },
+      "page" : null,
+      "problem" : null
+    }
+  }, {
+    "createRequest" : {
+      "type" : "journal",
+      "title" : "Example",
+      "configVersion" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      }
+    },
+    "createResponse" : {
+      "id" : "0e5a66b0-d154-4b39-8b52-6f65bbaf0039",
+      "type" : "journal",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.156655Z",
+      "updatedAt" : "2026-09-16T14:09:55.156655Z"
+    },
+    "createStatus" : 201,
+    "location" : "/api/v1/widgets/0e5a66b0-d154-4b39-8b52-6f65bbaf0039",
+    "dataResponse" : {
+      "widgetId" : "0e5a66b0-d154-4b39-8b52-6f65bbaf0039",
+      "type" : "journal",
+      "configRevision" : 1,
+      "configVersion" : 1,
+      "payloadVersion" : 1,
+      "availability" : "empty",
+      "freshness" : "current",
+      "readAt" : "2026-09-16T14:09:55.174220200Z",
+      "sourceObservedAt" : null,
+      "lastSuccessfulSyncAt" : null,
+      "data" : {
+        "items" : [ ],
+        "kind" : "journal"
+      },
+      "page" : {
+        "total" : 0,
+        "nextCursor" : null
+      },
+      "problem" : null
+    }
+  }, {
+    "createRequest" : {
+      "type" : "milestone",
+      "title" : "Example",
+      "configVersion" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      }
+    },
+    "createResponse" : {
+      "id" : "28427884-b0f1-444c-8f32-dc240809b64f",
+      "type" : "milestone",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.183973Z",
+      "updatedAt" : "2026-09-16T14:09:55.183973Z"
+    },
+    "createStatus" : 201,
+    "location" : "/api/v1/widgets/28427884-b0f1-444c-8f32-dc240809b64f",
+    "dataResponse" : {
+      "widgetId" : "28427884-b0f1-444c-8f32-dc240809b64f",
+      "type" : "milestone",
+      "configRevision" : 1,
+      "configVersion" : 1,
+      "payloadVersion" : 1,
+      "availability" : "empty",
+      "freshness" : "current",
+      "readAt" : "2026-09-16T14:09:55.199051100Z",
+      "sourceObservedAt" : null,
+      "lastSuccessfulSyncAt" : null,
+      "data" : {
+        "items" : [ ],
+        "kind" : "milestone"
+      },
+      "page" : {
+        "total" : 0,
+        "nextCursor" : null
+      },
+      "problem" : null
+    }
+  } ],
+  "layoutPutRequest" : {
+    "layoutRevision" : 0,
+    "placements" : [ {
+      "size" : "wide",
+      "widgetId" : "f719cf05-6586-422e-b60d-9bd686884085"
+    }, {
+      "size" : "wide",
+      "widgetId" : "e08bb289-698a-41c1-b6aa-13783ae92119"
+    }, {
+      "size" : "wide",
+      "widgetId" : "03bc39ed-22bd-44ef-99e7-f226e4f16095"
+    }, {
+      "size" : "wide",
+      "widgetId" : "1302dad8-2339-497e-9359-e403f08f2f7f"
+    }, {
+      "size" : "wide",
+      "widgetId" : "0e5a66b0-d154-4b39-8b52-6f65bbaf0039"
+    }, {
+      "size" : "wide",
+      "widgetId" : "28427884-b0f1-444c-8f32-dc240809b64f"
+    } ],
+    "schemaVersion" : 3
+  },
+  "savedLayout" : {
+    "id" : "home",
+    "schemaVersion" : 3,
+    "initialized" : true,
+    "layoutRevision" : 1,
+    "placements" : [ {
+      "id" : "cae674de-d492-4ae8-9fd9-83bb993bd249",
+      "widgetId" : "f719cf05-6586-422e-b60d-9bd686884085",
+      "size" : "wide"
+    }, {
+      "id" : "0c7de47a-9633-4b5f-9d9f-8613a8903507",
+      "widgetId" : "e08bb289-698a-41c1-b6aa-13783ae92119",
+      "size" : "wide"
+    }, {
+      "id" : "9fd2843c-3332-473f-95b5-0a31e5f4cfc5",
+      "widgetId" : "03bc39ed-22bd-44ef-99e7-f226e4f16095",
+      "size" : "wide"
+    }, {
+      "id" : "b71d56e6-6a8b-469c-843e-2b86898e51ba",
+      "widgetId" : "1302dad8-2339-497e-9359-e403f08f2f7f",
+      "size" : "wide"
+    }, {
+      "id" : "a50fe812-3589-4335-91ce-aae745842438",
+      "widgetId" : "0e5a66b0-d154-4b39-8b52-6f65bbaf0039",
+      "size" : "wide"
+    }, {
+      "id" : "4f011abe-2894-404f-9e78-31ea312ce4f6",
+      "widgetId" : "28427884-b0f1-444c-8f32-dc240809b64f",
+      "size" : "wide"
+    } ],
+    "widgets" : [ {
+      "id" : "f719cf05-6586-422e-b60d-9bd686884085",
+      "type" : "overview",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.055774Z",
+      "updatedAt" : "2026-09-16T14:09:55.055774Z"
+    }, {
+      "id" : "e08bb289-698a-41c1-b6aa-13783ae92119",
+      "type" : "board",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.083347Z",
+      "updatedAt" : "2026-09-16T14:09:55.083347Z"
+    }, {
+      "id" : "03bc39ed-22bd-44ef-99e7-f226e4f16095",
+      "type" : "deploy",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.113398Z",
+      "updatedAt" : "2026-09-16T14:09:55.113398Z"
+    }, {
+      "id" : "1302dad8-2339-497e-9359-e403f08f2f7f",
+      "type" : "links",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.134464Z",
+      "updatedAt" : "2026-09-16T14:09:55.134464Z"
+    }, {
+      "id" : "0e5a66b0-d154-4b39-8b52-6f65bbaf0039",
+      "type" : "journal",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.156655Z",
+      "updatedAt" : "2026-09-16T14:09:55.156655Z"
+    }, {
+      "id" : "28427884-b0f1-444c-8f32-dc240809b64f",
+      "type" : "milestone",
+      "title" : "Example",
+      "configVersion" : 1,
+      "revision" : 1,
+      "config" : {
+        "selection" : {
+          "kind" : "all"
+        }
+      },
+      "referenceState" : "valid",
+      "createdAt" : "2026-09-16T14:09:55.183973Z",
+      "updatedAt" : "2026-09-16T14:09:55.183973Z"
+    } ]
+  }
+}

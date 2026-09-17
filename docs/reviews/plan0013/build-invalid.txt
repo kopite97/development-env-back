@@ -1,0 +1,27 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+gradlew.bat : 
+At line:2 char:211
++ ... ; $output = & ./gradlew.bat '-Dorg.gradle.java.home=C:/Program Files/ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file 'C:\Users\nellu\lib\devspace\backend\build.gradle' line: 55
+
+* What went wrong:
+A problem occurred evaluating root project 'devspace'.
+> This release is final-only. Specify -PcategoryStage=final explicitly. For the bridge re
+play window use the preserved pre-Widget artifact/source; see docs/project-category-only-
+rollout.md. V17 drain checks still apply at startup.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 5s

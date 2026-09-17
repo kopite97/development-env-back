@@ -19,7 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest @ActiveProfiles("test") @Import(TestcontainersConfiguration.class) @AutoConfigureMockMvc
+// Historical bridge adapter contract only; final artifact retirement is tested separately.
+@SpringBootTest(properties="app.category-transition.legacy-replay-enabled=true") @ActiveProfiles("test") @Import(TestcontainersConfiguration.class) @AutoConfigureMockMvc
 class CategoryOnlyReplayApiTests {
     @Autowired MockMvc mvc; @Autowired UserWorkspaceCreationService users; @Autowired JdbcTemplate jdbc; @Autowired JsonMapper json;
     @Value("${app.security.origin}") String origin;

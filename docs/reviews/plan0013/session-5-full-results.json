@@ -1,0 +1,587 @@
+﻿[
+    {
+        "suite":  "com.kopite.devspace.AuthenticationOpenApiContractTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  14.077,
+        "sha256":  "C7157DD9C7FDF7EF4A3313823564E37A22D21BB2B14D6708205E0C9D61CDB18C"
+    },
+    {
+        "suite":  "com.kopite.devspace.BackendOpenApiContractTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  4.128,
+        "sha256":  "ECD2502979C0F974D225B106D6A5DE4EAFC0EC6BD5D5301706E6FF3BF23D82EB"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryApiTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  1.185,
+        "sha256":  "62BF2BDF6B671C554E54DEC1F5E706189EF9A76E2DD3E5453739BC8142D66EC1"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryCommandTests",
+        "tests":  7,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  6.361,
+        "sha256":  "AE352B98DB4434B38F998E44CC6717B82A58C0F44B11CE1F99CFA66BCE4F341C"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryCutoverMigrationTests",
+        "tests":  7,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  10.444,
+        "sha256":  "57BB03450D84DCB257EA4CBA33F5F007AF4E8742D93A91DA0556A5D3D831BC35"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryOnlyDashboardApiTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.394,
+        "sha256":  "1409CF0C96ABEA3C3DAF10B505F429F3B2EB2B7FCC2AC16674465A78F7D4DF15"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryOnlyLinkApiTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  1.062,
+        "sha256":  "8E51167EA81B985DC47A07F1B7BF804EB682390EAF1E565AAD2AE7614C476662"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryOnlyQueryApiTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.356,
+        "sha256":  "4714622513B3626500037781639BC7147D0BA2E113ED744247B0D8D9014BCD38"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryOnlyReplayApiTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.792,
+        "sha256":  "98B8A2BBC61DB5B3C7EEC5655A7A602993A0F2038D0B366BF943CA28234C148C"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryOnlyReplayConcurrencyTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.719,
+        "sha256":  "E2A4E2475E44CEAEB7B2D235137EC5431F8CEBEB55604CB7CE91FACE12B36656"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryOpenApiTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.047,
+        "sha256":  "73BB0E8C9F3F9B2B811E72267EF2CCB132CE820CA05981CFBECEDA81D4AEB1B3"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryPersistenceTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.496,
+        "sha256":  "DB78E666FF48C93D54EA22CDFA640C63A2945B28E3AD1A36E7CA51C304EE04E5"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryRelationConcurrencyTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  1.094,
+        "sha256":  "5F66B31E892D7B223392A2F803D9339C4E1FA7304E7CD1BAB61AD8920660E5B1"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategoryScopeRegressionTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.767,
+        "sha256":  "82E398F6674859C97E34DD07CC003DC827D052B3DEEEFF14A216F8DF5DA08048"
+    },
+    {
+        "suite":  "com.kopite.devspace.CategorySnapshotReadTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.606,
+        "sha256":  "3979AC5D6193E2A6D4BF389CF34B8EDEE4D989DEB40C6300BF05F6709E1C710A"
+    },
+    {
+        "suite":  "com.kopite.devspace.DashboardCategoryConcurrencyTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  1.427,
+        "sha256":  "E32E5B9B47D529694BAB5BA29ED59B0BC62D5531EE7264DD5579389CFFE7339A"
+    },
+    {
+        "suite":  "com.kopite.devspace.DashboardCategoryReadTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.667,
+        "sha256":  "625ACB8DADA457298C5DC3BD3DDF3A53C1041FBD4E927AAAA4F3A64D9A92C8F3"
+    },
+    {
+        "suite":  "com.kopite.devspace.DashboardCommandTests",
+        "tests":  11,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.771,
+        "sha256":  "ED2792863754C25A281E7D78A45601DCB31D3201C7948BE723A909ED1F3F09C8"
+    },
+    {
+        "suite":  "com.kopite.devspace.DashboardOverviewApiTests",
+        "tests":  5,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.567,
+        "sha256":  "BC593C8C6A96B19E3A403C5E704FDF8EFD60B0A3AE4901E1650C914E216AAF26"
+    },
+    {
+        "suite":  "com.kopite.devspace.DashboardOverviewOpenApiTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.025,
+        "sha256":  "AEB60283B8FDEBD181566D24F63FA0BEC624672137AFCE78DB4CE2105E473554"
+    },
+    {
+        "suite":  "com.kopite.devspace.DashboardPersistenceTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.413,
+        "sha256":  "DBD5D104830CFFE76D9C12E2B477E2910DB374534DB0174C596B6E9AB0A53169"
+    },
+    {
+        "suite":  "com.kopite.devspace.DevspaceApplicationTests",
+        "tests":  7,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.094,
+        "sha256":  "D985BBEBB047DCADA0252058D4572662D523575BE5C1A9FF4929F3ED8B7BE515"
+    },
+    {
+        "suite":  "com.kopite.devspace.FinalCategoryRuntimeTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.825,
+        "sha256":  "18C9EC5B220735DE28E47A49D5EE18E3D29BEA96D6619B2223CDBDCA85731183"
+    },
+    {
+        "suite":  "com.kopite.devspace.JournalApiTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  1.473,
+        "sha256":  "68EFFD596E03AC6927A7381CDDC7565AD542D5197E6C46DD2832FE1B2953356D"
+    },
+    {
+        "suite":  "com.kopite.devspace.JournalCommandTests",
+        "tests":  5,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.302,
+        "sha256":  "0E03DD413F8BCE509BE9DBDC2E1F166C5F10CBCE6DD61172CEA65E33E31E7A72"
+    },
+    {
+        "suite":  "com.kopite.devspace.JournalOpenApiTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.139,
+        "sha256":  "98AA112E54BDD1822731153C651951D989278FACB3D8528898D3BB37A62792C9"
+    },
+    {
+        "suite":  "com.kopite.devspace.JournalPersistenceTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.538,
+        "sha256":  "4131066B32AE3B9D557E8F7513A371B7C4C6264E01895FA75E0EC7E216B9F717"
+    },
+    {
+        "suite":  "com.kopite.devspace.JournalQueryTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.741,
+        "sha256":  "16557E5E1D644D48F20AE1F0E1AAF29651487D93A1E38FF4C09E92CB3C810AD0"
+    },
+    {
+        "suite":  "com.kopite.devspace.LegacyCreationGoldenTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.001,
+        "sha256":  "EB78865827822BFC5217D5FDDF5E6D809B6DF961F499F64C6E619FEC759CD2AB"
+    },
+    {
+        "suite":  "com.kopite.devspace.LinkApiTests",
+        "tests":  5,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  1.404,
+        "sha256":  "D9FCD9AE3F6E8CB517331E6A086BA8DE87D97E4FC2975C8E70CCE9667586236E"
+    },
+    {
+        "suite":  "com.kopite.devspace.LinkCommandTests",
+        "tests":  10,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  4.142,
+        "sha256":  "246401615BC50B6394771F0E513132397FCAC4A8FA87D296C04BB93594BD206D"
+    },
+    {
+        "suite":  "com.kopite.devspace.LinkOpenApiTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.027,
+        "sha256":  "667771C1B7C27CFE77FF75C4B853B1990D102849EA4DF5194BCFF1775A71B991"
+    },
+    {
+        "suite":  "com.kopite.devspace.LinkPersistenceTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.398,
+        "sha256":  "CB3968F4990F5BCBEE54B69B020BD9CB7C68B78EB99B1FDE1F5BD6EA7A91ACA1"
+    },
+    {
+        "suite":  "com.kopite.devspace.LinkQueryTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.875,
+        "sha256":  "0CC0EE1558613EB414931F642873370E6F08F70A1E15195D5D818148FC177A9D"
+    },
+    {
+        "suite":  "com.kopite.devspace.LinkRelationshipConcurrencyTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  1.504,
+        "sha256":  "84D022E73423CDC5DB0309F73D6822127E445529026B05C7988E24C14620C412"
+    },
+    {
+        "suite":  "com.kopite.devspace.MilestoneApiTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  1.391,
+        "sha256":  "61EC1C05B4FF09F1570EACAF0656A041E499E5D0B98744367F1917CB11D91946"
+    },
+    {
+        "suite":  "com.kopite.devspace.MilestoneCommandTests",
+        "tests":  10,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.606,
+        "sha256":  "6B0B8836F55370627EDA1B1C4F08FA11091F538C6C85EAC56C4244BA82B0E969"
+    },
+    {
+        "suite":  "com.kopite.devspace.MilestoneOpenApiTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.086,
+        "sha256":  "E7CC4DCE5A67563ABEFF531ADE0E3871DFA51DA50D76BC41BB4634428A3192E7"
+    },
+    {
+        "suite":  "com.kopite.devspace.MilestonePersistenceTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.358,
+        "sha256":  "DDE5C023E9DDD29ADFB3A5A83B1BB07BA9966E7C8BA059A4473AC4301D3C6963"
+    },
+    {
+        "suite":  "com.kopite.devspace.MilestoneQueryTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.617,
+        "sha256":  "4820F151654610F7C8B2F1E80D3B01FDE8F530D53EF394436984C20FC3498917"
+    },
+    {
+        "suite":  "com.kopite.devspace.OverviewQueryTests",
+        "tests":  3,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.583,
+        "sha256":  "491926AFEFA41922CA1280D2C460963C795888E6C697579BCB291E21B9A9079F"
+    },
+    {
+        "suite":  "com.kopite.devspace.ProductionSwaggerSecurityTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.783,
+        "sha256":  "58C8731051D3E5211DA7F1A0896C64CB90EA4F5B03232150899B4262AEEF45EE"
+    },
+    {
+        "suite":  "com.kopite.devspace.project.application.command.ProjectFingerprintTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.001,
+        "sha256":  "B318A352AAA4E05F56A5FAB46C77670BA4F96803AC67E06193C3B931DA7AFF90"
+    },
+    {
+        "suite":  "com.kopite.devspace.ProjectApiTests",
+        "tests":  7,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  1.603,
+        "sha256":  "4CB3B9AF83E1E8646D1A3E64CFABB9A38190F761A89F08DC74613580FED43950"
+    },
+    {
+        "suite":  "com.kopite.devspace.ProjectCommandTests",
+        "tests":  6,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.415,
+        "sha256":  "F030027FF32D6C3BBAE8E99BCD6797FD72C1CDDF71DC10330833FECD0C716DD5"
+    },
+    {
+        "suite":  "com.kopite.devspace.ProjectLegacyReplayTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.368,
+        "sha256":  "7B7AF12F76F30472348BB1546E8B125300B42DF7D2A6CF23F18D8ECD4F67641B"
+    },
+    {
+        "suite":  "com.kopite.devspace.ProjectOpenApiTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.05,
+        "sha256":  "2952B568ADD0C51A73094BE1E3A7FD8B63790874C545761837D5DFAB2389BA5E"
+    },
+    {
+        "suite":  "com.kopite.devspace.ProjectPersistenceTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.713,
+        "sha256":  "A815C9F6276DFA48535B5592187759307CE584A6E2A867B6A80AF1F02C88C6F7"
+    },
+    {
+        "suite":  "com.kopite.devspace.SecurityIntegrationTests",
+        "tests":  14,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.268,
+        "sha256":  "94D3237CC98BB0396B5E331AB5CD0332FDCBB9184BE0B3F02DFE3369CB06D379"
+    },
+    {
+        "suite":  "com.kopite.devspace.TaskApiTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.832,
+        "sha256":  "4A5732E35E7E2E3DA6949E4C5D8F4B5805F2A05A5E9405D28F4D726BBB48FE20"
+    },
+    {
+        "suite":  "com.kopite.devspace.TaskCommandTests",
+        "tests":  5,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.499,
+        "sha256":  "55165A250C0660A72192730EDE1B8A547D7E348C0012682A9D1449ACCD3E37CF"
+    },
+    {
+        "suite":  "com.kopite.devspace.TaskOpenApiTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.089,
+        "sha256":  "8A5821CC6839E7FF091A74EE212F8642AC0861230C8F82168B85615CD5A82AEB"
+    },
+    {
+        "suite":  "com.kopite.devspace.TaskPersistenceTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.333,
+        "sha256":  "18402C3A622B1AC10E39786EABF92829C6C6A5ED94E861F347F20F0A1DED7EB7"
+    },
+    {
+        "suite":  "com.kopite.devspace.UserWorkspaceCreationConcurrencyTests",
+        "tests":  10,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.624,
+        "sha256":  "1A8C1B4D93A828E2D1F1EB56FA1224A379BDA0AD92E970273C4BC67CB77EEC2D"
+    },
+    {
+        "suite":  "com.kopite.devspace.UserWorkspacePersistenceRulesTests",
+        "tests":  25,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.702,
+        "sha256":  "CF6592C3B11E68902A07C7FD6E81BDBC7EC81ED15B36A79008C5217F4638E00F"
+    },
+    {
+        "suite":  "com.kopite.devspace.UserWorkspacePersistenceTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.053,
+        "sha256":  "3E78BB7845F780AA68981ADE5A78EA923A68C079E2A3FA7BC7B0384F8A0B1897"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetApiTests",
+        "tests":  9,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.933,
+        "sha256":  "2D6B28D8C9199EFB58E9C9D5E76C026943D7709DA9DC88579455FEE5D0856DDC"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetConcurrencyTests",
+        "tests":  4,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.254,
+        "sha256":  "4B5C6AB9E24C3768E905CFD94C33F30ADB83248F2B227A4A4E02AB59ADD12317"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetDataTests",
+        "tests":  9,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  4.01,
+        "sha256":  "45955CB9B727202D40E463EA820EB724A93495B153DEA6C69A736112502DFAA4"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetExtensionTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  2.605,
+        "sha256":  "5508D7DB2907466B120943443D89C47D3EBFDAC0B8629B99B125072C771E4ECC"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetInputTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.297,
+        "sha256":  "4AA2D1B54B181751081804F3572E0B39155241029B391273A85A244DF0FB448B"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetMigrationTests",
+        "tests":  7,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  4.971,
+        "sha256":  "D02B4FA75F3283F37368AB07DB53F34EF123E5E3D769167AC0ACD3A803D59386"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetModelTests",
+        "tests":  2,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.006,
+        "sha256":  "B73435874B38AA41ADAAD37707CAF9D401D9256DAF01C913F218DA81F8DC51FF"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetPerformanceTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  3.78,
+        "sha256":  "6D2ACC8995B2ABE0E76138255B615FCC2E2054120886BBF542BA2447ECC99880"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetPersistenceTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "seconds":  0.06,
+        "sha256":  "A747365830A12CF7E3152422BA4669112902F9909B91B61FF7F276705D1B80E2"
+    }
+]

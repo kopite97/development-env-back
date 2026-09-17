@@ -21,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest @ActiveProfiles("test") @Import(TestcontainersConfiguration.class) @AutoConfigureMockMvc
+// Historical bridge replay remains a compatibility test, not a supported final runtime mode.
+@SpringBootTest(properties="app.category-transition.legacy-replay-enabled=true") @ActiveProfiles("test") @Import(TestcontainersConfiguration.class) @AutoConfigureMockMvc
 class ProjectLegacyReplayTests {
     @Autowired UserWorkspaceCreationService users;
     @Autowired ProjectCommandService commands;
@@ -48,7 +49,7 @@ class ProjectLegacyReplayTests {
         jdbc.update("insert into "+schema+".project_create_idempotency values(?,'POST','/api/v1/projects','old',?,201,?,now(),now()+interval '24 hours')",owner.workspace().getId(),hash,body);
         var before=jdbc.queryForMap("select * from "+schema+".project_create_idempotency");
         String manifest=json.writeValueAsString(Map.of("workspaces",List.of(Map.of("workspaceId",owner.workspace().getId().toString(),"expectedDataRevision",42,"links",List.of()))));
-        var upgraded=org.flywaydb.core.Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema)
+        var upgraded=org.flywaydb.core.Flyway.configure().dataSource(dataSource).schemas(schema).defaultSchema(schema).target("16")
             .initSql("select set_config('devspace.category_cutover_manifest','"+manifest+"',false)").load();upgraded.migrate();upgraded.validate();
         assertEquals(before,jdbc.queryForMap("select * from "+schema+".project_create_idempotency"));
         // Move the exact migrated test fixture into the application's disposable test schema for HTTP replay.

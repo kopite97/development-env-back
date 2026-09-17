@@ -1,0 +1,18 @@
+[
+    {
+        "suite":  "com.kopite.devspace.WidgetApiTests",
+        "tests":  "8",
+        "failures":  "0",
+        "errors":  "0",
+        "skipped":  "0",
+        "sha256":  "AE56D5E6A0630D99200B8D812E0672FC1EE7BE9D7A92A557FE6B85E9D1CFE1C5"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetConcurrencyTests",
+        "tests":  "4",
+        "failures":  "0",
+        "errors":  "0",
+        "skipped":  "0",
+        "sha256":  "247F52143C5E1249317D36C253C82E5D19E85C57F28822F5BEDBCF247DCF13D7"
+    }
+]

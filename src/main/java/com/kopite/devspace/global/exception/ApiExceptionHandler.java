@@ -22,6 +22,11 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(com.kopite.devspace.widget.domain.WidgetException.class)
+    ResponseEntity<ApiError> widget(com.kopite.devspace.widget.domain.WidgetException ex) {
+        int status=switch(ex.code()){case "RESOURCE_NOT_FOUND"->404;case "REVISION_CONFLICT","WIDGET_IN_USE","IDEMPOTENCY_KEY_REUSED"->409;default->400;};
+        return error(status,ex.code(),"Widget or layout request could not be completed",ex.field()==null?Map.of():Map.of(ex.field(),"invalid, missing, duplicate or unsupported value"));
+    }
     @ExceptionHandler(com.kopite.devspace.compatibility.application.ApiVersionRetiredException.class)
     ResponseEntity<ApiError> retiredVersion() {
         return error(410,"API_VERSION_RETIRED","This API version accepts no new operations; use the current API",Map.of());

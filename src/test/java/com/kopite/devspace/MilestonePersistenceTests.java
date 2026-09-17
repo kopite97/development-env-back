@@ -41,7 +41,7 @@ class MilestonePersistenceTests {
     private UUID workspace() { return users.createOrReuse("milestone-persistence",UUID.randomUUID().toString(),"Owner").workspace().getId(); }
     private UUID project(UUID workspace) {
         UUID id=UUID.randomUUID();
-        jdbc.update("insert into projects(id,workspace_id,name,scope,stack,created_at,updated_at) values(?,?,'Project','server','Java',now(),now())",id,workspace);
+        jdbc.update("insert into projects(id,workspace_id,name,stack,created_at,updated_at) values(?,?,'Project','Java',now(),now())",id,workspace);
         return id;
     }
     private MilestoneValues values(UUID project) { return new MilestoneValues(" Title ",project,LocalDate.of(2024,2,29),false); }

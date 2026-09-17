@@ -1,0 +1,17 @@
+[ {
+  "responseBytes" : 758,
+  "preparedStatementsPerRequest" : 6.0,
+  "widgets" : 6,
+  "samples" : 50,
+  "p50Ms" : 18.1067,
+  "p95Ms" : 36.6057,
+  "maxMs" : 53.8432
+}, {
+  "responseBytes" : 7126,
+  "preparedStatementsPerRequest" : 6.0,
+  "widgets" : 60,
+  "samples" : 50,
+  "p50Ms" : 17.6278,
+  "p95Ms" : 23.0317,
+  "maxMs" : 28.2819
+} ]

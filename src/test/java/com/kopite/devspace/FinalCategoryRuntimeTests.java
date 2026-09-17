@@ -39,7 +39,7 @@ class FinalCategoryRuntimeTests {
     @Autowired UserWorkspaceCreationService users; @Value("${app.security.origin}") String origin;
 
     @Test void finalSchemaSupportsNormalRelationsAndRetiresLegacyWithoutWriting()throws Exception {
-        assertEquals("17",jdbc.queryForObject("select version from flyway_schema_history order by installed_rank desc limit 1",String.class));
+        assertEquals("18",jdbc.queryForObject("select version from flyway_schema_history order by installed_rank desc limit 1",String.class));
         assertEquals(0,jdbc.queryForObject("select count(*) from information_schema.columns where table_schema='public' and column_name='scope'",Integer.class));
         var owner=users.createOrReuse("final",UUID.randomUUID().toString(),"Final");
         var context=SecurityContextHolder.createEmptyContext();context.setAuthentication(new UsernamePasswordAuthenticationToken(new InternalUserPrincipal(owner.user().getId(),"Final"),null,List.of()));
@@ -53,8 +53,10 @@ class FinalCategoryRuntimeTests {
         create(session,csrf,"/api/v2/journals","journal","{\"title\":\"Journal\",\"body\":\"Body\",\"entryDate\":\"2026-09-15\",\"projectId\":\""+id+"\"}");
         create(session,csrf,"/api/v2/milestones","milestone","{\"title\":\"Milestone\",\"projectId\":\""+id+"\"}");
         create(session,csrf,"/api/v2/links","link","{\"label\":\"Link\",\"url\":\"https://example.com\",\"projectId\":\""+id+"\"}");
-        for(String path:List.of("projects","projects/category-counts","tasks","tasks/stats","journals","milestones","links","overview","dashboards/home"))
+        for(String path:List.of("projects","projects/category-counts","tasks","tasks/stats","journals","milestones","links","overview"))
             mvc.perform(get("/api/v2/"+path).session(session)).andExpect(status().isOk()).andExpect(header().string("X-Workspace-Data-Revision","6"));
+        mvc.perform(get("/api/v3/dashboards/home").session(session)).andExpect(status().isOk()).andExpect(header().string("X-Workspace-Data-Revision","6"));
+        mvc.perform(get("/api/v2/dashboards/home").session(session)).andExpect(status().isGone());
         mvc.perform(delete("/api/v1/project-categories/"+category.path("id").asString()).session(session).queryParam("revision","1").header("Origin",origin).header("X-CSRF-Token",csrf))
             .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("CATEGORY_IN_USE"));
         for(String path:List.of("projects","tasks","journals","milestones","links"))

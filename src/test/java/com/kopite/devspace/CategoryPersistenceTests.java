@@ -48,7 +48,7 @@ class CategoryPersistenceTests {
         assertThrows(CategoryConflictException.class,()->tx.executeWithoutResult(s->{categories.save(ProjectCategory.create(w,new CategoryName("Tools"),Instant.now()));categories.flush();}));
         tx.executeWithoutResult(s->{categories.save(ProjectCategory.create(w,new CategoryName("tools"),Instant.now()));categories.flush();});
         UUID p=UUID.randomUUID();
-        jdbc.update("insert into projects(id,workspace_id,name,scope,stack,status,category_id,created_at,updated_at) values(?,?,'Same','unity','Java','archived',?,now(),now())",p,w,c.getId());
+        jdbc.update("insert into projects(id,workspace_id,name,stack,status,category_id,created_at,updated_at) values(?,?,'Same','Java','archived',?,now(),now())",p,w,c.getId());
         assertThrows(org.springframework.dao.DataIntegrityViolationException.class,()->jdbc.update("update projects set workspace_id=? where id=?",b.workspace().getId(),p));
         assertThrows(CategoryConflictException.class,()->tx.executeWithoutResult(s->categories.delete(categories.lockOwned(w,c.getId()).orElseThrow())));
         assertEquals(c.getId(),jdbc.queryForObject("select category_id from projects where id=?",UUID.class,p));

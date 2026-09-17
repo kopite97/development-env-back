@@ -13,3 +13,4 @@ Completed plans in execution order.
 - [PLAN-0009: Dashboard and Overview API](PLAN-0009-dashboard-overview-api.md)
 - [PLAN-0010: ProjectCategory](PLAN-0010-project-category.md)
 - [PLAN-0011: ProjectCategory-only classification](PLAN-0011-project-category-only-classification.md)
+- [PLAN-0013: Independent Widgets and Dashboard Placements](PLAN-0013-independent-widget-refactoring.md)

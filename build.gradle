@@ -49,30 +49,29 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-// A bridge artifact must never contain the later contract migration.
-def categoryStage = providers.gradleProperty('categoryStage').orElse('bridge')
-if (!(categoryStage.get() in ['bridge', 'final'])) {
-    throw new GradleException('categoryStage must be bridge or final')
-}
-tasks.named('processResources') {
-    inputs.property('categoryStage', categoryStage)
-    doFirst {
-        // Copy tasks do not remove files left by a previous final build.
-        if (categoryStage.get() == 'bridge') {
-            def stale = new File(destinationDir, 'db/migration/V17__retire_classification_scope.sql')
-            def buildRoot = layout.buildDirectory.get().asFile.toPath().toAbsolutePath().normalize()
-            if (!stale.toPath().toAbsolutePath().normalize().startsWith(buildRoot)) {
-                throw new GradleException('Refusing to remove a migration outside the build directory')
-            }
-            if (stale.exists() && !stale.delete()) throw new GradleException('Cannot remove stale final migration')
+// Widget releases require the post-V17 schema. Never silently opt into contract migrations.
+def categoryStage = providers.gradleProperty('categoryStage')
+// Compilation is not a release or database operation. Guard executable workflows instead.
+// Keep validation as a dependency so up-to-date outputs cannot bypass the check.
+def validateCategoryStage = tasks.register('validateCategoryStage') {
+    group = 'verification'
+    description = 'Require explicit final selection before packaging, testing or Gradle application startup.'
+    doLast {
+        if (categoryStage.orNull != 'final') {
+            throw new GradleException('This release is final-only. Specify -PcategoryStage=final explicitly. ' +
+                'For the bridge replay window use the preserved pre-Widget artifact/source; ' +
+                'see docs/project-category-only-rollout.md. V17 drain checks still apply at startup.')
         }
     }
+}
+['bootJar', 'jar', 'bootRun', 'test'].each { taskName ->
+    tasks.named(taskName) { dependsOn(validateCategoryStage) }
+}
+tasks.named('processResources') {
     from('src/main/migration-stages/cutover') { into 'db/migration' }
-    if (categoryStage.get() == 'final') {
-        from('src/main/migration-stages/contract') { into 'db/migration' }
-    }
+    from('src/main/migration-stages/contract') { into 'db/migration' }
     doLast {
         new File(destinationDir, 'category-transition.properties').text =
-            "app.category-transition.legacy-replay-enabled=${categoryStage.get() == 'bridge'}\n"
+            "app.category-transition.legacy-replay-enabled=false\n"
     }
 }

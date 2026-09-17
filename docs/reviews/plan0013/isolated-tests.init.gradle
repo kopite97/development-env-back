@@ -1,0 +1,6 @@
+allprojects {
+    tasks.withType(Test).configureEach {
+        systemProperty 'spring.config.location', 'classpath:widget-isolated-test.yml'
+        maxParallelForks = 1
+    }
+}

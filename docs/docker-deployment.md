@@ -57,7 +57,7 @@ Render가 제공하는 `postgresql://user:password@host/database`는 JDBC URL이
 | `PORT` | 로컬 .env에는 없는 Render 포트 설정. `8080` 지정 |
 | `SERVER_PORT` | Spring Boot 표준 설정. 기본 8080을 쓰면 불필요 |
 | `SERVER_FORWARD_HEADERS_STRATEGY` | Spring Boot 표준 프록시 설정. Render에서는 `framework` 지정 |
-| `CATEGORY_STAGE` | Docker 빌드 인자. 생략하면 `bridge`; DB 전환 단계에 따라 선택 |
+| `CATEGORY_STAGE` | Required Docker build argument: `final`. Omitted, `bridge`, and invalid values fail the build. Runtime settings cannot change an already built JAR. |
 
 `spring.flyway.init-sqls[0]`는 로컬에서 `.env`를 Java properties로 읽기 때문에 적용되는 속성이다.
 일반 환경변수와 구분해야 하며, 기존 DB의 ID·revision을 담은 manifest를 다른 DB에 재사용하면
@@ -75,20 +75,20 @@ Google OAuth 콘솔에도 `OIDC_GOOGLE_REDIRECT_URI`와 정확히 같은 승인�
 ## 마이그레이션
 
 새 DB는 기동 시 Flyway로 스키마가 생성된다. 기존 로컬 데이터는 자동 복사되지 않는다.
-V16 이전의 데이터가 있는 DB를 복원한다면 기본 `bridge` 이미지도 승인된 cutover manifest가
-필요하다. 아래 전환 절차를 먼저 따른다. V17까지 적용된 DB에는 `final` 이미지를 사용한다.
-기본 이미지는 현재 Gradle 기본값과 같은 `bridge` 단계다.
-`final`은 V17 contract migration을 포함하므로 기존 DB에서는
-[전환 절차](project-category-only-rollout.md)를 확인한 뒤 선택한다.
-Render에서 선택할 때는 환경변수 `CATEGORY_STAGE=final`을 설정하고 이미지를 **다시 빌드**한다.
-이 값은 Docker build argument이며 실행 중 변경해도 이미 만들어진 JAR는 바뀌지 않는다.
+This source produces final-only artifacts. Explicitly supply `CATEGORY_STAGE=final` at Docker build time;
+there is no implicit stage. The build includes V17 but does not execute migrations. Startup still requires
+the reviewed V16 manifest where applicable and V17 replay-drain prerequisites. Follow the
+[rollout procedure](project-category-only-rollout.md) before starting an image against an existing database.
+For a database still in the bridge window, use the preserved pre-Widget artifact/source, not this image.
+Configure the build argument in the hosting build configuration and rebuild; changing a running service's
+environment alone cannot alter the packaged migrations. No hosting or database configuration was changed here.
 
 ## 개인 서버로 이전
 
 동일한 Dockerfile로 이미지를 만들고 실행 환경의 DB 주소만 교체할 수 있다.
 
 ```sh
-docker build -t devspace-backend .
+docker build --build-arg CATEGORY_STAGE=final -t devspace-backend .
 docker run -d --name devspace-backend --env-file .env -p 127.0.0.1:8080:8080 devspace-backend
 ```
 

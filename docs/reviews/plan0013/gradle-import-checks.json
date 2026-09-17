@@ -1,0 +1,37 @@
+﻿[
+    {
+        "check":  "help-without-stage",
+        "exit":  0,
+        "expected":  0,
+        "finalOnlyMessage":  false,
+        "passed":  true
+    },
+    {
+        "check":  "final-bootJar",
+        "exit":  0,
+        "expected":  0,
+        "finalOnlyMessage":  false,
+        "passed":  true
+    },
+    {
+        "check":  "cached-bootJar-without-stage",
+        "exit":  1,
+        "expected":  1,
+        "finalOnlyMessage":  true,
+        "passed":  true
+    },
+    {
+        "check":  "bridge-bootJar",
+        "exit":  1,
+        "expected":  1,
+        "finalOnlyMessage":  true,
+        "passed":  true
+    },
+    {
+        "check":  "invalid-bootJar",
+        "exit":  1,
+        "expected":  1,
+        "finalOnlyMessage":  true,
+        "passed":  true
+    }
+]

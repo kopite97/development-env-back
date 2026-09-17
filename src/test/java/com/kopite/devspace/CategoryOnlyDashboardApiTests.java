@@ -1,104 +1,49 @@
 package com.kopite.devspace;
-import com.kopite.devspace.auth.application.InternalUserPrincipal;
-import com.kopite.devspace.user.application.UserWorkspaceCreationService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.json.JsonMapper;
-import java.nio.file.*;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest @ActiveProfiles("test") @Import(TestcontainersConfiguration.class) @AutoConfigureMockMvc
-class CategoryOnlyDashboardApiTests {
-    @Autowired MockMvc mvc; @Autowired UserWorkspaceCreationService users; @Autowired JdbcTemplate jdbc; @Autowired JsonMapper json;
-    @Value("${app.security.origin}") String origin;
-    record Owner(UUID user,UUID workspace,MockHttpSession session,String csrf) {}
-    Owner owner()throws Exception {
-        var o=users.createOrReuse("v2-replay",UUID.randomUUID().toString(),"Owner");
-        var ctx=SecurityContextHolder.createEmptyContext();ctx.setAuthentication(new UsernamePasswordAuthenticationToken(new InternalUserPrincipal(o.user().getId(),"Owner"),null,List.of()));
-        var session=new MockHttpSession();session.setAttribute("SPRING_SECURITY_CONTEXT",ctx);
-        String csrf=json.readTree(mvc.perform(get("/api/v1/auth/csrf").session(session)).andReturn().getResponse().getContentAsString()).path("csrfToken").asString();
-        return new Owner(o.user().getId(),o.workspace().getId(),session,csrf);
+/** Category compatibility through the replacement Widget/layout API. */
+class CategoryOnlyDashboardApiTests extends WidgetTestSupport {
+    String category(Owner o,String name)throws Exception {
+        return id(tree(request(o,post("/api/v1/project-categories").header("Idempotency-Key",UUID.randomUUID().toString()),json.writeValueAsString(Map.of("name",name)),201)));
     }
-    String post(Owner o,String path,String key,String body,int status)throws Exception {
-        return mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post(path).session(o.session()).header("X-CSRF-Token",o.csrf()).header("Origin",origin)
-            .header("Idempotency-Key",key).contentType("application/json").content(body)).andExpect(status().is(status))
-            .andExpect(header().string("Cache-Control","no-store")).andReturn().getResponse().getContentAsString();
-    }
-
-    tools.jackson.databind.JsonNode read(Owner o,String path)throws Exception {
-        var response=mvc.perform(get(path).session(o.session())).andExpect(status().isOk())
-            .andExpect(header().string("Cache-Control","no-store"))
-            .andExpect(header().string("X-Workspace-Data-Revision",Long.toString(counter(o)))).andReturn().getResponse();
-        return json.readTree(response.getContentAsString());
-    }
-    long counter(Owner o){return jdbc.queryForObject("select data_revision from workspaces where id=?",Long.class,o.workspace());}
-    String category(Owner o,String name)throws Exception{return json.readTree(post(o,"/api/v1/project-categories",name,json.writeValueAsString(Map.of("name",name)),201)).path("id").asString();}
-    String project(Owner o,String name,String category)throws Exception {
-        var body=new LinkedHashMap<String,Object>();body.put("name",name);body.put("stack","Java");body.put("categoryId",category);
-        return json.readTree(post(o,"/api/v2/projects",name,json.writeValueAsString(body),201)).path("id").asString();
-    }
-    void patchProject(Owner o,String id,long revision,Object category)throws Exception {
-        var body=new LinkedHashMap<String,Object>();body.put("revision",revision);body.put("categoryId",category);
-        long before=counter(o);
-        mvc.perform(patch("/api/v2/projects/"+id).session(o.session()).header("Origin",origin).header("X-CSRF-Token",o.csrf())
-            .contentType("application/json").content(json.writeValueAsString(body))).andExpect(status().isOk())
-            .andExpect(header().string("X-Workspace-Data-Revision",Long.toString(before+1)));
-    }
-    void children(Owner o,String project)throws Exception {
-        var id=UUID.fromString(project);
-        jdbc.update("insert into tasks(id,workspace_id,project_id,title,created_at,updated_at) values(?,?,?,'Needle',now(),now())",UUID.randomUUID(),o.workspace(),id);
-        jdbc.update("insert into journals(id,workspace_id,project_id,title,body,entry_date,created_at,updated_at) values(?,?,?,'Needle','Body',current_date,now(),now())",UUID.randomUUID(),o.workspace(),id);
-        jdbc.update("insert into milestones(id,workspace_id,project_id,title,created_at,updated_at) values(?,?,?,'Needle',now(),now())",UUID.randomUUID(),o.workspace(),id);
-    }
-
-    static final String HOME="/api/v2/dashboards/home";
-    Map<String,Object> widget(String id,String kind,String target) {
-        var selection=new LinkedHashMap<String,Object>();selection.put("kind",kind);if(target!=null)selection.put(kind+"Id",target);
-        return new LinkedHashMap<>(Map.of("id",id,"type","board","title","Board","size","wide","selection",selection));
-    }
-    tools.jackson.databind.JsonNode save(Owner o,long revision,List<?> widgets,int expected)throws Exception {
-        long before=counter(o);var result=mvc.perform(put(HOME).session(o.session()).header("Origin",origin).header("X-CSRF-Token",o.csrf()).contentType("application/json")
-            .content(json.writeValueAsString(Map.of("schemaVersion",2,"revision",revision,"widgets",widgets)))).andExpect(status().is(expected));
-        if(expected==200)result.andExpect(header().string("X-Workspace-Data-Revision",Long.toString(before+1)));
-        else {result.andExpect(header().doesNotExist("X-Workspace-Data-Revision"));assertEquals(before,counter(o));}
-        return json.readTree(result.andReturn().getResponse().getContentAsString());
-    }
+    String withSelection(String body,Object selection){var n=(tools.jackson.databind.node.ObjectNode)json.readTree(body);((tools.jackson.databind.node.ObjectNode)n.path("config")).set("selection",json.valueToTree(selection));return n.toString();}
     @Test void deletionRetainsUuidAndOnlyIdenticalExistingMissingSelectionsCanBeSaved()throws Exception {
-        var o=owner();String c=category(o,"Name");var original=widget("category","category",c);
-        var saved=save(o,0,List.of(original),200);assertEquals("valid",saved.path("widgets").get(0).path("selectionState").asString());
-        String row=jdbc.queryForObject("select widgets::text from dashboards where workspace_id=?",String.class,o.workspace());assertFalse(row.contains("selectionState"));assertFalse(row.contains("scope"));
-        mvc.perform(delete("/api/v1/project-categories/"+c).session(o.session()).header("Origin",origin).header("X-CSRF-Token",o.csrf()).queryParam("revision","1")).andExpect(status().isOk());
-        var missing=read(o,HOME);assertEquals(1,missing.path("revision").asInt());assertEquals(c,missing.path("widgets").get(0).path("selection").path("categoryId").asString());assertEquals("missingCategory",missing.path("widgets").get(0).path("selectionState").asString());
-        assertEquals(row,jdbc.queryForObject("select widgets::text from dashboards where workspace_id=?",String.class,o.workspace()));
-        String recreated=json.readTree(post(o,"/api/v1/project-categories","recreated",json.writeValueAsString(Map.of("name","Name")),201)).path("id").asString();assertNotEquals(c,recreated);
-        assertEquals("missingCategory",read(o,HOME).path("widgets").get(0).path("selectionState").asString());
-        var retained=save(o,1,List.of(original),200);assertEquals(2,retained.path("revision").asInt());assertEquals("missingCategory",retained.path("widgets").get(0).path("selectionState").asString());
-        save(o,2,List.of(widget("new-id","category",c)),404);save(o,2,List.of(widget("category","category",UUID.randomUUID().toString())),404);
-        var roundTrip=json.convertValue(retained.path("widgets").get(0),Map.class);save(o,2,List.of(roundTrip),400);
-        save(o,1,List.of(original),409);
-        var valid=save(o,2,List.of(widget("category","category",recreated)),200);assertEquals("valid",valid.path("widgets").get(0).path("selectionState").asString());
+        var o=owner();String c=category(o,"Name");var selection=Map.of("kind","category","categoryId",c);
+        String body=withSelection(createBody("board"),selection);String id=id(tree(request(o,post(W).header("Idempotency-Key","create"),body,201)));
+        request(o,put(D),layout(0,id),200);
+        String row=jdbc.queryForObject("select config::text from widgets where id=?",String.class,UUID.fromString(id));assertFalse(row.contains("referenceState"));
+        request(o,delete("/api/v1/project-categories/"+c+"?revision=1"),null,200);
+        var missing=tree(request(o,get(W+"/"+id),null,200));assertEquals("missingCategory",missing.path("referenceState").asString());assertEquals(c,missing.path("config").path("selection").path("categoryId").asString());
+        assertEquals(row,jdbc.queryForObject("select config::text from widgets where id=?",String.class,UUID.fromString(id)));
+        assertEquals("REFERENCE_MISSING",tree(request(o,get(W+"/"+id+"/data"),null,200)).path("problem").path("code").asString());
+        String recreated=category(o,"Name");assertNotEquals(c,recreated);
+        assertEquals("missingCategory",tree(request(o,get(D),null,200)).path("widgets").get(0).path("referenceState").asString());
+        var retained=tree(request(o,put(W+"/"+id),withSelection(update(1),selection),200));assertEquals(2,retained.path("revision").asLong());
+        request(o,post(W).header("Idempotency-Key","new"),body,404);
+        request(o,put(W+"/"+id),withSelection(update(2),Map.of("kind","category","categoryId",UUID.randomUUID().toString())),404);
+        request(o,put(W+"/"+id),retained.toString(),400);
+        request(o,put(W+"/"+id),withSelection(update(1),selection),409);
+        assertEquals("valid",tree(request(o,put(W+"/"+id),withSelection(update(2),Map.of("kind","category","categoryId",recreated)),200)).path("referenceState").asString());
     }
     @Test void strictSelectionShapesAndOwnedIdentities()throws Exception {
-        var o=owner();var other=owner();String foreignCategory=category(other,"Foreign"),foreignProject=project(other,"Foreign",null);
-        save(o,0,List.of(widget("c","category",foreignCategory)),404);save(o,0,List.of(widget("p","project",foreignProject)),404);
-        var bad=new ArrayList<Object>();bad.add("all");bad.add(List.of());bad.add(Map.of());bad.add(Map.of("kind","unity"));bad.add(Map.of("kind","project"));bad.add(Map.of("kind","category","categoryId","bad"));
-        bad.add(Map.of("kind","all","projectId",UUID.randomUUID().toString()));bad.add(Map.of("kind","category","categoryId",UUID.randomUUID().toString(),"projectId",UUID.randomUUID().toString()));bad.add(Map.of("kind","all","scope","all"));
+        var o=owner();var other=owner();String foreign=category(other,"Foreign");
+        request(o,post(W).header("Idempotency-Key","foreign"),withSelection(createBody("board"),Map.of("kind","category","categoryId",foreign)),404);
+        var bad=new ArrayList<Object>(List.of("all",List.of(),Map.of(),Map.of("kind","unity"),Map.of("kind","project"),Map.of("kind","category","categoryId","bad"),Map.of("kind","all","scope","all"),Map.of("kind","all","projectId",UUID.randomUUID().toString()),Map.of("kind","category","categoryId",foreign,"projectId",foreign)));
         var explicitNull=new LinkedHashMap<String,Object>();explicitNull.put("kind","all");explicitNull.put("categoryId",null);bad.add(explicitNull);
-        for(Object selection:bad){var w=widget("x","all",null);w.put("selection",selection);save(o,0,List.of(w),400);}
-        String duplicate="{\"schemaVersion\":2,\"revision\":0,\"widgets\":[{\"id\":\"x\",\"type\":\"board\",\"title\":\"T\",\"size\":\"wide\",\"selection\":{\"kind\":\"all\",\"kind\":\"uncategorized\"}}]}";
-        mvc.perform(put(HOME).session(o.session()).header("Origin",origin).header("X-CSRF-Token",o.csrf()).contentType("application/json").content(duplicate)).andExpect(status().isBadRequest());
-        assertEquals(0,counter(o));assertEquals(0,read(o,HOME).path("revision").asInt());
+        for(Object selection:bad)request(o,post(W).header("Idempotency-Key",UUID.randomUUID().toString()),withSelection(createBody("board"),selection),400);
+        assertEquals(0,counter(o));assertFalse(tree(request(o,get(D),null,200)).path("initialized").asBoolean());
+    }
+    @Test void allTypeSizeSelectionCombinationsPreserveOmittedDefaults()throws Exception {
+        var o=owner();String c=category(o,"Reference");UUID p=UUID.randomUUID();jdbc.update("insert into projects(id,workspace_id,name,stack,status,created_at,updated_at) values(?,?,'Archived','Java','archived',now(),now())",p,o.workspace());long revision=0;
+        for(String type:List.of("overview","board","deploy","links","journal","milestone"))for(String size:List.of("small","medium","wide"))for(String kind:List.of("all","uncategorized","project","category")){
+            var selection=new LinkedHashMap<String,Object>();selection.put("kind",kind);if(kind.equals("project"))selection.put("projectId",p.toString());if(kind.equals("category"))selection.put("categoryId",c);
+            String body=withSelection(createBody(type),selection);boolean invalid=type.equals("deploy")&&!kind.equals("all");
+            var created=request(o,post(W).header("Idempotency-Key",UUID.randomUUID().toString()),body,invalid?400:201);if(invalid)continue;
+            var widget=tree(created);assertEquals(kind,widget.path("config").path("selection").path("kind").asString());assertFalse(widget.path("config").has("limit"));assertEquals("valid",widget.path("referenceState").asString());
+            var saved=tree(request(o,put(D),json.writeValueAsString(Map.of("schemaVersion",3,"layoutRevision",revision++,"placements",List.of(Map.of("widgetId",id(widget),"size",size)))),200));assertEquals(size,saved.path("placements").get(0).path("size").asString());
+        }
     }
 }

@@ -1,0 +1,26 @@
+[
+    {
+        "suite":  "com.kopite.devspace.WidgetApiTests",
+        "tests":  "8",
+        "failures":  "0",
+        "errors":  "0",
+        "skipped":  "0",
+        "sha256":  "27E3E57E510D00FE1E0E522FF43B95E39453BF150276BEBC3A8002CBDEB6E6FB"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetDataTests",
+        "tests":  "9",
+        "failures":  "0",
+        "errors":  "0",
+        "skipped":  "0",
+        "sha256":  "91D8D75A33D3C9C4CFCE0E269A29A11B50BED22E72B0E0A24135807C5B58C153"
+    },
+    {
+        "suite":  "com.kopite.devspace.WidgetExtensionTests",
+        "tests":  "1",
+        "failures":  "0",
+        "errors":  "0",
+        "skipped":  "0",
+        "sha256":  "3E7A8460203DF6B3FF35B89619658C84DBA61EE38CA6197CD1CE909AA1BF6651"
+    }
+]

@@ -1,0 +1,20 @@
+[
+    {
+        "suite":  "com.kopite.devspace.CategoryCutoverMigrationTests",
+        "tests":  7,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "timestamp":  "2026-09-16T12:40:31.325Z",
+        "sha256":  "A68CF7A1E2DBF80A6B5CF31A4EBD5298C287C8B06832355A714A0D86BE30B2BC"
+    },
+    {
+        "suite":  "com.kopite.devspace.FinalCategoryRuntimeTests",
+        "tests":  1,
+        "failures":  0,
+        "errors":  0,
+        "skipped":  0,
+        "timestamp":  "2026-09-16T12:40:46.386Z",
+        "sha256":  "29CA1046578D3EFE70807EF0F60D77D630CB9073F9B9E8C708CE61935B6C6A1C"
+    }
+]
